@@ -12,6 +12,8 @@ import { scrapeAtlantaParent } from "./sources/scrapers/atlanta-parent.js";
 import { scrapeOCParentGuide } from "./sources/scrapers/oc-parent-guide.js";
 import { deduplicateEvents } from "./deduplicate.js";
 import { fillMissingImages } from "./images.js";
+import { cleanDescriptions } from "./clean-descriptions.js";
+import { rewriteDescriptions } from "./rewrite.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { log } from "./utils/logger.js";
 
@@ -84,8 +86,14 @@ async function main() {
   // Deduplicate
   const deduped = deduplicateEvents(allEvents);
 
+  // Clean promotional language from descriptions
+  const cleaned = cleanDescriptions(deduped);
+
+  // Rewrite descriptions to be unique
+  const rewritten = rewriteDescriptions(cleaned);
+
   // Fill missing images
-  const withImages = await fillMissingImages(deduped);
+  const withImages = await fillMissingImages(rewritten);
 
   // Upload to CloudKit (or write to output/)
   log.divider();

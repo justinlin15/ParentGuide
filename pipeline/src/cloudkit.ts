@@ -72,6 +72,62 @@ async function cloudKitFetch(
   return resp.json();
 }
 
+// ─── Query for manually edited records ───────────────────────────────────────
+
+async function fetchManuallyEditedRecords(
+  privateKeyPem: string
+): Promise<Set<string>> {
+  const env = config.cloudkit.environment;
+  const container = config.cloudkit.container;
+  const subpath = `/database/1/${container}/${env}/public/records/query`;
+
+  const body = {
+    query: {
+      recordType: "Event",
+      filterBy: [
+        {
+          comparator: "EQUALS",
+          fieldName: "manuallyEdited",
+          fieldValue: { value: 1 },
+        },
+      ],
+    },
+    resultsLimit: 500,
+  };
+
+  const editedNames = new Set<string>();
+
+  try {
+    let continuationMarker: string | undefined;
+    let page = 0;
+
+    do {
+      const requestBody = continuationMarker
+        ? { ...body, continuationMarker }
+        : body;
+
+      const result = await cloudKitFetch(subpath, requestBody, privateKeyPem);
+
+      for (const record of result.records || []) {
+        if (record.recordName) {
+          editedNames.add(record.recordName);
+        }
+      }
+
+      continuationMarker = result.continuationMarker;
+      page++;
+    } while (continuationMarker && page < 10); // safety cap
+
+    return editedNames;
+  } catch (err) {
+    log.warn(
+      "cloudkit",
+      `Could not fetch manually edited records: ${err} — will upload all`
+    );
+    return editedNames; // empty set = upload everything
+  }
+}
+
 // ─── Record conversion ──────────────────────────────────────────────────────
 
 function toCloudKitRecord(event: PipelineEvent) {
@@ -98,6 +154,7 @@ function toCloudKitRecord(event: PipelineEvent) {
       isRecurring: { value: event.isRecurring ? 1 : 0 },
       tags: { value: event.tags },
       metro: { value: event.metro },
+      manuallyEdited: { value: 0 },
     },
   };
 }
@@ -179,12 +236,22 @@ export async function uploadToCloudKit(
     return;
   }
 
+  // Fetch manually edited record names to skip during upload
+  const manuallyEdited = await fetchManuallyEditedRecords(privateKeyPem);
+  if (manuallyEdited.size > 0) {
+    log.info("cloudkit", `Found ${manuallyEdited.size} manually edited events — will not overwrite`);
+  }
+
+  const allRecords = events.map(toCloudKitRecord);
+  const records = allRecords.filter(
+    (r) => !manuallyEdited.has(r.recordName)
+  );
+  const skipped = allRecords.length - records.length;
+
   log.info(
     "cloudkit",
-    `Uploading ${events.length} events to ${config.cloudkit.container} (${config.cloudkit.environment})…`
+    `Uploading ${records.length} events to ${config.cloudkit.container} (${config.cloudkit.environment})${skipped > 0 ? ` (${skipped} skipped — manually edited)` : ""}…`
   );
-
-  const records = events.map(toCloudKitRecord);
   const batches: (typeof records)[] = [];
   for (let i = 0; i < records.length; i += BATCH_SIZE) {
     batches.push(records.slice(i, i + BATCH_SIZE));
