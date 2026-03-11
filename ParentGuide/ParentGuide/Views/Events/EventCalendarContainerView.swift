@@ -8,35 +8,23 @@ import SwiftUI
 struct EventCalendarContainerView: View {
     @State private var viewModel = EventCalendarViewModel()
     @State private var adminService = AdminService.shared
+    @State private var subscriptionService = SubscriptionService.shared
     @State private var showSearch = false
     @State private var showDayEvents = false
     @State private var showCreateEvent = false
 
+    /// Whether the user has access (subscribed or admin).
+    private var hasAccess: Bool {
+        subscriptionService.isSubscribed || adminService.isAdmin
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                ViewModeSelectorView(viewModel: viewModel) {
-                    showSearch = true
-                }
-
-                switch viewModel.selectedViewMode {
-                case .month:
-                    if viewModel.isLoading {
-                        LoadingView(message: "Loading events...")
-                    } else {
-                        CalendarMonthView(viewModel: viewModel) { date in
-                            showDayEvents = true
-                        }
-                    }
-
-                case .list:
-                    EventListView(events: viewModel.events)
-
-                case .week:
-                    EventAgendaView(events: viewModel.events)
-
-                case .map:
-                    EventMapView(events: viewModel.events)
+            Group {
+                if hasAccess {
+                    eventContent
+                } else {
+                    PaywallView(lockedContentName: "the Event Calendar")
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -58,7 +46,9 @@ struct EventCalendarContainerView: View {
             }
             .task {
                 await adminService.checkAdminStatus()
-                await viewModel.loadEvents()
+                if hasAccess {
+                    await viewModel.loadEvents()
+                }
             }
             .sheet(isPresented: $showSearch) {
                 EventSearchView(allEvents: viewModel.events)
@@ -91,6 +81,37 @@ struct EventCalendarContainerView: View {
                     }
                     .presentationDetents([.medium, .large])
                 }
+            }
+        }
+    }
+
+    // MARK: - Event Content (shown when subscribed)
+
+    @ViewBuilder
+    private var eventContent: some View {
+        VStack(spacing: 0) {
+            ViewModeSelectorView(viewModel: viewModel) {
+                showSearch = true
+            }
+
+            switch viewModel.selectedViewMode {
+            case .month:
+                if viewModel.isLoading {
+                    LoadingView(message: "Loading events...")
+                } else {
+                    CalendarMonthView(viewModel: viewModel) { date in
+                        showDayEvents = true
+                    }
+                }
+
+            case .list:
+                EventListView(events: viewModel.events)
+
+            case .week:
+                EventAgendaView(events: viewModel.events)
+
+            case .map:
+                EventMapView(events: viewModel.events)
             }
         }
     }

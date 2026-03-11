@@ -11,33 +11,32 @@ class AdminService {
     static let shared = AdminService()
 
     private(set) var isAdmin = false
-    private(set) var userRecordName: String?
+    private(set) var appleUserID: String?
 
-    // Hardcoded admin iCloud user record names.
-    // To find yours: run the app, check console for "iCloud userRecordName: ..."
-    private static let adminRecordNames: Set<String> = [
-        // Add your iCloud user record name here after first launch
+    // Hardcoded admin Apple user identifiers.
+    // To find yours: sign in with Apple, check console for "[AdminService] Apple User ID: ..."
+    private static let adminAppleUserIDs: Set<String> = [
+        // Add your Apple user ID here after first Sign in with Apple
     ]
 
     func checkAdminStatus() async {
-        do {
-            let container = CKContainer(identifier: AppConstants.cloudKitContainerID)
-            let recordID = try await container.userRecordID()
-            let recordName = recordID.recordName
-            userRecordName = recordName
-            isAdmin = Self.adminRecordNames.contains(recordName)
-            print("[AdminService] iCloud userRecordName: \(recordName)")
-            print("[AdminService] isAdmin: \(isAdmin)")
-
-            // If adminRecordNames is empty, auto-grant admin to first user (development convenience)
-            if Self.adminRecordNames.isEmpty {
-                print("[AdminService] No admin IDs configured — granting admin access by default.")
-                print("[AdminService] Add \"\(recordName)\" to AdminService.adminRecordNames for production.")
-                isAdmin = true
-            }
-        } catch {
-            print("[AdminService] Could not fetch user record: \(error)")
+        // Check if user is signed in with Apple and get their ID
+        guard let userID = KeychainService.read(key: KeychainService.appleUserIdentifier) else {
+            print("[AdminService] No Apple user ID found — user not signed in")
             isAdmin = false
+            return
+        }
+
+        appleUserID = userID
+        isAdmin = Self.adminAppleUserIDs.contains(userID)
+        print("[AdminService] Apple User ID: \(userID)")
+        print("[AdminService] isAdmin: \(isAdmin)")
+
+        // If no admin IDs configured, auto-grant admin (development convenience)
+        if Self.adminAppleUserIDs.isEmpty {
+            print("[AdminService] No admin IDs configured — granting admin access by default.")
+            print("[AdminService] Add \"\(userID)\" to AdminService.adminAppleUserIDs for production.")
+            isAdmin = true
         }
     }
 }

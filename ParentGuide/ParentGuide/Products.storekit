@@ -1,0 +1,70 @@
+{
+  "identifier" : "com.iw.ParentGuide.Products",
+  "type" : "Configuration",
+  "version" : 3,
+  "subscriptionGroups" : [
+    {
+      "id" : "parentguide_membership",
+      "localizations" : [
+        {
+          "description" : "Access all events, guides, and member content",
+          "displayName" : "Parent Guide Membership",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Parent Guide Membership",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "3.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "monthly_001",
+          "introductoryOffer" : {
+            "internalID" : "monthly_trial",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Full access to events and guides, billed monthly",
+              "displayName" : "Monthly Membership",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.iw.ParentGuide.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Membership",
+          "subscriptionGroupID" : "parentguide_membership",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "44.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "annual_001",
+          "introductoryOffer" : {
+            "internalID" : "annual_trial",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Full access to events and guides, billed annually — save 6%!",
+              "displayName" : "Annual Membership",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.iw.ParentGuide.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual Membership",
+          "subscriptionGroupID" : "parentguide_membership",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ]
+}

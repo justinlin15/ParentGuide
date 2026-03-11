@@ -3,10 +3,14 @@
 //  ParentGuide
 //
 
+import StoreKit
 import SwiftUI
 
 struct PlansView: View {
-    @State private var showComingSoon = false
+    @State private var subscriptionService = SubscriptionService.shared
+    @State private var authService = AuthService.shared
+    @State private var showLogin = false
+    @State private var purchaseError: String?
 
     var body: some View {
         ScrollView {
@@ -27,23 +31,99 @@ struct PlansView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
 
+                // Already subscribed banner
+                if subscriptionService.isSubscribed {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.green)
+                        Text("You're a member!")
+                            .fontWeight(.semibold)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green.opacity(0.1))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
+                }
+
                 // Plan cards
-                HStack(spacing: 16) {
-                    ForEach(SubscriptionPlan.allPlans) { plan in
-                        PlanCardView(plan: plan) {
-                            showComingSoon = true
+                if !subscriptionService.isSubscribed {
+                    HStack(spacing: 16) {
+                        ForEach(SubscriptionPlan.allPlans) { plan in
+                            PlanCardView(plan: plan) {
+                                Task { await handlePurchase(plan: plan) }
+                            }
                         }
                     }
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
+
+                // Error message
+                if let error = purchaseError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .padding(.horizontal, 16)
+                }
+
+                // Restore purchases
+                Button {
+                    Task { await subscriptionService.restorePurchases() }
+                } label: {
+                    Text("Restore Purchases")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.brandBlue)
+                }
+                .padding(.bottom, 20)
             }
         }
         .navigationTitle("Plans")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Coming Soon!", isPresented: $showComingSoon) {
-            Button("OK") {}
-        } message: {
-            Text("In-app subscriptions are coming soon. Stay tuned!")
+        .task {
+            await subscriptionService.loadProducts()
+        }
+        .overlay {
+            if subscriptionService.isLoading {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    ProgressView()
+                        .padding(24)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
+            }
+        }
+        .sheet(isPresented: $showLogin) {
+            NavigationStack {
+                LoginView()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Cancel") { showLogin = false }
+                        }
+                    }
+            }
+        }
+    }
+
+    private func handlePurchase(plan: SubscriptionPlan) async {
+        purchaseError = nil
+
+        // Must be signed in to purchase
+        guard authService.isSignedIn else {
+            showLogin = true
+            return
+        }
+
+        // Get the StoreKit product
+        guard let product = subscriptionService.product(for: plan.productID) else {
+            purchaseError = "Subscription not available. Please try again later."
+            return
+        }
+
+        do {
+            _ = try await subscriptionService.purchase(product)
+        } catch {
+            purchaseError = "Purchase failed. Please try again."
         }
     }
 }
@@ -51,6 +131,17 @@ struct PlansView: View {
 struct PlanCardView: View {
     let plan: SubscriptionPlan
     var onSubscribe: () -> Void = {}
+
+    // Not private so the memberwise init stays internal (accessible from other files)
+    var subscriptionService = SubscriptionService.shared
+
+    /// Use real App Store price if available, otherwise fall back to hardcoded.
+    private var displayPrice: String {
+        if let product = subscriptionService.product(for: plan.productID) {
+            return product.displayPrice
+        }
+        return plan.price
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -70,7 +161,7 @@ struct PlanCardView: View {
                 .fontWeight(.semibold)
 
             VStack(spacing: 2) {
-                Text(plan.price)
+                Text(displayPrice)
                     .font(.system(size: 36, weight: .bold))
                 Text(plan.period)
                     .font(.caption)

@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var authService = AuthService.shared
+
     var body: some View {
         VStack(spacing: 20) {
             // Avatar placeholder
@@ -14,13 +16,25 @@ struct ProfileView: View {
                 .foregroundStyle(Color.brandBlue)
                 .padding(.top, 40)
 
-            Text("kailin84")
-                .font(.title2)
-                .fontWeight(.semibold)
+            if let user = authService.currentUser {
+                Text(user.displayName)
+                    .font(.title2)
+                    .fontWeight(.semibold)
 
-            Text("Member since 2024")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                if !user.email.isEmpty {
+                    Text(user.email)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text("Member since \(user.createdAt.formatted(.dateTime.month(.wide).year()))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Parent")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+            }
 
             Spacer()
         }

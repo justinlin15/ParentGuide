@@ -3,111 +3,77 @@
 //  ParentGuide
 //
 
-import SwiftUI
 import AuthenticationServices
+import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var showSignUp = false
+    @State private var authService = AuthService.shared
+    @State private var isSigningIn = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 32) {
             Spacer()
 
-            // Logo placeholder
+            // Logo
             Image(systemName: "figure.2.and.child.holdinghands")
                 .font(.system(size: 60))
                 .foregroundStyle(Color.brandBlue)
 
-            Text("Parent Guide")
-                .font(.system(.title, design: .rounded, weight: .bold))
+            VStack(spacing: 8) {
+                Text("Parent Guide")
+                    .font(.system(.title, design: .rounded, weight: .bold))
 
-            // Email field
-            VStack(spacing: 12) {
-                TextField("Email address", text: $email)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .padding(14)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-
-                SecureField("Password", text: $password)
-                    .textContentType(.password)
-                    .padding(14)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-            }
-            .padding(.horizontal, 32)
-
-            // Forgot password
-            Button("Forgot password?") {}
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            // Sign in button
-            Button {
-                // TODO: Implement email sign in
-            } label: {
-                Text("Sign in")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Color.brandBlue)
-                    .cornerRadius(25)
-            }
-            .padding(.horizontal, 32)
-
-            // Divider
-            HStack {
-                Rectangle()
-                    .fill(Color(.systemGray4))
-                    .frame(height: 1)
-                Text("or sign in with")
-                    .font(.caption)
+                Text("Sign in to access events, guides,\nand exclusive member content")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Rectangle()
-                    .fill(Color(.systemGray4))
-                    .frame(height: 1)
+                    .multilineTextAlignment(.center)
             }
-            .padding(.horizontal, 32)
 
             // Sign in with Apple
             SignInWithAppleButton(.signIn) { request in
+                let nonce = authService.prepareNonce()
                 request.requestedScopes = [.email, .fullName]
+                request.nonce = AuthService.sha256(nonce)
             } onCompletion: { result in
-                switch result {
-                case .success:
-                    dismiss()
-                case .failure(let error):
-                    print("Sign in with Apple failed: \(error)")
+                isSigningIn = true
+                Task {
+                    await authService.handleAppleSignIn(result: result)
+                    isSigningIn = false
+                    if authService.isSignedIn {
+                        dismiss()
+                    }
                 }
             }
-            .signInWithAppleButtonStyle(.black)
-            .frame(height: 44)
+            .signInWithAppleButtonStyle(colorScheme == .dark ? .white : .black)
+            .frame(height: 50)
             .padding(.horizontal, 32)
 
-            // Sign up link
-            HStack {
-                Text("Don't have an account?")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Button("Sign up") {
-                    showSignUp = true
-                }
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            // Error message
+            if let error = authService.errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
             }
 
             Spacer()
+            Spacer()
         }
-        .navigationTitle("Log In")
+        .navigationTitle("Sign In")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showSignUp) {
-            SignUpView()
+        .overlay {
+            if isSigningIn {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    ProgressView("Signing in...")
+                        .padding(24)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
+            }
         }
     }
 }
