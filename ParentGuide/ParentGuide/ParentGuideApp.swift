@@ -13,8 +13,12 @@ struct ParentGuideApp: App {
     @State private var authService = AuthService.shared
     @State private var subscriptionService = SubscriptionService.shared
     @State private var metroService = MetroService.shared
+    @State private var showOnboarding: Bool
 
     init() {
+        // Initialize onboarding state from persisted value
+        _showOnboarding = State(initialValue: !MetroService.shared.hasCompletedOnboarding)
+
         let navAppearance = UINavigationBarAppearance()
         navAppearance.configureWithDefaultBackground()
         navAppearance.largeTitleTextAttributes = [
@@ -30,12 +34,7 @@ struct ParentGuideApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .fullScreenCover(
-                    isPresented: Binding(
-                        get: { !metroService.hasCompletedOnboarding },
-                        set: { _ in }
-                    )
-                ) {
+                .fullScreenCover(isPresented: $showOnboarding) {
                     OnboardingView()
                 }
                 .task {
