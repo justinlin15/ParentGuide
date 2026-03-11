@@ -6,7 +6,6 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @Environment(\.dismiss) private var dismiss
     @State private var metroService = MetroService.shared
     @State private var selectedMetro: AppConstants.Metro?
     @State private var isDetecting = false
@@ -97,7 +96,6 @@ struct OnboardingView: View {
             Button {
                 if let metro = selectedMetro {
                     metroService.completeOnboarding(with: metro)
-                    dismiss()
                 }
             } label: {
                 Text("Get Started")
