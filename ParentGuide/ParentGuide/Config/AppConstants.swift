@@ -17,7 +17,7 @@ nonisolated enum AppConstants {
     static let defaultRegionSpanDelta = 0.5
 
     // MARK: - Metro Areas (must match pipeline/src/config.ts)
-    struct Metro {
+    struct Metro: Equatable {
         let id: String
         let name: String
         let latitude: Double

@@ -38,7 +38,8 @@ class EventCalendarViewModel {
         }
 
         do {
-            let fetched = try await EventService.shared.fetchEvents(for: currentMonth)
+            let metroId = MetroService.shared.selectedMetro.id
+            let fetched = try await EventService.shared.fetchEvents(forMetro: metroId, month: currentMonth)
             events = fetched
             groupEventsByDate()
         } catch {

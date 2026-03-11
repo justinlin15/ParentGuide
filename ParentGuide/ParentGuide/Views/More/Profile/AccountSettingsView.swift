@@ -7,6 +7,7 @@ import SwiftUI
 
 struct AccountSettingsView: View {
     @State private var subscriptionService = SubscriptionService.shared
+    @State private var metroService = MetroService.shared
 
     private var planName: String {
         if subscriptionService.isSubscribed {
@@ -47,12 +48,22 @@ struct AccountSettingsView: View {
                 }
             }
 
+            Section("Location") {
+                NavigationLink {
+                    LocationSettingsView()
+                } label: {
+                    HStack {
+                        Text("Metro Area")
+                        Spacer()
+                        Text(metroService.selectedMetro.name)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+
             Section("Preferences") {
                 Toggle("Push Notifications", isOn: .constant(true))
-                NavigationLink("Favorite Cities") {
-                    Text("Coming soon")
-                        .foregroundStyle(.secondary)
-                }
             }
 
             Section("Support") {

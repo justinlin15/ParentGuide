@@ -35,7 +35,9 @@ class ParentsNightOutViewModel {
         }
 
         do {
-            providers = try await GuideService.shared.fetchParentsNightOutProviders()
+            let allProviders = try await GuideService.shared.fetchParentsNightOutProviders()
+            let metroId = MetroService.shared.selectedMetro.id
+            providers = allProviders.filter { $0.metro == metroId }
             extractCities()
             applyFilter()
         } catch {

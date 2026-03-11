@@ -12,6 +12,7 @@ import SwiftUI
 struct ParentGuideApp: App {
     @State private var authService = AuthService.shared
     @State private var subscriptionService = SubscriptionService.shared
+    @State private var metroService = MetroService.shared
 
     init() {
         let navAppearance = UINavigationBarAppearance()
@@ -29,9 +30,22 @@ struct ParentGuideApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .fullScreenCover(
+                    isPresented: Binding(
+                        get: { !metroService.hasCompletedOnboarding },
+                        set: { _ in }
+                    )
+                ) {
+                    OnboardingView()
+                }
                 .task {
                     // Restore auth session from Keychain
                     await authService.restoreSession()
+
+                    // If signed in, restore metro from profile
+                    if let profile = authService.currentUser {
+                        metroService.restoreFromProfile(profile)
+                    }
 
                     // Load subscription status
                     await subscriptionService.updateSubscriptionStatus()

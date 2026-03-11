@@ -37,7 +37,9 @@ class KidsEatFreeViewModel {
         }
 
         do {
-            restaurants = try await GuideService.shared.fetchKidsEatFreeRestaurants()
+            let allRestaurants = try await GuideService.shared.fetchKidsEatFreeRestaurants()
+            let metroId = MetroService.shared.selectedMetro.id
+            restaurants = allRestaurants.filter { $0.metro == metroId }
             extractCities()
             applyFilter()
         } catch {

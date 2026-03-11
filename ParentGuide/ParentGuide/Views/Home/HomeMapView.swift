@@ -7,17 +7,21 @@ import SwiftUI
 import MapKit
 
 struct HomeMapView: View {
-    let region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(
-            latitude: AppConstants.defaultRegionLatitude,
-            longitude: AppConstants.defaultRegionLongitude
-        ),
-        span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
-    )
+    private var metroService = MetroService.shared
+
+    private var region: MKCoordinateRegion {
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(
+                latitude: metroService.selectedMetro.latitude,
+                longitude: metroService.selectedMetro.longitude
+            ),
+            span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        )
+    }
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("Events across Orange County")
+            Text("Events across \(metroService.selectedMetro.name)")
                 .font(.title3)
                 .fontWeight(.semibold)
 

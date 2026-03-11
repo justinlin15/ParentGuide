@@ -12,10 +12,11 @@ struct EventMapView: View {
     @State private var selectedEvent: Event?
     @State private var mapPosition: MapCameraPosition = .automatic
     @State private var visibleRegion: MKCoordinateRegion?
-    @State private var showLocationPrompt = true
+    @State private var showLocationPrompt = false
     @State private var showZipEntry = false
     @State private var zipCode = ""
     @State private var locationManager = LocationHelper()
+    var metroService = MetroService.shared
 
     private var eventsWithLocation: [Event] {
         events.filter { $0.hasLocation }
@@ -188,6 +189,14 @@ struct EventMapView: View {
                     }
             }
             .presentationDetents([.medium, .large])
+        }
+        .onAppear {
+            // Auto-center on selected metro unless user has granted location
+            let metro = metroService.selectedMetro
+            setInitialRegion(center: CLLocationCoordinate2D(
+                latitude: metro.latitude,
+                longitude: metro.longitude
+            ))
         }
     }
 

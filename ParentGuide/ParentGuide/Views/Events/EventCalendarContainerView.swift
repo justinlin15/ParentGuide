@@ -9,6 +9,7 @@ struct EventCalendarContainerView: View {
     @State private var viewModel = EventCalendarViewModel()
     @State private var adminService = AdminService.shared
     @State private var subscriptionService = SubscriptionService.shared
+    @State private var metroService = MetroService.shared
     @State private var showSearch = false
     @State private var showDayEvents = false
     @State private var showCreateEvent = false
@@ -49,6 +50,9 @@ struct EventCalendarContainerView: View {
                 if hasAccess {
                     await viewModel.loadEvents()
                 }
+            }
+            .onChange(of: metroService.selectedMetro.id) {
+                Task { await viewModel.loadEvents() }
             }
             .sheet(isPresented: $showSearch) {
                 EventSearchView(allEvents: viewModel.events)
