@@ -23,7 +23,7 @@ class EventCalendarViewModel {
     var errorMessage: String?
 
     // Use preview data for now; switch to CloudKit later
-    var usePreviewData = true
+    var usePreviewData = false
 
     func loadEvents() async {
         isLoading = true

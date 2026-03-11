@@ -17,7 +17,7 @@ class ParentsNightOutViewModel {
     var errorMessage: String?
     var showFilter = false
 
-    var usePreviewData = true
+    var usePreviewData = false
 
     var activeFilterCount: Int {
         selectedCities.count + (onlyWithPromo ? 1 : 0)

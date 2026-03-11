@@ -14,6 +14,7 @@ struct PaywallView: View {
     @State private var purchaseError: String?
     @State private var isSigningIn = false
     @Environment(\.colorScheme) private var colorScheme
+    private var metroService: MetroService { MetroService.shared }
 
     /// Optional title to customize per tab (e.g., "Event Calendar" or "Guides")
     var lockedContentName: String = "this content"
@@ -32,7 +33,7 @@ struct PaywallView: View {
                 VStack(spacing: 8) {
                     Text("Unlimited family fun in")
                         .font(.system(.title2, design: .rounded, weight: .bold))
-                    Text("Orange County")
+                    Text(metroService.selectedMetro.name)
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(Color.brandBlue)
 

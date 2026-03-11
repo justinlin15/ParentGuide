@@ -208,10 +208,15 @@ struct EventMapView: View {
     }
 
     private func geocodeZip(_ zip: String) {
-        let geocoder = CLGeocoder()
-        geocoder.geocodeAddressString(zip) { placemarks, error in
-            if let coordinate = placemarks?.first?.location?.coordinate {
-                setInitialRegion(center: coordinate)
+        Task {
+            do {
+                guard let request = MKGeocodingRequest(addressString: zip) else { return }
+                let mapItems = try await request.mapItems
+                if let location = mapItems.first?.location {
+                    setInitialRegion(center: location.coordinate)
+                }
+            } catch {
+                print("[EventMapView] Geocoding failed: \(error)")
             }
             showZipEntry = false
         }

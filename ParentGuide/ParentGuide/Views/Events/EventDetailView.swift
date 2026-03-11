@@ -123,6 +123,7 @@ struct EventDetailView: View {
 
                             // Get Directions button
                             Button {
+                                // TODO: Migrate to MKMapItem(location:address:) when MKAddress has a simpler API
                                 let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)))
                                 mapItem.name = event.locationName ?? event.title
                                 mapItem.openInMaps()

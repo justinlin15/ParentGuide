@@ -17,7 +17,7 @@ class KidsEatFreeViewModel {
     var errorMessage: String?
     var showFilter = false
 
-    var usePreviewData = true
+    var usePreviewData = false
 
     static let allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 

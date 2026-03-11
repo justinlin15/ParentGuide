@@ -11,6 +11,7 @@ struct PlansView: View {
     @State private var authService = AuthService.shared
     @State private var showLogin = false
     @State private var purchaseError: String?
+    private var metroService: MetroService { MetroService.shared }
 
     var body: some View {
         ScrollView {
@@ -19,7 +20,7 @@ struct PlansView: View {
                 VStack(spacing: 12) {
                     Text("Unlimited family fun in")
                         .font(.system(.title, design: .rounded, weight: .bold))
-                    Text("Orange County")
+                    Text(metroService.selectedMetro.name)
                         .font(.system(.title, design: .rounded, weight: .bold))
                         .foregroundStyle(Color.brandBlue)
 
