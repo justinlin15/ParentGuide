@@ -4,6 +4,7 @@
 //
 
 import CloudKit
+import CoreLocation
 import Foundation
 
 actor EventService {
@@ -62,6 +63,49 @@ actor EventService {
         let records = try await cloudKit.fetchRecords(
             recordType: CloudKitConfig.RecordType.event,
             predicate: predicate
+        )
+
+        return records.compactMap { Event(record: $0) }
+    }
+
+    func fetchEvents(forMetro metro: String, month: Date) async throws -> [Event] {
+        let startOfMonth = month.startOfMonth
+        let endOfMonth = month.endOfMonth
+
+        let predicate = NSPredicate(
+            format: "metro == %@ AND startDate >= %@ AND startDate <= %@",
+            metro,
+            startOfMonth as NSDate,
+            endOfMonth as NSDate
+        )
+        let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
+
+        let records = try await cloudKit.fetchRecords(
+            recordType: CloudKitConfig.RecordType.event,
+            predicate: predicate,
+            sortDescriptors: sortDescriptors,
+            resultsLimit: 200
+        )
+
+        return records.compactMap { Event(record: $0) }
+    }
+
+    func fetchNearbyEvents(latitude: Double, longitude: Double, radiusMiles: Double = 50) async throws -> [Event] {
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+        let radiusMeters = radiusMiles * 1609.34
+
+        let predicate = NSPredicate(
+            format: "distanceToLocation:fromLocation:(location, %@) < %f",
+            location,
+            radiusMeters
+        )
+        let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
+
+        let records = try await cloudKit.fetchRecords(
+            recordType: CloudKitConfig.RecordType.event,
+            predicate: predicate,
+            sortDescriptors: sortDescriptors,
+            resultsLimit: 200
         )
 
         return records.compactMap { Event(record: $0) }

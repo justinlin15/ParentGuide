@@ -14,11 +14,9 @@ struct PlansView: View {
                 // Hero text
                 VStack(spacing: 12) {
                     Text("Unlimited family fun in")
-                        .font(.title)
-                        .fontWeight(.bold)
+                        .font(.system(.title, design: .rounded, weight: .bold))
                     Text("Orange County")
-                        .font(.title)
-                        .fontWeight(.bold)
+                        .font(.system(.title, design: .rounded, weight: .bold))
                         .foregroundStyle(Color.brandBlue)
 
                     Text("Become a member and access over 1,500 monthly events, exclusive subscriber meet-ups, local partner discounts and free giveaways!")
@@ -62,7 +60,7 @@ struct PlanCardView: View {
                     .fontWeight(.semibold)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Color.purple)
+                    .background(Color.brandLavender)
                     .foregroundStyle(.white)
                     .cornerRadius(4)
             }

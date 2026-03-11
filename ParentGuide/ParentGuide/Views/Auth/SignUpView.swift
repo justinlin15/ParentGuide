@@ -18,8 +18,7 @@ struct SignUpView: View {
                 Spacer()
 
                 Text("Create Account")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.system(.title, design: .rounded, weight: .bold))
 
                 VStack(spacing: 12) {
                     TextField("Display name", text: $displayName)

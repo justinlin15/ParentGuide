@@ -30,13 +30,24 @@ extension Color {
         )
     }
 
-    // Brand colors
-    static let brandBlue = Color(hex: "4FC3F7")
-    static let brandPink = Color(hex: "F8BBD0")
-    static let brandNavy = Color(hex: "1A237E")
-    static let eventGreen = Color(hex: "4CAF50")
-    static let eventBlue = Color(hex: "42A5F5")
-    static let eventPink = Color(hex: "E91E8A")
-    static let eventGray = Color(hex: "9E9E9E")
-    static let eventOrange = Color(hex: "FF9800")
+    // Brand colors — warm palette
+    static let brandBlue = Color(hex: "C48B7F")        // Dusty Rose (primary accent)
+    static let brandPink = Color(hex: "E8D5D0")        // Blush Cream (soft backgrounds)
+    static let brandNavy = Color(hex: "3D3232")         // Warm Charcoal (dark contrast)
+    static let brandLavender = Color(hex: "C0B5CB")     // Soft Lavender
+    static let warmSurface = Color(hex: "F5EFEB")       // Warm Surface (card bg)
+
+    // Event category colors — muted pastels
+    static let eventGreen = Color(hex: "8FAE8B")        // Sage Green
+    static let eventBlue = Color(hex: "7FA8BA")          // Dusty Blue
+    static let eventPink = Color(hex: "D4918F")          // Muted Rose
+    static let eventGray = Color(hex: "B5ADA7")          // Warm Taupe
+    static let eventOrange = Color(hex: "D4A574")        // Warm Caramel
+}
+
+extension UIFont {
+    func rounded() -> UIFont {
+        guard let descriptor = fontDescriptor.withDesign(.rounded) else { return self }
+        return UIFont(descriptor: descriptor, size: pointSize)
+    }
 }

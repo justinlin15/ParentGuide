@@ -22,8 +22,7 @@ struct HeroSectionView: View {
                     .foregroundStyle(Color.brandBlue)
 
                 Text("Your family fun calendar!")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -35,7 +34,7 @@ struct HeroSectionView: View {
 
                 NavigationLink(destination: PlansView()) {
                     Text("Start free trial")
-                        .font(.headline)
+                        .font(.system(.headline, design: .rounded))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 14)

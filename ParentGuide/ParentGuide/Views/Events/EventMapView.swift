@@ -11,19 +11,26 @@ struct EventMapView: View {
     let events: [Event]
     @State private var selectedEvent: Event?
     @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var visibleRegion: MKCoordinateRegion?
     @State private var showLocationPrompt = true
     @State private var showZipEntry = false
     @State private var zipCode = ""
-    @State private var nearbyEvents: [Event] = []
     @State private var locationManager = LocationHelper()
-    @State private var hasSetLocation = false
 
     private var eventsWithLocation: [Event] {
         events.filter { $0.hasLocation }
     }
 
     private var displayedEvents: [Event] {
-        hasSetLocation ? nearbyEvents : eventsWithLocation
+        guard let region = visibleRegion else { return eventsWithLocation }
+        let latMin = region.center.latitude - region.span.latitudeDelta / 2
+        let latMax = region.center.latitude + region.span.latitudeDelta / 2
+        let lonMin = region.center.longitude - region.span.longitudeDelta / 2
+        let lonMax = region.center.longitude + region.span.longitudeDelta / 2
+        return eventsWithLocation.filter { event in
+            guard let lat = event.latitude, let lon = event.longitude else { return false }
+            return lat >= latMin && lat <= latMax && lon >= lonMin && lon <= lonMax
+        }
     }
 
     var body: some View {
@@ -60,6 +67,26 @@ struct EventMapView: View {
                     }
                 }
             }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                visibleRegion = context.region
+            }
+
+            // Event count badge
+            if !showLocationPrompt && !showZipEntry {
+                VStack {
+                    HStack {
+                        Text("\(displayedEvents.count) event\(displayedEvents.count == 1 ? "" : "s") in this area")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(.ultraThinMaterial, in: Capsule())
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding()
+            }
 
             // Location prompt overlay
             if showLocationPrompt {
@@ -83,7 +110,7 @@ struct EventMapView: View {
                     Button {
                         locationManager.requestLocation { coordinate in
                             if let coordinate {
-                                centerMap(on: coordinate)
+                                setInitialRegion(center: coordinate)
                             } else {
                                 showZipEntry = true
                             }
@@ -150,26 +177,6 @@ struct EventMapView: View {
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
                 .padding(24)
             }
-
-            // Change location button (after location set)
-            if hasSetLocation && !showLocationPrompt && !showZipEntry {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            showZipEntry = true
-                        } label: {
-                            Label("Change Area", systemImage: "location.magnifyingglass")
-                                .font(.caption)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(.regularMaterial, in: Capsule())
-                        }
-                    }
-                    Spacer()
-                }
-                .padding()
-            }
         }
         .sheet(item: $selectedEvent) { event in
             NavigationStack {
@@ -184,30 +191,18 @@ struct EventMapView: View {
         }
     }
 
-    private func centerMap(on coordinate: CLLocationCoordinate2D) {
-        let nearby = eventsWithLocation.sorted { e1, e2 in
-            distance(from: coordinate, to: e1) < distance(from: coordinate, to: e2)
-        }
-        nearbyEvents = Array(nearby.prefix(10))
-        hasSetLocation = true
+    private func setInitialRegion(center: CLLocationCoordinate2D) {
         mapPosition = .region(MKCoordinateRegion(
-            center: coordinate,
+            center: center,
             span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
         ))
-    }
-
-    private func distance(from coord: CLLocationCoordinate2D, to event: Event) -> Double {
-        guard let lat = event.latitude, let lon = event.longitude else { return .greatestFiniteMagnitude }
-        let dx = coord.latitude - lat
-        let dy = coord.longitude - lon
-        return dx * dx + dy * dy
     }
 
     private func geocodeZip(_ zip: String) {
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(zip) { placemarks, error in
             if let coordinate = placemarks?.first?.location?.coordinate {
-                centerMap(on: coordinate)
+                setInitialRegion(center: coordinate)
             }
             showZipEntry = false
         }

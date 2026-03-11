@@ -22,8 +22,7 @@ struct LoginView: View {
                 .foregroundStyle(Color.brandBlue)
 
             Text("Parent Guide")
-                .font(.title)
-                .fontWeight(.bold)
+                .font(.system(.title, design: .rounded, weight: .bold))
 
             // Email field
             VStack(spacing: 12) {

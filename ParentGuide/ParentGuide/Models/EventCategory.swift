@@ -28,15 +28,15 @@ nonisolated enum EventCategory: String, CaseIterable, Identifiable, Codable, Sen
     var color: Color {
         switch self {
         case .storytime, .farmersMarket, .outdoorAdventure:
-            return Color("EventGreen")
+            return Color.eventGreen
         case .freeMovie, .music, .museum, .education:
-            return Color("EventBlue")
+            return Color.eventBlue
         case .toddlerActivity, .craft, .festival, .seasonal, .subscriberMeetup:
-            return Color("EventPink")
+            return Color.eventPink
         case .fireStationTour, .sports, .other:
-            return Color("EventGray")
+            return Color.eventGray
         case .food:
-            return Color("EventOrange")
+            return Color.eventOrange
         }
     }
 

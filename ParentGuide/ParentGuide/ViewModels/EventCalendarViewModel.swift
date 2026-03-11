@@ -7,7 +7,7 @@ import Foundation
 
 enum CalendarViewMode: String, CaseIterable {
     case week = "Week"
-    case list = "List"
+    case list = "Day"
     case month = "Month"
     case map = "Map"
 }

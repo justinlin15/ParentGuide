@@ -1,30 +1,29 @@
 //
-//  KidsEatFreeFilterView.swift
+//  ParentsNightOutFilterView.swift
 //  ParentGuide
 //
 
 import SwiftUI
 
-struct KidsEatFreeFilterView: View {
-    @Bindable var viewModel: KidsEatFreeViewModel
+struct ParentsNightOutFilterView: View {
+    @Bindable var viewModel: ParentsNightOutViewModel
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             List {
-                Section("Day of the Week") {
-                    ForEach(KidsEatFreeViewModel.allDays, id: \.self) { day in
-                        Button {
-                            viewModel.toggleDay(day)
-                        } label: {
-                            HStack {
-                                Text(day)
-                                    .foregroundStyle(.primary)
-                                Spacer()
-                                if viewModel.selectedDays.contains(day) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(Color.brandBlue)
-                                }
+                Section("Deals") {
+                    Button {
+                        viewModel.onlyWithPromo.toggle()
+                        viewModel.applyFilter()
+                    } label: {
+                        HStack {
+                            Text("Has promo code")
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if viewModel.onlyWithPromo {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(Color.brandBlue)
                             }
                         }
                     }
@@ -68,5 +67,5 @@ struct KidsEatFreeFilterView: View {
 }
 
 #Preview {
-    KidsEatFreeFilterView(viewModel: KidsEatFreeViewModel())
+    ParentsNightOutFilterView(viewModel: ParentsNightOutViewModel())
 }

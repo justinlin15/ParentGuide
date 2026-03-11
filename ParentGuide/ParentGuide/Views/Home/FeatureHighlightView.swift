@@ -21,8 +21,7 @@ struct FeatureHighlightView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18))
 
             Text(title)
-                .font(.title3)
-                .fontWeight(.bold)
+                .font(.system(.title3, design: .rounded, weight: .bold))
 
             Text(description)
                 .font(.subheadline)
@@ -31,8 +30,8 @@ struct FeatureHighlightView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(Color(.systemGray6).opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(Color.warmSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 

@@ -24,6 +24,8 @@ struct Event: Identifiable, Hashable, Codable {
     let isFeatured: Bool
     let isRecurring: Bool
     let tags: [String]
+    let metro: String?
+    let source: String?
     let createdAt: Date
     let modifiedAt: Date
 
@@ -73,6 +75,8 @@ nonisolated extension Event {
         self.isFeatured = record["isFeatured"] as? Bool ?? false
         self.isRecurring = record["isRecurring"] as? Bool ?? false
         self.tags = record["tags"] as? [String] ?? []
+        self.metro = record["metro"] as? String
+        self.source = record["source"] as? String
         self.createdAt = record.creationDate ?? Date()
         self.modifiedAt = record.modificationDate ?? Date()
     }

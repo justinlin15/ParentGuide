@@ -31,3 +31,10 @@ Pods/
 
 # Claude
 .claude/
+
+# Pipeline
+pipeline/node_modules/
+pipeline/dist/
+pipeline/output/
+pipeline/.env
+pipeline/*.pem
