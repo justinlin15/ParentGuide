@@ -9,6 +9,7 @@ import { scrapeNYCFamily } from "./sources/scrapers/nyc-family.js";
 import { scrapeDFWChild } from "./sources/scrapers/dfw-child.js";
 import { scrapeMyKidList } from "./sources/scrapers/mykidlist.js";
 import { scrapeAtlantaParent } from "./sources/scrapers/atlanta-parent.js";
+import { scrapeOCParentGuide } from "./sources/scrapers/oc-parent-guide.js";
 import { deduplicateEvents } from "./deduplicate.js";
 import { fillMissingImages } from "./images.js";
 import { uploadToCloudKit } from "./cloudkit.js";
@@ -59,6 +60,7 @@ async function main() {
       () => scrapeDFWChild(metro),         // Dallas only
       () => scrapeMyKidList(metro),        // Chicago only
       () => scrapeAtlantaParent(metro),    // Atlanta only
+      () => scrapeOCParentGuide(metro),    // LA/OC only (Playwright)
     ];
 
     for (const scraperFn of scraperFns) {
