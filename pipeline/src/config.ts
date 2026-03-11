@@ -104,6 +104,9 @@ export const config = {
     container: process.env.CLOUDKIT_CONTAINER || "",
     keyId: process.env.CLOUDKIT_KEY_ID || "",
     privateKeyPath: process.env.CLOUDKIT_PRIVATE_KEY_PATH || "",
+    // Raw PEM content — used in GitHub Actions where file path isn't practical
+    privateKey: process.env.CLOUDKIT_PRIVATE_KEY || "",
+    environment: process.env.CLOUDKIT_ENVIRONMENT || "development",
   },
   // Pipeline settings
   dryRun: process.argv.includes("--dry-run"),

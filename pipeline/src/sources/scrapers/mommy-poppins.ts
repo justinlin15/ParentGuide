@@ -55,7 +55,7 @@ async function scrapeRegionPage(
   });
 
   if (!res.ok) {
-    log.warn("mommy-poppins", `  HTTP ${res.status} for ${dateStr}`);
+    log.warn("mommy-poppins", `  HTTP ${res.status} for ${region.slug}`);
     return [];
   }
 
