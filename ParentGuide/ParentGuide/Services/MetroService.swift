@@ -18,9 +18,9 @@ class MetroService {
     }
 
     /// Whether the user has completed the onboarding flow (picked a metro).
+    /// Stored property so @Observable can track changes and SwiftUI re-renders.
     var hasCompletedOnboarding: Bool {
-        get { UserDefaults.standard.bool(forKey: Self.onboardingKey) }
-        set { UserDefaults.standard.set(newValue, forKey: Self.onboardingKey) }
+        didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: Self.onboardingKey) }
     }
 
     // MARK: - Keys
@@ -35,6 +35,7 @@ class MetroService {
         let savedId = UserDefaults.standard.string(forKey: Self.selectedMetroKey)
         selectedMetro = AppConstants.metroAreas.first { $0.id == savedId }
             ?? AppConstants.metroAreas[0]
+        hasCompletedOnboarding = UserDefaults.standard.bool(forKey: Self.onboardingKey)
     }
 
     // MARK: - Actions
