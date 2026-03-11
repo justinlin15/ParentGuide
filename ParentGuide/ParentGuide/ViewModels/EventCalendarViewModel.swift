@@ -63,6 +63,22 @@ class EventCalendarViewModel {
         return eventsByDate[key] ?? []
     }
 
+    // MARK: - Admin CRUD helpers
+
+    func removeEvent(id: String) {
+        events.removeAll { $0.id == id }
+        groupEventsByDate()
+    }
+
+    func upsertEvent(_ event: Event) {
+        if let idx = events.firstIndex(where: { $0.id == event.id }) {
+            events[idx] = event
+        } else {
+            events.append(event)
+        }
+        groupEventsByDate()
+    }
+
     private func groupEventsByDate() {
         eventsByDate = [:]
         for event in events {

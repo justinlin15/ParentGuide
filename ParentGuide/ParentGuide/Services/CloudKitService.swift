@@ -44,6 +44,16 @@ actor CloudKitService {
         try await publicDB.record(for: recordID)
     }
 
+    // MARK: - Public Database Write/Delete
+
+    func savePublicRecord(_ record: CKRecord) async throws -> CKRecord {
+        try await publicDB.save(record)
+    }
+
+    func deletePublicRecord(recordID: CKRecord.ID) async throws {
+        try await publicDB.deleteRecord(withID: recordID)
+    }
+
     // MARK: - Private Database (User Profile)
 
     func fetchPrivateRecords(

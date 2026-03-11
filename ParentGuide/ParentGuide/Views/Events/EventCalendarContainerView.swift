@@ -7,8 +7,10 @@ import SwiftUI
 
 struct EventCalendarContainerView: View {
     @State private var viewModel = EventCalendarViewModel()
+    @State private var adminService = AdminService.shared
     @State private var showSearch = false
     @State private var showDayEvents = false
+    @State private var showCreateEvent = false
 
     var body: some View {
         NavigationStack {
@@ -43,12 +45,29 @@ struct EventCalendarContainerView: View {
                     Text("What's on the schedule today?")
                         .font(.headline)
                 }
+
+                if adminService.isAdmin {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showCreateEvent = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
             }
             .task {
+                await adminService.checkAdminStatus()
                 await viewModel.loadEvents()
             }
             .sheet(isPresented: $showSearch) {
                 EventSearchView(allEvents: viewModel.events)
+            }
+            .sheet(isPresented: $showCreateEvent) {
+                EventFormView(editingEvent: nil) { _ in
+                    // Refresh events after creating
+                    Task { await viewModel.loadEvents() }
+                }
             }
             .sheet(isPresented: $showDayEvents) {
                 if let selectedDate = viewModel.selectedDate {

@@ -8,6 +8,14 @@ import MapKit
 
 struct EventDetailView: View {
     let event: Event
+    var onDelete: (() -> Void)?
+    var onUpdate: ((Event) -> Void)?
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var adminService = AdminService.shared
+    @State private var showEditSheet = false
+    @State private var showDeleteAlert = false
+    @State private var isDeleting = false
 
     var body: some View {
         ScrollView {
@@ -144,6 +152,55 @@ struct EventDetailView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if adminService.isAdmin {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button {
+                        showEditSheet = true
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
+
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .disabled(isDeleting)
+                }
+            }
+        }
+        .sheet(isPresented: $showEditSheet) {
+            EventFormView(editingEvent: event) { updatedEvent in
+                onUpdate?(updatedEvent)
+            }
+        }
+        .alert("Delete Event", isPresented: $showDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                deleteEvent()
+            }
+        } message: {
+            Text("Are you sure you want to delete \"\(event.title)\"? This cannot be undone.")
+        }
+    }
+
+    private func deleteEvent() {
+        isDeleting = true
+        Task {
+            do {
+                try await EventService.shared.deleteEvent(id: event.id)
+                await MainActor.run {
+                    onDelete?()
+                    dismiss()
+                }
+            } catch {
+                print("[EventDetailView] Delete failed: \(error)")
+                await MainActor.run {
+                    isDeleting = false
+                }
+            }
+        }
     }
 
     private var categoryBadge: some View {

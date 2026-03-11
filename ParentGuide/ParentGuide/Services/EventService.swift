@@ -123,4 +123,48 @@ actor EventService {
 
         return records.compactMap { Event(record: $0) }
     }
+
+    // MARK: - Admin CRUD
+
+    func createEvent(_ event: Event) async throws -> Event {
+        let record = event.toCKRecord()
+        record["manuallyEdited"] = Int64(1) as CKRecordValue
+        let savedRecord = try await cloudKit.savePublicRecord(record)
+        guard let newEvent = Event(record: savedRecord) else {
+            throw EventServiceError.invalidRecord
+        }
+        return newEvent
+    }
+
+    func updateEvent(_ event: Event) async throws -> Event {
+        // Fetch the existing record to preserve server metadata (changeTag, etc.)
+        let recordID = CKRecord.ID(recordName: event.id)
+        let existingRecord = try await cloudKit.fetchRecord(recordID: recordID)
+
+        // Apply updated fields
+        event.applyFields(to: existingRecord)
+        existingRecord["manuallyEdited"] = Int64(1) as CKRecordValue
+
+        let savedRecord = try await cloudKit.savePublicRecord(existingRecord)
+        guard let updatedEvent = Event(record: savedRecord) else {
+            throw EventServiceError.invalidRecord
+        }
+        return updatedEvent
+    }
+
+    func deleteEvent(id: String) async throws {
+        let recordID = CKRecord.ID(recordName: id)
+        try await cloudKit.deletePublicRecord(recordID: recordID)
+    }
+}
+
+enum EventServiceError: LocalizedError {
+    case invalidRecord
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidRecord:
+            return "Failed to parse the saved event record."
+        }
+    }
 }

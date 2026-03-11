@@ -19,6 +19,8 @@ struct ParentsNightOutProvider: Identifiable, Hashable {
     let externalURL: String?
     let isActive: Bool
     let sortOrder: Int
+    let metro: String?
+    let source: String?
     let createdAt: Date
     let modifiedAt: Date
 }
@@ -39,6 +41,8 @@ nonisolated extension ParentsNightOutProvider {
         self.externalURL = record["externalURL"] as? String
         self.isActive = record["isActive"] as? Bool ?? true
         self.sortOrder = record["sortOrder"] as? Int ?? 0
+        self.metro = record["metro"] as? String
+        self.source = record["source"] as? String
         self.createdAt = record.creationDate ?? Date()
         self.modifiedAt = record.modificationDate ?? Date()
     }
