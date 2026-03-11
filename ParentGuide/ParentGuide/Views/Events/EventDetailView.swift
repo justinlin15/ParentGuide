@@ -1,0 +1,185 @@
+//
+//  EventDetailView.swift
+//  ParentGuide
+//
+
+import SwiftUI
+import MapKit
+
+struct EventDetailView: View {
+    let event: Event
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // Hero image
+                if let imageURL = event.imageURL, let url = URL(string: imageURL) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 220)
+                                .clipped()
+                                .overlay(alignment: .bottomLeading) {
+                                    categoryBadge
+                                }
+                        default:
+                            heroPlaceholder
+                        }
+                    }
+                } else {
+                    heroPlaceholder
+                }
+
+                VStack(alignment: .leading, spacing: 16) {
+                    // Title
+                    Text(event.title)
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    // Date and Location row
+                    HStack(spacing: 16) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "calendar")
+                                .foregroundStyle(Color.brandBlue)
+                            Text(event.formattedDate)
+                                .font(.subheadline)
+                        }
+
+                        HStack(spacing: 6) {
+                            Image(systemName: "mappin.circle.fill")
+                                .foregroundStyle(.red)
+                            Text(event.city)
+                                .font(.subheadline)
+                        }
+                    }
+                    .foregroundStyle(.secondary)
+
+                    // Time
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock")
+                            .foregroundStyle(Color.brandBlue)
+                        Text(event.formattedTime)
+                            .font(.subheadline)
+                    }
+                    .foregroundStyle(.secondary)
+
+                    Divider()
+
+                    // About section
+                    Text("About")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+
+                    Text(event.eventDescription)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+
+                    // Location section
+                    if event.hasLocation {
+                        Divider()
+
+                        Text("Location")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+
+                        if let name = event.locationName {
+                            Text(name)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        if let address = event.address {
+                            Text(address)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        // Map
+                        if let lat = event.latitude, let lon = event.longitude {
+                            let position = MapCameraPosition.region(
+                                MKCoordinateRegion(
+                                    center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
+                                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                                )
+                            )
+
+                            Map(initialPosition: position) {
+                                Marker(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
+                                    .tint(event.category.color)
+                            }
+                            .frame(height: 200)
+                            .cornerRadius(12)
+
+                            // Get Directions button
+                            Button {
+                                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)))
+                                mapItem.name = event.locationName ?? event.title
+                                mapItem.openInMaps()
+                            } label: {
+                                Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(Color.brandBlue)
+                                    .foregroundStyle(.white)
+                                    .cornerRadius(10)
+                            }
+                        }
+                    }
+
+                    // External link
+                    if let urlString = event.externalURL, let url = URL(string: urlString) {
+                        Link(destination: url) {
+                            Label("More Information", systemImage: "safari")
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(10)
+                        }
+                    }
+                }
+                .padding(20)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var categoryBadge: some View {
+        Label(event.category.rawValue, systemImage: event.category.iconName)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(event.category.color.opacity(0.85))
+            .clipShape(Capsule())
+            .padding(12)
+    }
+
+    private var heroPlaceholder: some View {
+        ZStack {
+            Rectangle()
+                .fill(event.category.color.opacity(0.15))
+            VStack(spacing: 8) {
+                Image(systemName: event.category.iconName)
+                    .font(.system(size: 40))
+                    .foregroundStyle(event.category.color)
+                Text(event.category.rawValue)
+                    .font(.headline)
+                    .foregroundStyle(event.category.color)
+            }
+        }
+        .frame(height: 220)
+        .overlay(alignment: .bottomLeading) {
+            categoryBadge
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        EventDetailView(event: PreviewData.sampleEvents[0])
+    }
+}
