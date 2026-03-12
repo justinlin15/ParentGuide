@@ -17,7 +17,7 @@ export async function scrapeNYCFamily(
 
   log.info("nyc-family", "Scraping events.newyorkfamily.com...");
   const events: PipelineEvent[] = [];
-  const maxPages = 5;
+  const maxPages = 15;
 
   for (let page = 1; page <= maxPages; page++) {
     try {

@@ -52,10 +52,10 @@ export async function scrapeDFWChild(
 
     log.info("dfw-child", `  Found ${eventUrls.size} event links`);
 
-    // Fetch detail pages for JSON-LD (limit to 30 to be respectful)
+    // Fetch detail pages for JSON-LD (limit to 60 to be respectful)
     let count = 0;
     for (const eventUrl of eventUrls) {
-      if (count >= 30) break;
+      if (count >= 60) break;
       try {
         const event = await scrapeDetailPage(eventUrl, metro);
         if (event) events.push(event);

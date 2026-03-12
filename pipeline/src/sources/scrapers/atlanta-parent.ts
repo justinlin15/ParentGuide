@@ -53,10 +53,10 @@ export async function scrapeAtlantaParent(
 
     log.info("atlanta-parent", `  Found ${eventUrls.size} event links`);
 
-    // Fetch detail pages for JSON-LD (limit to 30)
+    // Fetch detail pages for JSON-LD (limit to 60)
     let count = 0;
     for (const eventUrl of eventUrls) {
-      if (count >= 30) break;
+      if (count >= 60) break;
       try {
         const event = await scrapeDetailPage(eventUrl, metro);
         if (event) events.push(event);
@@ -86,44 +86,52 @@ async function scrapeEventsCalendar(
   metro: MetroArea
 ): Promise<PipelineEvent[]> {
   const events: PipelineEvent[] = [];
-
-  // Try the Tribe Events list view
-  const today = new Date().toISOString().split("T")[0];
-  const url = `https://www.atlantaparent.com/events/list/?tribe-bar-date=${today}`;
-
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-      Accept: "text/html",
-    },
-  });
-
-  if (!res.ok) return [];
-
-  const html = await res.text();
-
-  // Tribe Events list view has event articles with class "tribe_events"
-  const eventPattern =
-    /<a[^>]*href="(https?:\/\/www\.atlantaparent\.com\/event\/[^"]*)"[^>]*class="[^"]*tribe[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;
-  let match;
   const seenUrls = new Set<string>();
 
-  while ((match = eventPattern.exec(html)) !== null) {
-    const eventUrl = match[1];
-    if (seenUrls.has(eventUrl)) continue;
-    seenUrls.add(eventUrl);
+  // Scrape calendar in weekly chunks for the next 30 days
+  for (let weekOffset = 0; weekOffset < 5; weekOffset++) {
+    const date = new Date();
+    date.setDate(date.getDate() + weekOffset * 7);
+    const dateStr = date.toISOString().split("T")[0];
 
-    // Fetch detail page for structured data
+    const url = `https://www.atlantaparent.com/events/list/?tribe-bar-date=${dateStr}`;
+
     try {
-      const event = await scrapeDetailPage(eventUrl, metro);
-      if (event) events.push(event);
-      await delay(2000);
-    } catch {
-      // skip
-    }
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          Accept: "text/html",
+        },
+      });
 
-    if (events.length >= 20) break; // Limit for calendar view
+      if (!res.ok) continue;
+
+      const html = await res.text();
+
+      // Tribe Events list view has event articles with class "tribe_events"
+      const eventPattern =
+        /<a[^>]*href="(https?:\/\/www\.atlantaparent\.com\/event\/[^"]*)"[^>]*class="[^"]*tribe[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;
+      let match;
+
+      while ((match = eventPattern.exec(html)) !== null) {
+        const eventUrl = match[1];
+        if (seenUrls.has(eventUrl)) continue;
+        seenUrls.add(eventUrl);
+
+        try {
+          const event = await scrapeDetailPage(eventUrl, metro);
+          if (event) events.push(event);
+          await delay(2000);
+        } catch {
+          // skip
+        }
+      }
+
+      await delay(2000);
+    } catch (err) {
+      log.error("atlanta-parent", `Error scraping calendar week ${weekOffset}`, err);
+    }
   }
 
   return events;

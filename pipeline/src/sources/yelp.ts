@@ -47,7 +47,7 @@ export async function fetchYelpEvents(
   const events: PipelineEvent[] = [];
   let offset = 0;
   const limit = 50;
-  const maxResults = 150;
+  const maxResults = 300;
 
   log.info("yelp", `Fetching events for ${metro.name}...`);
 

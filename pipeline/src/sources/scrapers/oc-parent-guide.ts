@@ -77,9 +77,25 @@ export async function scrapeOCParentGuide(
       log.info(SOURCE, "  List view button not found, using Month view");
     }
 
-    // Step 5: Extract events from the calendar
+    // Step 5: Extract events from the current month
     const events = await extractEventsFromCalendar(calendarFrame);
-    log.success(SOURCE, `Found ${events.length} events`);
+    log.info(SOURCE, `  Current month: ${events.length} events`);
+
+    // Step 6: Navigate to next month for 30+ day coverage
+    try {
+      const nextBtn = await calendarFrame.$('button.fc-next-button, button[aria-label*="next" i], .fc-button-next');
+      if (nextBtn) {
+        await nextBtn.click();
+        await page.waitForTimeout(3000);
+        const nextMonthEvents = await extractEventsFromCalendar(calendarFrame);
+        log.info(SOURCE, `  Next month: ${nextMonthEvents.length} events`);
+        events.push(...nextMonthEvents);
+      }
+    } catch {
+      log.info(SOURCE, "  Could not navigate to next month");
+    }
+
+    log.success(SOURCE, `Found ${events.length} events total`);
     return events;
   } catch (err) {
     log.error(SOURCE, `Scraping failed: ${err}`);

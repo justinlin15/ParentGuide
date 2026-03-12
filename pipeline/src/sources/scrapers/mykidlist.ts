@@ -19,8 +19,8 @@ export async function scrapeMyKidList(
   log.info("mykidlist", "Scraping mykidlist.com/events/...");
   const events: PipelineEvent[] = [];
 
-  // Scrape the next 7 days
-  for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+  // Scrape the next 30 days
+  for (let dayOffset = 0; dayOffset < 30; dayOffset++) {
     const date = new Date();
     date.setDate(date.getDate() + dayOffset);
     const dateStr = date.toISOString().split("T")[0];

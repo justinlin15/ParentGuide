@@ -69,7 +69,7 @@ export async function fetchTicketmasterEvents(
 
   const events: PipelineEvent[] = [];
   let page = 0;
-  const maxPages = 5; // 5 pages × 50 results = up to 250 events per metro
+  const maxPages = 10; // 10 pages × 50 results = up to 500 events per metro
 
   log.info("ticketmaster", `Fetching family events for ${metro.name}...`);
 

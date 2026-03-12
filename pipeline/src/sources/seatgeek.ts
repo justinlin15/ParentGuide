@@ -56,7 +56,7 @@ export async function fetchSeatGeekEvents(
 
   const events: PipelineEvent[] = [];
   let page = 1;
-  const maxPages = 3;
+  const maxPages = 5;
 
   log.info("seatgeek", `Fetching family events for ${metro.name}...`);
 
