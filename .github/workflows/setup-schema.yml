@@ -1,0 +1,33 @@
+name: Setup CloudKit Schema
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: pipeline/package-lock.json
+
+      - name: Install dependencies
+        working-directory: pipeline
+        run: npm ci
+
+      - name: Setup CloudKit Schema Indexes
+        working-directory: pipeline
+        env:
+          CLOUDKIT_CONTAINER: ${{ secrets.CLOUDKIT_CONTAINER }}
+          CLOUDKIT_KEY_ID: ${{ secrets.CLOUDKIT_KEY_ID }}
+          CLOUDKIT_PRIVATE_KEY: ${{ secrets.CLOUDKIT_PRIVATE_KEY }}
+          CLOUDKIT_ENVIRONMENT: ${{ secrets.CLOUDKIT_ENVIRONMENT }}
+        run: npx tsx setup-schema.ts
