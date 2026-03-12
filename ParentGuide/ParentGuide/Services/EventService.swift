@@ -12,51 +12,35 @@ actor EventService {
 
     private let cloudKit = CloudKitService.shared
 
-    /// Convert a Date to milliseconds since epoch (matching CloudKit INT64 storage format)
-    private func millis(_ date: Date) -> NSNumber {
-        NSNumber(value: Int64(date.timeIntervalSince1970 * 1000))
+    // MARK: - Fetch helpers
+
+    /// Fetch ALL events from CloudKit (no date predicate) and filter client-side.
+    /// The pipeline stores startDate as Int64 milliseconds via the REST API,
+    /// which causes type-mismatch issues with server-side NSDate/NSNumber predicates.
+    /// With ~150 events in the database, fetching all and filtering locally is fast.
+    private func fetchAllEvents() async throws -> [Event] {
+        let records = try await cloudKit.fetchRecords(
+            recordType: CloudKitConfig.RecordType.event,
+            predicate: NSPredicate(value: true),
+            sortDescriptors: [NSSortDescriptor(key: "startDate", ascending: true)],
+            resultsLimit: 500
+        )
+        return records.compactMap { Event(record: $0) }
     }
 
     func fetchEvents(for month: Date) async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
         let startOfMonth = month.startOfMonth
         let endOfMonth = month.endOfMonth
-
-        let predicate = NSPredicate(
-            format: "startDate >= %@ AND startDate <= %@",
-            millis(startOfMonth),
-            millis(endOfMonth)
-        )
-        let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
-
-        let records = try await cloudKit.fetchRecords(
-            recordType: CloudKitConfig.RecordType.event,
-            predicate: predicate,
-            sortDescriptors: sortDescriptors,
-            resultsLimit: 200
-        )
-
-        return records.compactMap { Event(record: $0) }
+        return allEvents.filter { $0.startDate >= startOfMonth && $0.startDate <= endOfMonth }
     }
 
     func fetchEvents(forDay date: Date) async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
-
-        let predicate = NSPredicate(
-            format: "startDate >= %@ AND startDate < %@",
-            millis(startOfDay),
-            millis(endOfDay)
-        )
-        let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
-
-        let records = try await cloudKit.fetchRecords(
-            recordType: CloudKitConfig.RecordType.event,
-            predicate: predicate,
-            sortDescriptors: sortDescriptors
-        )
-
-        return records.compactMap { Event(record: $0) }
+        return allEvents.filter { $0.startDate >= startOfDay && $0.startDate < endOfDay }
     }
 
     func searchEvents(query: String) async throws -> [Event] {
@@ -74,30 +58,15 @@ actor EventService {
     }
 
     func fetchEvents(forMetro metro: String, month: Date) async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
         let startOfMonth = month.startOfMonth
         let endOfMonth = month.endOfMonth
 
-        // Fetch all events for the month, then filter by metro client-side.
-        // CloudKit doesn't support OR predicates, so we can't do
-        // "metro == X OR metro == nil" in a single query.
-        // Use milliseconds to match CloudKit INT64 storage format from the pipeline.
-        let predicate = NSPredicate(
-            format: "startDate >= %@ AND startDate <= %@",
-            millis(startOfMonth),
-            millis(endOfMonth)
-        )
-        let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
-
-        let records = try await cloudKit.fetchRecords(
-            recordType: CloudKitConfig.RecordType.event,
-            predicate: predicate,
-            sortDescriptors: sortDescriptors,
-            resultsLimit: 500
-        )
-
-        let allEvents = records.compactMap { Event(record: $0) }
-        // Records with nil metro are legacy OC data — treat as "los-angeles"
-        return allEvents.filter { ($0.metro ?? "los-angeles") == metro }
+        return allEvents.filter { event in
+            let inMonth = event.startDate >= startOfMonth && event.startDate <= endOfMonth
+            let matchesMetro = (event.metro ?? "los-angeles") == metro
+            return inMonth && matchesMetro
+        }
     }
 
     func fetchNearbyEvents(latitude: Double, longitude: Double, radiusMiles: Double = 50) async throws -> [Event] {
@@ -138,7 +107,6 @@ actor EventService {
 
     func createEvent(_ event: Event) async throws -> Event {
         let record = event.toCKRecord()
-        record["manuallyEdited"] = Int64(1) as CKRecordValue
         let savedRecord = try await cloudKit.savePublicRecord(record)
         guard let newEvent = Event(record: savedRecord) else {
             throw EventServiceError.invalidRecord
@@ -153,7 +121,6 @@ actor EventService {
 
         // Apply updated fields
         event.applyFields(to: existingRecord)
-        existingRecord["manuallyEdited"] = Int64(1) as CKRecordValue
 
         let savedRecord = try await cloudKit.savePublicRecord(existingRecord)
         guard let updatedEvent = Event(record: savedRecord) else {
