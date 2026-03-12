@@ -154,7 +154,6 @@ function toCloudKitRecord(event: PipelineEvent) {
       isRecurring: { value: event.isRecurring ? 1 : 0 },
       tags: { value: event.tags },
       metro: { value: event.metro },
-      manuallyEdited: { value: 0 },
     },
   };
 }
@@ -236,21 +235,11 @@ export async function uploadToCloudKit(
     return;
   }
 
-  // Fetch manually edited record names to skip during upload
-  const manuallyEdited = await fetchManuallyEditedRecords(privateKeyPem);
-  if (manuallyEdited.size > 0) {
-    log.info("cloudkit", `Found ${manuallyEdited.size} manually edited events — will not overwrite`);
-  }
-
-  const allRecords = events.map(toCloudKitRecord);
-  const records = allRecords.filter(
-    (r) => !manuallyEdited.has(r.recordName)
-  );
-  const skipped = allRecords.length - records.length;
+  const records = events.map(toCloudKitRecord);
 
   log.info(
     "cloudkit",
-    `Uploading ${records.length} events to ${config.cloudkit.container} (${config.cloudkit.environment})${skipped > 0 ? ` (${skipped} skipped — manually edited)` : ""}…`
+    `Uploading ${records.length} events to ${config.cloudkit.container} (${config.cloudkit.environment})…`
   );
   const batches: (typeof records)[] = [];
   for (let i = 0; i < records.length; i += BATCH_SIZE) {
