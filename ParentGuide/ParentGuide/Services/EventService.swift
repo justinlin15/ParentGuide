@@ -72,9 +72,11 @@ actor EventService {
         let startOfMonth = month.startOfMonth
         let endOfMonth = month.endOfMonth
 
+        // Fetch all events for the month, then filter by metro client-side.
+        // CloudKit doesn't support OR predicates, so we can't do
+        // "metro == X OR metro == nil" in a single query.
         let predicate = NSPredicate(
-            format: "metro == %@ AND startDate >= %@ AND startDate <= %@",
-            metro,
+            format: "startDate >= %@ AND startDate <= %@",
             startOfMonth as NSDate,
             endOfMonth as NSDate
         )
@@ -84,10 +86,12 @@ actor EventService {
             recordType: CloudKitConfig.RecordType.event,
             predicate: predicate,
             sortDescriptors: sortDescriptors,
-            resultsLimit: 200
+            resultsLimit: 500
         )
 
-        return records.compactMap { Event(record: $0) }
+        let allEvents = records.compactMap { Event(record: $0) }
+        // Records with nil metro are legacy OC data — treat as "los-angeles"
+        return allEvents.filter { ($0.metro ?? "los-angeles") == metro }
     }
 
     func fetchNearbyEvents(latitude: Double, longitude: Double, radiusMiles: Double = 50) async throws -> [Event] {

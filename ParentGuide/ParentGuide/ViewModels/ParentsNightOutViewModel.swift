@@ -37,7 +37,8 @@ class ParentsNightOutViewModel {
         do {
             let allProviders = try await GuideService.shared.fetchParentsNightOutProviders()
             let metroId = MetroService.shared.selectedMetro.id
-            providers = allProviders.filter { $0.metro == metroId }
+            // Records with nil metro are legacy OC data — treat as "los-angeles"
+            providers = allProviders.filter { ($0.metro ?? "los-angeles") == metroId }
             extractCities()
             applyFilter()
         } catch {

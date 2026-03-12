@@ -39,7 +39,8 @@ class KidsEatFreeViewModel {
         do {
             let allRestaurants = try await GuideService.shared.fetchKidsEatFreeRestaurants()
             let metroId = MetroService.shared.selectedMetro.id
-            restaurants = allRestaurants.filter { $0.metro == metroId }
+            // Records with nil metro are legacy OC data — treat as "los-angeles"
+            restaurants = allRestaurants.filter { ($0.metro ?? "los-angeles") == metroId }
             extractCities()
             applyFilter()
         } catch {
