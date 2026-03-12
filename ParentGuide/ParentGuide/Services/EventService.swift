@@ -12,14 +12,19 @@ actor EventService {
 
     private let cloudKit = CloudKitService.shared
 
+    /// Convert a Date to milliseconds since epoch (matching CloudKit INT64 storage format)
+    private func millis(_ date: Date) -> NSNumber {
+        NSNumber(value: Int64(date.timeIntervalSince1970 * 1000))
+    }
+
     func fetchEvents(for month: Date) async throws -> [Event] {
         let startOfMonth = month.startOfMonth
         let endOfMonth = month.endOfMonth
 
         let predicate = NSPredicate(
             format: "startDate >= %@ AND startDate <= %@",
-            startOfMonth as NSDate,
-            endOfMonth as NSDate
+            millis(startOfMonth),
+            millis(endOfMonth)
         )
         let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
 
@@ -40,8 +45,8 @@ actor EventService {
 
         let predicate = NSPredicate(
             format: "startDate >= %@ AND startDate < %@",
-            startOfDay as NSDate,
-            endOfDay as NSDate
+            millis(startOfDay),
+            millis(endOfDay)
         )
         let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
 
@@ -75,10 +80,11 @@ actor EventService {
         // Fetch all events for the month, then filter by metro client-side.
         // CloudKit doesn't support OR predicates, so we can't do
         // "metro == X OR metro == nil" in a single query.
+        // Use milliseconds to match CloudKit INT64 storage format from the pipeline.
         let predicate = NSPredicate(
             format: "startDate >= %@ AND startDate <= %@",
-            startOfMonth as NSDate,
-            endOfMonth as NSDate
+            millis(startOfMonth),
+            millis(endOfMonth)
         )
         let sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: true)]
 
