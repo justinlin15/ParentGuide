@@ -92,8 +92,23 @@ async function main() {
   // Rewrite descriptions to be unique
   const rewritten = rewriteDescriptions(cleaned);
 
+  // Filter out stale events (startDate before today)
+  const todayMidnightUTC = new Date();
+  todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+  const todayStr = todayMidnightUTC.toISOString();
+
+  const upcoming = rewritten.filter((event) => event.startDate >= todayStr);
+  const staleCount = rewritten.length - upcoming.length;
+  if (staleCount > 0) {
+    log.info(
+      "pipeline",
+      `Removed ${staleCount} stale events (before ${todayMidnightUTC.toISOString().slice(0, 10)})`
+    );
+  }
+  log.info("pipeline", `Upcoming events: ${upcoming.length}`);
+
   // Fill missing images
-  const withImages = await fillMissingImages(rewritten);
+  const withImages = await fillMissingImages(upcoming);
 
   // Upload to CloudKit (or write to output/)
   log.divider();

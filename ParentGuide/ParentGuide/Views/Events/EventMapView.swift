@@ -45,18 +45,17 @@ struct EventMapView: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundStyle(.white)
                                     .frame(width: 38, height: 38)
-                                    .background(Color.brandBlue)
+                                    .background(event.category.color)
                                     .clipShape(Circle())
                                     .overlay(
                                         Circle()
                                             .stroke(.white, lineWidth: 2.5)
                                     )
-                                    .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+                                    .shadow(color: event.category.color.opacity(0.4), radius: 4, y: 2)
 
-                                // Arrow pointer
                                 Image(systemName: "triangle.fill")
                                     .font(.system(size: 10))
-                                    .foregroundStyle(Color.brandBlue)
+                                    .foregroundStyle(event.category.color)
                                     .rotationEffect(.degrees(180))
                                     .offset(y: -3)
                             }
@@ -72,7 +71,6 @@ struct EventMapView: View {
                 visibleRegion = context.region
             }
 
-            // Event count badge
             if !showLocationPrompt && !showZipEntry {
                 VStack {
                     HStack {
@@ -89,94 +87,50 @@ struct EventMapView: View {
                 .padding()
             }
 
-            // Location prompt overlay
             if showLocationPrompt {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-
+                Color.black.opacity(0.4).ignoresSafeArea()
                 VStack(spacing: 20) {
                     Image(systemName: "map.fill")
                         .font(.system(size: 40))
                         .foregroundStyle(Color.brandBlue)
-
                     Text("Find events near you")
-                        .font(.title3)
-                        .fontWeight(.bold)
-
+                        .font(.title3).fontWeight(.bold)
                     Text("Allow location access to find nearby events, or enter a zip code.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-
+                        .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
                     Button {
                         locationManager.requestLocation { coordinate in
-                            if let coordinate {
-                                setInitialRegion(center: coordinate)
-                            } else {
-                                showZipEntry = true
-                            }
+                            if let coordinate { setInitialRegion(center: coordinate) }
+                            else { showZipEntry = true }
                             showLocationPrompt = false
                         }
                     } label: {
                         Label("Use My Location", systemImage: "location.fill")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.brandBlue)
-                            .clipShape(Capsule())
+                            .font(.headline).foregroundStyle(.white)
+                            .frame(maxWidth: .infinity).padding(.vertical, 14)
+                            .background(Color.brandBlue).clipShape(Capsule())
                     }
-
-                    Button {
-                        showLocationPrompt = false
-                        showZipEntry = true
-                    } label: {
-                        Text("Enter Zip Code Instead")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.brandBlue)
+                    Button { showLocationPrompt = false; showZipEntry = true } label: {
+                        Text("Enter Zip Code Instead").font(.subheadline).foregroundStyle(Color.brandBlue)
                     }
                 }
-                .padding(32)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-                .padding(24)
+                .padding(32).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20)).padding(24)
             }
 
-            // Zip code entry overlay
             if showZipEntry {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-
+                Color.black.opacity(0.4).ignoresSafeArea()
                 VStack(spacing: 20) {
-                    Text("Enter Zip Code")
-                        .font(.title3)
-                        .fontWeight(.bold)
-
+                    Text("Enter Zip Code").font(.title3).fontWeight(.bold)
                     TextField("e.g. 92618", text: $zipCode)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(maxWidth: 200)
-                        .multilineTextAlignment(.center)
-
-                    Button {
-                        geocodeZip(zipCode)
-                    } label: {
-                        Text("Find Events")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.brandBlue)
-                            .clipShape(Capsule())
+                        .keyboardType(.numberPad).textFieldStyle(.roundedBorder)
+                        .frame(maxWidth: 200).multilineTextAlignment(.center)
+                    Button { geocodeZip(zipCode) } label: {
+                        Text("Find Events").font(.headline).foregroundStyle(.white)
+                            .frame(maxWidth: .infinity).padding(.vertical, 14)
+                            .background(Color.brandBlue).clipShape(Capsule())
                     }
-
-                    Button("Cancel") {
-                        showZipEntry = false
-                    }
-                    .foregroundStyle(.secondary)
+                    Button("Cancel") { showZipEntry = false }.foregroundStyle(.secondary)
                 }
-                .padding(32)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-                .padding(24)
+                .padding(32).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20)).padding(24)
             }
         }
         .sheet(item: $selectedEvent) { event in
@@ -191,12 +145,8 @@ struct EventMapView: View {
             .presentationDetents([.medium, .large])
         }
         .onAppear {
-            // Auto-center on selected metro unless user has granted location
             let metro = metroService.selectedMetro
-            setInitialRegion(center: CLLocationCoordinate2D(
-                latitude: metro.latitude,
-                longitude: metro.longitude
-            ))
+            setInitialRegion(center: CLLocationCoordinate2D(latitude: metro.latitude, longitude: metro.longitude))
         }
     }
 
@@ -215,15 +165,12 @@ struct EventMapView: View {
                 if let location = mapItems.first?.location {
                     setInitialRegion(center: location.coordinate)
                 }
-            } catch {
-                print("[EventMapView] Geocoding failed: \(error)")
-            }
+            } catch { print("[EventMapView] Geocoding failed: \(error)") }
             showZipEntry = false
         }
     }
 }
 
-// Simple location helper
 @Observable
 class LocationHelper: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
@@ -238,17 +185,11 @@ class LocationHelper: NSObject, CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let coordinate = locations.first?.coordinate
-        Task { @MainActor in
-            completion?(coordinate)
-            completion = nil
-        }
+        Task { @MainActor in completion?(coordinate); completion = nil }
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        Task { @MainActor in
-            completion?(nil)
-            completion = nil
-        }
+        Task { @MainActor in completion?(nil); completion = nil }
     }
 }
 

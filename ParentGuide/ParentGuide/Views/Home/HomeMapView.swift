@@ -8,6 +8,7 @@ import MapKit
 
 struct HomeMapView: View {
     private var metroService = MetroService.shared
+    @State private var events: [Event] = []
 
     private var region: MKCoordinateRegion {
         MKCoordinateRegion(
@@ -26,17 +27,32 @@ struct HomeMapView: View {
                 .fontWeight(.semibold)
 
             Map(initialPosition: .region(region)) {
-                // Sample event markers
-                ForEach(PreviewData.sampleEvents) { event in
+                ForEach(events.filter { $0.hasLocation }) { event in
                     if let lat = event.latitude, let lon = event.longitude {
-                        Marker(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-                            .tint(Color.brandBlue)
+                        Annotation(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
+                            Image(systemName: event.category.iconName)
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(.white)
+                                .frame(width: 28, height: 28)
+                                .background(event.category.color)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(.white, lineWidth: 1.5))
+                                .shadow(color: event.category.color.opacity(0.3), radius: 3, y: 1)
+                        }
                     }
                 }
             }
             .frame(height: 250)
             .cornerRadius(16)
             .padding(.horizontal, 20)
+        }
+        .task {
+            do {
+                let metroId = metroService.selectedMetro.id
+                events = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
+            } catch {
+                // Fallback: leave empty
+            }
         }
     }
 }

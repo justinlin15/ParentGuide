@@ -13,10 +13,11 @@ class AdminService {
     private(set) var isAdmin = false
     private(set) var appleUserID: String?
 
-    // Hardcoded admin Apple user identifiers.
+    // Admin Apple user identifiers.
     // To find yours: sign in with Apple, check console for "[AdminService] Apple User ID: ..."
     private static let adminAppleUserIDs: Set<String> = [
-        // Add your Apple user ID here after first Sign in with Apple
+        // TODO: Add real Apple User IDs here, e.g.:
+        // "000000.abcdef1234567890abcdef1234567890.1234"
     ]
 
     func checkAdminStatus() async {
@@ -28,15 +29,19 @@ class AdminService {
         }
 
         appleUserID = userID
-        isAdmin = Self.adminAppleUserIDs.contains(userID)
         print("[AdminService] Apple User ID: \(userID)")
-        print("[AdminService] isAdmin: \(isAdmin)")
 
-        // If no admin IDs configured, auto-grant admin (development convenience)
+        #if DEBUG
+        // In debug builds, auto-grant admin if no admin IDs are configured yet
         if Self.adminAppleUserIDs.isEmpty {
-            print("[AdminService] No admin IDs configured — granting admin access by default.")
-            print("[AdminService] Add \"\(userID)\" to AdminService.adminAppleUserIDs for production.")
+            print("[AdminService] DEBUG: No admin IDs configured — granting admin access for development.")
+            print("[AdminService] DEBUG: Add \"\(userID)\" to AdminService.adminAppleUserIDs for production.")
             isAdmin = true
+            return
         }
+        #endif
+
+        isAdmin = Self.adminAppleUserIDs.contains(userID)
+        print("[AdminService] isAdmin: \(isAdmin)")
     }
 }

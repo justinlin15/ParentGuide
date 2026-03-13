@@ -59,7 +59,8 @@ function normalizeTitle(title: string): string {
 
 /**
  * Fuzzy match: find an existing event that's nearly identical.
- * Checks same date + similar title (Levenshtein distance ≤ 5 or one is substring of other).
+ * Checks same date + similar title using proportional thresholds
+ * to avoid over-aggressive deduplication.
  */
 function findFuzzyMatch(
   event: PipelineEvent,
@@ -68,26 +69,37 @@ function findFuzzyMatch(
   const eventTitle = normalizeTitle(event.title);
   const eventDate = event.startDate.slice(0, 10);
 
-  if (eventTitle.length < 10) return null; // too short to fuzzy match
+  // Require both titles to be long enough for fuzzy matching
+  if (eventTitle.length < 20) return null;
 
   for (const [key, candidate] of existing) {
     const candidateDate = candidate.startDate.slice(0, 10);
     if (candidateDate !== eventDate) continue;
 
     const candidateTitle = normalizeTitle(candidate.title);
+    if (candidateTitle.length < 20) continue;
 
-    // Check if one title is a substring of the other
+    // Check if one title is a substring of the other,
+    // but only if the shorter title is > 50% the length of the longer one.
+    // This prevents short generic phrases from matching many longer titles.
+    const shorter = Math.min(eventTitle.length, candidateTitle.length);
+    const longer = Math.max(eventTitle.length, candidateTitle.length);
+
     if (
-      eventTitle.includes(candidateTitle) ||
-      candidateTitle.includes(eventTitle)
+      shorter / longer > 0.5 &&
+      (eventTitle.includes(candidateTitle) ||
+        candidateTitle.includes(eventTitle))
     ) {
       return { key, event: candidate };
     }
 
-    // Check Levenshtein distance for similar-length titles
+    // Check Levenshtein distance with a proportional threshold:
+    // Allow at most 15% of the shorter title's length as edit distance,
+    // capped at a maximum of 6 edits.
+    const maxDistance = Math.min(6, Math.floor(shorter * 0.15));
     if (
       Math.abs(eventTitle.length - candidateTitle.length) < 10 &&
-      levenshtein(eventTitle, candidateTitle) <= 5
+      levenshtein(eventTitle, candidateTitle) <= maxDistance
     ) {
       return { key, event: candidate };
     }

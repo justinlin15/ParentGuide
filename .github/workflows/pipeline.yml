@@ -22,6 +22,9 @@ jobs:
   fetch-events:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    permissions:
+      contents: write
+      issues: write
 
     steps:
       - name: Checkout
@@ -66,6 +69,38 @@ jobs:
           fi
           npx tsx src/index.ts $ARGS
 
+      - name: Check for empty output (staleness protection)
+        if: success()
+        working-directory: pipeline
+        run: |
+          if [ ! -f output/all-events.json ]; then
+            echo "::error::Pipeline output file not found: output/all-events.json"
+            exit 1
+          fi
+          EVENT_COUNT=$(jq 'length' output/all-events.json)
+          echo "Event count: $EVENT_COUNT"
+          if [ "$EVENT_COUNT" -eq 0 ]; then
+            echo "::error::Pipeline produced 0 events. Failing to prevent pushing empty data."
+            exit 1
+          fi
+          echo "Staleness check passed: $EVENT_COUNT events found."
+
+      - name: Output job summary
+        if: success()
+        working-directory: pipeline
+        run: |
+          if [ -f output/summary.json ]; then
+            echo "## Event Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            jq -r 'to_entries[] | "| \(.key) | \(.value) |"' output/summary.json >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_Run #${{ github.run_number }} at $(date -u '+%Y-%m-%d %H:%M UTC')_" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "::warning::summary.json not found, skipping job summary."
+          fi
+
       - name: Commit events JSON to repo
         if: success()
         run: |
@@ -76,7 +111,7 @@ jobs:
             cp pipeline/output/all-events.json docs/api/events.json
           }
           git add docs/api/events.json
-          git diff --cached --quiet || git commit -m "Update events data [pipeline]" && git push
+          git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git push)
 
       - name: Upload output artifacts
         if: always()
@@ -85,3 +120,19 @@ jobs:
           name: pipeline-output-${{ github.run_number }}
           path: pipeline/output/
           retention-days: 7
+
+      - name: Create issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Event Pipeline failed (run #${{ github.run_number }})" \
+            --body "The Event Pipeline workflow failed on $(date -u '+%Y-%m-%d %H:%M UTC').
+
+          **Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          **Branch:** \`${{ github.ref_name }}\`
+          **Trigger:** \`${{ github.event_name }}\`
+
+          Please investigate the logs for details." \
+            --label "bug"

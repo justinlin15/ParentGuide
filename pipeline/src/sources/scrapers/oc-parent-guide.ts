@@ -33,60 +33,101 @@ export async function scrapeOCParentGuide(
     });
     const page = await context.newPage();
 
-    // Step 1: Navigate and login
+    // Step 1: Navigate to the event calendar page
+    log.info(SOURCE, "  Loading event calendar page...");
     await page.goto(`${SITE_URL}${EVENTS_PATH}`, {
       waitUntil: "domcontentloaded",
-      timeout: 45000,
+      timeout: 60000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
 
-    log.info(SOURCE, "  Logging in...");
-    await page.fill('input[type="email"]', OC_EMAIL);
-    await page.fill('input[type="password"]', OC_PASSWORD);
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 }).catch(() => null),
-      page.click('button:has-text("Sign in")'),
-    ]);
-    await page.waitForTimeout(3000);
+    // Step 2: Attempt Wix member login
+    // Wix member login is typically triggered by clicking a login button in the
+    // site header, which opens a lightbox/modal with email + password fields.
+    log.info(SOURCE, "  Attempting login...");
+    const loggedIn = await attemptWixLogin(page);
+    if (loggedIn) {
+      log.info(SOURCE, "  Login successful, reloading calendar page...");
+      await page.goto(`${SITE_URL}${EVENTS_PATH}`, {
+        waitUntil: "domcontentloaded",
+        timeout: 60000,
+      });
+    } else {
+      log.info(SOURCE, "  Login may have failed or was not needed, continuing...");
+    }
 
-    // Step 2: Navigate to event calendar after login
-    log.info(SOURCE, "  Loading event calendar...");
-    await page.goto(`${SITE_URL}${EVENTS_PATH}`, {
-      waitUntil: "domcontentloaded",
-      timeout: 45000,
-    });
-    await page.waitForTimeout(8000);
+    // Step 3: Wait for the boomte.ch calendar iframe to load
+    // Wix sites are JavaScript-heavy and the calendar component loads last
+    log.info(SOURCE, "  Waiting for calendar to load...");
+    await page.waitForTimeout(10000);
 
-    // Step 3: Find the boomte.ch calendar iframe
-    const calendarFrame = page.frames().find((f) =>
-      f.url().includes("boomte.ch/widget")
-    );
+    // Scroll down to trigger lazy-loaded content
+    await page.evaluate(() => window.scrollBy(0, 500));
+    await page.waitForTimeout(5000);
+
+    // Step 4: Find the boomte.ch calendar iframe
+    let calendarFrame = findCalendarFrame(page);
 
     if (!calendarFrame) {
-      log.warn(SOURCE, "  Calendar iframe not found");
+      // Try scrolling more and waiting
+      log.info(SOURCE, "  Calendar iframe not found yet, scrolling and waiting...");
+      await page.evaluate(() => window.scrollBy(0, 800));
+      await page.waitForTimeout(8000);
+      calendarFrame = findCalendarFrame(page);
+    }
+
+    if (!calendarFrame) {
+      // Log all frame URLs for debugging
+      const frameUrls = page.frames().map((f) => f.url());
+      log.warn(SOURCE, `  Calendar iframe not found. Frames: ${frameUrls.join(", ")}`);
       return [];
     }
 
-    log.info(SOURCE, "  Found calendar iframe, switching to List view...");
+    log.info(SOURCE, "  Found calendar iframe");
 
-    // Step 4: Switch to List view for easier scraping
+    // Step 5: Wait for FullCalendar to render inside the iframe
     try {
-      await calendarFrame.click('button:has-text("List")', { timeout: 5000 });
-      await page.waitForTimeout(3000);
+      await calendarFrame.waitForSelector(
+        ".fc-daygrid-day, .fc-event, .fc-list-event",
+        { timeout: 15000 }
+      );
     } catch {
-      log.info(SOURCE, "  List view button not found, using Month view");
+      log.warn(SOURCE, "  FullCalendar events did not render in time");
+      // Continue anyway - might still find some elements
     }
 
-    // Step 5: Extract events from the current month
-    const events = await extractEventsFromCalendar(calendarFrame);
-    log.info(SOURCE, `  Current month: ${events.length} events`);
-
-    // Step 6: Navigate to next month for 30+ day coverage
+    // Step 6: Try switching to List view for easier scraping
     try {
-      const nextBtn = await calendarFrame.$('button.fc-next-button, button[aria-label*="next" i], .fc-button-next');
+      // Boom Calendar has view buttons labeled "List" or "Agenda"
+      const listBtn = await calendarFrame.$(
+        'button:has-text("List"), button:has-text("Agenda"), ' +
+        '[class*="list-btn"], [class*="agenda-btn"], ' +
+        '.fc-listWeek-button, .fc-listMonth-button, .fc-list-button'
+      );
+      if (listBtn) {
+        await listBtn.click();
+        await page.waitForTimeout(4000);
+        log.info(SOURCE, "  Switched to List/Agenda view");
+      } else {
+        log.info(SOURCE, "  No List view button found, using current view");
+      }
+    } catch {
+      log.info(SOURCE, "  Could not switch to List view, using current view");
+    }
+
+    // Step 7: Extract events from the current month/view
+    const events = await extractEventsFromCalendar(calendarFrame);
+    log.info(SOURCE, `  Current view: ${events.length} events`);
+
+    // Step 8: Navigate to next month for broader coverage
+    try {
+      const nextBtn = await calendarFrame.$(
+        'button.fc-next-button, button[aria-label*="next" i], ' +
+        '.fc-button-next, [class*="next-btn"], [class*="nav-next"]'
+      );
       if (nextBtn) {
         await nextBtn.click();
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(4000);
         const nextMonthEvents = await extractEventsFromCalendar(calendarFrame);
         log.info(SOURCE, `  Next month: ${nextMonthEvents.length} events`);
         events.push(...nextMonthEvents);
@@ -95,13 +136,230 @@ export async function scrapeOCParentGuide(
       log.info(SOURCE, "  Could not navigate to next month");
     }
 
-    log.success(SOURCE, `Found ${events.length} events total`);
-    return events;
+    // Deduplicate by title + date
+    const seen = new Set<string>();
+    const unique = events.filter((e) => {
+      const key = `${e.title}|${e.startDate}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    log.success(SOURCE, `Found ${unique.length} events total`);
+    return unique;
   } catch (err) {
     log.error(SOURCE, `Scraping failed: ${err}`);
     return [];
   } finally {
     if (browser) await browser.close();
+  }
+}
+
+function findCalendarFrame(page: Page): Frame | null {
+  // Look for boomte.ch calendar iframe
+  return (
+    page.frames().find((f) => f.url().includes("boomte.ch/widget")) ||
+    page.frames().find((f) => f.url().includes("boomte.ch")) ||
+    page.frames().find((f) => f.url().includes("calendar")) ||
+    null
+  );
+}
+
+async function attemptWixLogin(page: Page): Promise<boolean> {
+  try {
+    // Wix sites have a member area dropdown or login button in the header.
+    // Try several common selectors for the Wix login trigger.
+    const loginTriggerSelectors = [
+      '[data-testid="loginButton"]',
+      '[data-hook="login-button"]',
+      'button:has-text("Log In")',
+      'button:has-text("Sign In")',
+      'a:has-text("Log In")',
+      'a:has-text("Sign In")',
+      // OC Parent Guide uses a member area dropdown with username display
+      '[data-hook="member-login-button"]',
+      '[aria-label="Log in"]',
+    ];
+
+    let loginClicked = false;
+    for (const selector of loginTriggerSelectors) {
+      try {
+        const el = await page.$(selector);
+        if (el && await el.isVisible()) {
+          await el.click();
+          loginClicked = true;
+          await page.waitForTimeout(2000);
+          break;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    if (!loginClicked) {
+      // Check if already logged in (member name visible)
+      const memberArea = await page.$('[data-hook="member-name"], [class*="member-name"]');
+      if (memberArea) {
+        log.info(SOURCE, "  Already logged in");
+        return true;
+      }
+      log.info(SOURCE, "  No login trigger found");
+      return false;
+    }
+
+    // Wait for the login modal/lightbox to appear
+    await page.waitForTimeout(2000);
+
+    // Wix login modal uses specific data-testid attributes or iframe
+    // Try filling the email field
+    const emailSelectors = [
+      '[data-testid="emailAuth.loginEmailInput"] input',
+      'input[data-testid="emailInput"]',
+      'input[type="email"]',
+      'input[name="email"]',
+      'input[placeholder*="email" i]',
+      'input[placeholder*="Email" i]',
+    ];
+
+    let emailFilled = false;
+    for (const selector of emailSelectors) {
+      try {
+        const el = await page.$(selector);
+        if (el && await el.isVisible()) {
+          await el.fill(OC_EMAIL);
+          emailFilled = true;
+          break;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    // Also check inside any iframes (Wix sometimes uses an auth iframe)
+    if (!emailFilled) {
+      for (const frame of page.frames()) {
+        if (frame === page.mainFrame()) continue;
+        try {
+          for (const selector of emailSelectors) {
+            const el = await frame.$(selector);
+            if (el) {
+              await el.fill(OC_EMAIL);
+              emailFilled = true;
+              break;
+            }
+          }
+          if (emailFilled) break;
+        } catch {
+          continue;
+        }
+      }
+    }
+
+    if (!emailFilled) {
+      log.warn(SOURCE, "  Could not find email input field");
+      return false;
+    }
+
+    // Fill password
+    const passwordSelectors = [
+      '[data-testid="emailAuth.loginPasswordInput"] input',
+      'input[data-testid="passwordInput"]',
+      'input[type="password"]',
+      'input[name="password"]',
+    ];
+
+    let passwordFilled = false;
+    for (const selector of passwordSelectors) {
+      try {
+        const el = await page.$(selector);
+        if (el && await el.isVisible()) {
+          await el.fill(OC_PASSWORD);
+          passwordFilled = true;
+          break;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    // Check iframes for password too
+    if (!passwordFilled) {
+      for (const frame of page.frames()) {
+        if (frame === page.mainFrame()) continue;
+        try {
+          for (const selector of passwordSelectors) {
+            const el = await frame.$(selector);
+            if (el) {
+              await el.fill(OC_PASSWORD);
+              passwordFilled = true;
+              break;
+            }
+          }
+          if (passwordFilled) break;
+        } catch {
+          continue;
+        }
+      }
+    }
+
+    if (!passwordFilled) {
+      log.warn(SOURCE, "  Could not find password input field");
+      return false;
+    }
+
+    // Click the submit/login button
+    const submitSelectors = [
+      '[data-testid="emailAuth.loginSubmitButton"]',
+      '[data-testid="submit"]',
+      'button:has-text("Log In")',
+      'button:has-text("Sign In")',
+      'button:has-text("Submit")',
+      'button[type="submit"]',
+    ];
+
+    for (const selector of submitSelectors) {
+      try {
+        const el = await page.$(selector);
+        if (el && await el.isVisible()) {
+          await Promise.all([
+            page
+              .waitForNavigation({
+                waitUntil: "domcontentloaded",
+                timeout: 15000,
+              })
+              .catch(() => null),
+            el.click(),
+          ]);
+          await page.waitForTimeout(3000);
+          return true;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    // Also check iframes for the submit button
+    for (const frame of page.frames()) {
+      if (frame === page.mainFrame()) continue;
+      try {
+        for (const selector of submitSelectors) {
+          const el = await frame.$(selector);
+          if (el) {
+            await el.click();
+            await page.waitForTimeout(5000);
+            return true;
+          }
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    log.warn(SOURCE, "  Could not find login submit button");
+    return false;
+  } catch (err) {
+    log.warn(SOURCE, `  Login attempt error: ${err}`);
+    return false;
   }
 }
 
@@ -112,67 +370,119 @@ async function extractEventsFromCalendar(
     const results: Array<{
       title: string;
       dateText: string;
-      dayNumber: string;
+      timeText: string;
     }> = [];
     const seen = new Set<string>();
 
-    // FullCalendar renders events as .fc-event elements inside day cells
-    // Each day cell has a date attribute or day number
-    const dayCells = document.querySelectorAll(".fc-daygrid-day, .fc-list-day");
-
+    // Strategy 1: FullCalendar month grid view - each day cell has data-date
+    const dayCells = document.querySelectorAll(".fc-daygrid-day");
     if (dayCells.length > 0) {
-      // Month/Day grid view
       dayCells.forEach((cell) => {
-        const dateAttr =
-          cell.getAttribute("data-date") || "";
-        const dayNum =
-          cell.querySelector(".fc-daygrid-day-number")?.textContent?.trim() || "";
+        const dateAttr = cell.getAttribute("data-date") || "";
 
-        const eventEls = cell.querySelectorAll(".fc-event-title");
+        // Events can be in various FullCalendar elements
+        const eventEls = cell.querySelectorAll(
+          ".fc-event, .fc-daygrid-event, [class*='event']"
+        );
         eventEls.forEach((el) => {
-          const title = (el as HTMLElement).textContent?.trim() || "";
-          if (title && !seen.has(`${dateAttr}-${title}`)) {
+          const titleEl =
+            el.querySelector(".fc-event-title, .fc-event-title-container") ||
+            el;
+          const title = (titleEl as HTMLElement).textContent?.trim() || "";
+          const timeEl = el.querySelector(
+            ".fc-event-time, .fc-daygrid-event-time"
+          );
+          const timeText = timeEl
+            ? (timeEl as HTMLElement).textContent?.trim() || ""
+            : "";
+
+          if (
+            title &&
+            title.length > 3 &&
+            !title.startsWith("+") &&
+            !seen.has(`${dateAttr}-${title}`)
+          ) {
             seen.add(`${dateAttr}-${title}`);
-            results.push({ title, dateText: dateAttr, dayNumber: dayNum });
+            results.push({ title, dateText: dateAttr, timeText });
           }
         });
       });
     }
 
-    // Also check for list view events
+    // Strategy 2: FullCalendar list view
     if (results.length === 0) {
-      const listEvents = document.querySelectorAll(
-        ".fc-list-event, .fc-event"
+      const listDays = document.querySelectorAll(
+        ".fc-list-day, [class*='list-day']"
       );
-      listEvents.forEach((el) => {
-        const titleEl = el.querySelector(
-          ".fc-event-title, .fc-list-event-title"
-        ) as HTMLElement;
-        const dateEl = el.closest(".fc-list-day")?.querySelector(
-          ".fc-list-day-text"
-        ) as HTMLElement;
+      listDays.forEach((dayRow) => {
+        const dateEl = dayRow.querySelector(
+          ".fc-list-day-text, .fc-list-day-cushion, [class*='day-text']"
+        );
+        const dateText = dateEl
+          ? (dateEl as HTMLElement).textContent?.trim() || ""
+          : "";
 
-        const title = titleEl?.textContent?.trim() || "";
-        if (title && !seen.has(title)) {
-          seen.add(title);
-          results.push({
-            title,
-            dateText: dateEl?.textContent?.trim() || "",
-            dayNumber: "",
-          });
+        // Events follow each day header as sibling rows
+        let sibling = dayRow.nextElementSibling;
+        while (
+          sibling &&
+          !sibling.classList.contains("fc-list-day") &&
+          !sibling.matches("[class*='list-day']")
+        ) {
+          const titleEl = sibling.querySelector(
+            ".fc-list-event-title, .fc-event-title"
+          ) as HTMLElement;
+          const timeEl = sibling.querySelector(
+            ".fc-list-event-time, .fc-event-time"
+          ) as HTMLElement;
+          const title = titleEl?.textContent?.trim() || "";
+          const timeText = timeEl?.textContent?.trim() || "";
+
+          if (title && title.length > 3 && !seen.has(title)) {
+            seen.add(title);
+            results.push({ title, dateText, timeText });
+          }
+          sibling = sibling.nextElementSibling;
         }
       });
     }
 
-    // Fallback: get "+N more" items by looking at all fc-event elements
+    // Strategy 3: Boom Calendar custom elements (non-FullCalendar)
     if (results.length === 0) {
-      document.querySelectorAll(".fc-event").forEach((el) => {
+      const allEvents = document.querySelectorAll(
+        "[class*='event-item'], [class*='event-title'], [class*='agenda-item']"
+      );
+      allEvents.forEach((el) => {
         const title = (el as HTMLElement).textContent?.trim() || "";
-        if (title && title.length > 3 && !title.startsWith("+") && !seen.has(title)) {
+        if (
+          title &&
+          title.length > 3 &&
+          title.length < 200 &&
+          !title.startsWith("+") &&
+          !seen.has(title)
+        ) {
           seen.add(title);
-          results.push({ title, dateText: "", dayNumber: "" });
+          results.push({ title, dateText: "", timeText: "" });
         }
       });
+    }
+
+    // Strategy 4: Generic fallback - any .fc-event elements anywhere
+    if (results.length === 0) {
+      document
+        .querySelectorAll(".fc-event, [class*='fc-event']")
+        .forEach((el) => {
+          const title = (el as HTMLElement).textContent?.trim() || "";
+          if (
+            title &&
+            title.length > 3 &&
+            !title.startsWith("+") &&
+            !seen.has(title)
+          ) {
+            seen.add(title);
+            results.push({ title, dateText: "", timeText: "" });
+          }
+        });
     }
 
     return results;
@@ -182,19 +492,23 @@ async function extractEventsFromCalendar(
   const monthYear = await frame
     .evaluate(() => {
       const header = document.querySelector(
-        ".fc-toolbar-title, .fc-header-toolbar h2"
+        ".fc-toolbar-title, .fc-header-toolbar h2, " +
+          "[class*='toolbar-title'], [class*='calendar-title']"
       );
       return header?.textContent?.trim() || "";
     })
     .catch(() => "");
 
-  log.info(SOURCE, `  Calendar showing: ${monthYear} (${rawEvents.length} events)`);
+  log.info(
+    SOURCE,
+    `  Calendar showing: "${monthYear}" (${rawEvents.length} raw events)`
+  );
 
   // Convert to PipelineEvent format
   return rawEvents
     .filter((e) => e.title.length > 3 && !e.title.startsWith("+"))
     .map((e) => {
-      const startDate = parseEventDate(e.dateText, monthYear);
+      const startDate = parseEventDate(e.dateText, e.timeText, monthYear);
 
       return {
         sourceId: `${SOURCE}-${slugify(e.title)}-${e.dateText || "nodate"}`,
@@ -203,7 +517,7 @@ async function extractEventsFromCalendar(
         description: "",
         startDate: startDate || new Date().toISOString(),
         endDate: undefined,
-        isAllDay: true,
+        isAllDay: !e.timeText,
         category: categorizeEvent(e.title, ""),
         city: extractCity(e.title) || "Orange County",
         address: "",
@@ -232,14 +546,27 @@ function slugify(text: string): string {
 
 function parseEventDate(
   dateAttr: string,
+  timeText: string,
   monthYear: string
 ): string | null {
-  // data-date is in YYYY-MM-DD format
+  // data-date is in YYYY-MM-DD format (from FullCalendar)
   if (dateAttr && /^\d{4}-\d{2}-\d{2}$/.test(dateAttr)) {
+    if (timeText) {
+      const time = parseTimeText(timeText);
+      if (time) return new Date(`${dateAttr}T${time}`).toISOString();
+    }
     return new Date(dateAttr + "T00:00:00").toISOString();
   }
 
-  // Fallback: parse from month/year header + day number
+  // Try parsing dateText as a human-readable date (e.g. "March 12, 2026")
+  if (dateAttr) {
+    try {
+      const d = new Date(dateAttr);
+      if (!isNaN(d.getTime())) return d.toISOString();
+    } catch {}
+  }
+
+  // Fallback: parse from month/year header
   if (monthYear) {
     try {
       const d = new Date(monthYear + " 1");
@@ -252,26 +579,77 @@ function parseEventDate(
   return null;
 }
 
+function parseTimeText(timeStr: string): string | null {
+  const match = timeStr.match(/(\d{1,2}):?(\d{2})?\s*(am|pm|a|p)/i);
+  if (!match) return null;
+
+  let hours = parseInt(match[1]);
+  const minutes = match[2] || "00";
+  const period = match[3].toLowerCase();
+
+  if ((period === "pm" || period === "p") && hours !== 12) hours += 12;
+  if ((period === "am" || period === "a") && hours === 12) hours = 0;
+
+  return `${hours.toString().padStart(2, "0")}:${minutes}:00`;
+}
+
 function extractCity(title: string): string {
-  // Try to extract city from event title (many include "in CityName")
-  const match = title.match(
-    /\bin\s+([\w\s]+?)(?:\s*\(|\s*$|\s*-)/i
-  );
+  // Try to extract city from event title (many include "in CityName" or "at Location, City")
+  const match = title.match(/\bin\s+([\w\s]+?)(?:\s*\(|\s*$|\s*-)/i);
   if (match) {
     const city = match[1].trim();
     // Common OC cities
     const ocCities = [
-      "Irvine", "Anaheim", "Huntington Beach", "Newport Beach",
-      "Costa Mesa", "Tustin", "Orange", "Santa Ana", "Buena Park",
-      "Dana Point", "San Clemente", "San Juan Capistrano", "Lake Forest",
-      "Laguna Beach", "Laguna Niguel", "Mission Viejo", "Rancho Mission Viejo",
-      "Yorba Linda", "Fullerton", "Westminster", "Long Beach",
-      "Aliso Viejo", "Foothill Ranch",
+      "Irvine",
+      "Anaheim",
+      "Huntington Beach",
+      "Newport Beach",
+      "Costa Mesa",
+      "Tustin",
+      "Orange",
+      "Santa Ana",
+      "Buena Park",
+      "Dana Point",
+      "San Clemente",
+      "San Juan Capistrano",
+      "Lake Forest",
+      "Laguna Beach",
+      "Laguna Niguel",
+      "Mission Viejo",
+      "Rancho Mission Viejo",
+      "Yorba Linda",
+      "Fullerton",
+      "Westminster",
+      "Long Beach",
+      "Aliso Viejo",
+      "Foothill Ranch",
     ];
     for (const oc of ocCities) {
       if (city.toLowerCase().includes(oc.toLowerCase())) return oc;
     }
     return city;
   }
+
+  // Also check for city names appearing anywhere in the title
+  const titleLower = title.toLowerCase();
+  const cityChecks = [
+    "Irvine",
+    "Anaheim",
+    "Huntington Beach",
+    "Newport Beach",
+    "Costa Mesa",
+    "Tustin",
+    "Santa Ana",
+    "Laguna Beach",
+    "Mission Viejo",
+    "Fullerton",
+    "Long Beach",
+    "San Clemente",
+    "Dana Point",
+  ];
+  for (const city of cityChecks) {
+    if (titleLower.includes(city.toLowerCase())) return city;
+  }
+
   return "Orange County";
 }

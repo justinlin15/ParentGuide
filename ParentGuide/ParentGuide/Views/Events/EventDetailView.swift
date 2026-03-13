@@ -13,16 +13,21 @@ struct EventDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var adminService = AdminService.shared
+    @State private var favoritesService = FavoritesService.shared
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     @State private var isDeleting = false
+
+    private var isFavorite: Bool {
+        favoritesService.isFavorite(event.id)
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Hero image
                 if let imageURL = event.imageURL, let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { phase in
+                    CachedAsyncImagePhase(url: url) { phase in
                         switch phase {
                         case .success(let image):
                             image
@@ -42,10 +47,25 @@ struct EventDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 16) {
-                    // Title
-                    Text(event.title)
-                        .font(.title)
-                        .fontWeight(.bold)
+                    // Title row with favorite
+                    HStack(alignment: .top) {
+                        Text(event.title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Spacer()
+
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                favoritesService.toggleFavorite(event.id)
+                            }
+                        } label: {
+                            Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                .font(.title2)
+                                .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     // Date and Location row
                     HStack(spacing: 16) {
@@ -58,7 +78,7 @@ struct EventDetailView: View {
 
                         HStack(spacing: 6) {
                             Image(systemName: "mappin.circle.fill")
-                                .foregroundStyle(.red)
+                                .foregroundStyle(event.category.color)
                             Text(event.city)
                                 .font(.subheadline)
                         }
@@ -73,6 +93,16 @@ struct EventDetailView: View {
                             .font(.subheadline)
                     }
                     .foregroundStyle(.secondary)
+
+                    // Category tag
+                    Label(event.category.rawValue, systemImage: event.category.iconName)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(event.category.color)
+                        .clipShape(Capsule())
 
                     Divider()
 
@@ -105,7 +135,6 @@ struct EventDetailView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        // Map
                         if let lat = event.latitude, let lon = event.longitude {
                             let position = MapCameraPosition.region(
                                 MKCoordinateRegion(
@@ -121,9 +150,7 @@ struct EventDetailView: View {
                             .frame(height: 200)
                             .cornerRadius(12)
 
-                            // Get Directions button
                             Button {
-                                // TODO: Migrate to MKMapItem(location:address:) when MKAddress has a simpler API
                                 let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)))
                                 mapItem.name = event.locationName ?? event.title
                                 mapItem.openInMaps()

@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "scrape": "tsx src/index.ts --scrapers-only",
-    "test": "tsx src/index.ts --dry-run"
+    "test": "node --import tsx --test src/__tests__/pipeline.test.ts",
+    "test:dry-run": "tsx src/index.ts --dry-run"
   },
   "dependencies": {
     "playwright": "^1.49.0",

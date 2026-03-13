@@ -21,8 +21,18 @@ extension Resource {
 
         self.id = record.recordID.recordName
         self.title = title
-        self.fileURL = nil
-        self.thumbnailURL = nil
+
+        if let asset = record["file"] as? CKAsset, let url = asset.fileURL {
+            self.fileURL = url.absoluteString
+        } else {
+            self.fileURL = nil
+        }
+
+        if let asset = record["thumbnail"] as? CKAsset, let url = asset.fileURL {
+            self.thumbnailURL = url.absoluteString
+        } else {
+            self.thumbnailURL = nil
+        }
         self.sortOrder = record["sortOrder"] as? Int ?? 0
         self.createdAt = record.creationDate ?? Date()
     }

@@ -7,6 +7,11 @@ import SwiftUI
 
 struct EventCardView: View {
     let event: Event
+    @State private var favoritesService = FavoritesService.shared
+
+    private var isFavorite: Bool {
+        favoritesService.isFavorite(event.id)
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -44,6 +49,18 @@ struct EventCardView: View {
             }
 
             Spacer()
+
+            // Favorite heart button
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    favoritesService.toggleFavorite(event.id)
+                }
+            } label: {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .font(.body)
+                    .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
+            }
+            .buttonStyle(.plain)
 
             // Category icon
             Image(systemName: event.category.iconName)

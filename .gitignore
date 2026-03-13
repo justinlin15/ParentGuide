@@ -32,9 +32,16 @@ Pods/
 # Claude
 .claude/
 
+# Credentials
+*.credentials.md
+.credentials.md
+.env
+.env.*
+
 # Pipeline
 pipeline/node_modules/
 pipeline/dist/
 pipeline/output/
 pipeline/.env
+pipeline/.env.*
 pipeline/*.pem

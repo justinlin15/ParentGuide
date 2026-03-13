@@ -30,19 +30,20 @@ extension Color {
         )
     }
 
-    // Brand colors — warm palette
-    static let brandBlue = Color(hex: "C48B7F")        // Dusty Rose (primary accent)
-    static let brandPink = Color(hex: "E8D5D0")        // Blush Cream (soft backgrounds)
-    static let brandNavy = Color(hex: "3D3232")         // Warm Charcoal (dark contrast)
-    static let brandLavender = Color(hex: "C0B5CB")     // Soft Lavender
-    static let warmSurface = Color(hex: "F5EFEB")       // Warm Surface (card bg)
+    // Brand colors — soft feminine palette for moms
+    static let brandBlue = Color(hex: "D4727E")         // Soft Coral Rose (primary accent)
+    static let brandPink = Color(hex: "F8E8EC")         // Light Rose Mist (soft backgrounds)
+    static let brandNavy = Color(hex: "3D3232")          // Warm Charcoal (dark contrast)
+    static let brandLavender = Color(hex: "B8A9C9")     // Soft Lavender
+    static let warmSurface = Color(hex: "FBF4F6")       // Warm Rose Surface (card bg)
 
-    // Event category colors — muted pastels
-    static let eventGreen = Color(hex: "8FAE8B")        // Sage Green
-    static let eventBlue = Color(hex: "7FA8BA")          // Dusty Blue
-    static let eventPink = Color(hex: "D4918F")          // Muted Rose
-    static let eventGray = Color(hex: "B5ADA7")          // Warm Taupe
-    static let eventOrange = Color(hex: "D4A574")        // Warm Caramel
+    // Event category colors — soft pastels
+    static let eventGreen = Color(hex: "7CB69A")         // Soft Sage
+    static let eventBlue = Color(hex: "7BA7C2")          // Dusty Sky Blue
+    static let eventPink = Color(hex: "D88B99")          // Rose Pink
+    static let eventGray = Color(hex: "A8A3B3")          // Soft Mauve Gray
+    static let eventOrange = Color(hex: "E0A96D")        // Warm Honey
+    static let eventPurple = Color(hex: "9B8EC4")        // Soft Purple
 }
 
 extension UIFont {

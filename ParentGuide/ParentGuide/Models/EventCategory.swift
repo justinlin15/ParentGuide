@@ -27,16 +27,38 @@ nonisolated enum EventCategory: String, CaseIterable, Identifiable, Codable, Sen
 
     var color: Color {
         switch self {
-        case .storytime, .farmersMarket, .outdoorAdventure:
-            return Color.eventGreen
-        case .freeMovie, .music, .museum, .education:
+        case .storytime:
             return Color.eventBlue
-        case .toddlerActivity, .craft, .festival, .seasonal, .subscriberMeetup:
+        case .farmersMarket:
+            return Color.eventGreen
+        case .freeMovie:
+            return Color.eventPurple
+        case .toddlerActivity:
             return Color.eventPink
-        case .fireStationTour, .sports, .other:
+        case .craft:
+            return Color.eventOrange
+        case .music:
+            return Color.eventPurple
+        case .fireStationTour:
             return Color.eventGray
+        case .museum:
+            return Color.eventBlue
+        case .outdoorAdventure:
+            return Color.eventGreen
         case .food:
             return Color.eventOrange
+        case .sports:
+            return Color.eventGreen
+        case .education:
+            return Color.eventBlue
+        case .festival:
+            return Color.eventPink
+        case .seasonal:
+            return Color.brandBlue
+        case .subscriberMeetup:
+            return Color.brandLavender
+        case .other:
+            return Color.eventGray
         }
     }
 

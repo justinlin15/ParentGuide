@@ -13,7 +13,6 @@ actor EventService {
     private let cloudKit = CloudKitService.shared
 
     /// GitHub-hosted JSON feed — updated every 12 hours by the pipeline.
-    /// Used as primary data source while CloudKit schema indexes are being set up.
     private static let eventsJSONURL = URL(
         string: "https://raw.githubusercontent.com/justinlin15/ParentGuide/main/docs/api/events.json"
     )!
@@ -23,10 +22,56 @@ actor EventService {
     private var cacheTimestamp: Date?
     private let cacheDuration: TimeInterval = 300 // 5 minutes
 
+    // MARK: - Persistent disk cache
+
+    /// Wrapper for persisting events + timestamp to disk as JSON.
+    private struct CachedEvents: Codable {
+        let events: [Event]
+        let timestamp: Date
+    }
+
+    /// File URL for the on-disk event cache.
+    private var diskCacheURL: URL? {
+        FileManager.default
+            .urls(for: .cachesDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent("events-cache.json")
+    }
+
+    /// Persist fetched events to a JSON file in the caches directory.
+    private func saveToDiskCache(_ events: [Event]) {
+        guard let url = diskCacheURL else { return }
+        do {
+            let cached = CachedEvents(events: events, timestamp: Date())
+            let data = try JSONEncoder().encode(cached)
+            try data.write(to: url, options: [.atomic])
+            NSLog("[EventService] Saved %d events to disk cache", events.count)
+        } catch {
+            NSLog("[EventService] Failed to write disk cache: %@", error.localizedDescription)
+        }
+    }
+
+    /// Load previously cached events from disk. Returns nil if no cache exists.
+    private func loadFromDiskCache() -> [Event]? {
+        guard let url = diskCacheURL,
+              FileManager.default.fileExists(atPath: url.path) else { return nil }
+        do {
+            let data = try Data(contentsOf: url)
+            let cached = try JSONDecoder().decode(CachedEvents.self, from: data)
+            NSLog("[EventService] Loaded %d events from disk cache (saved %@)",
+                  cached.events.count,
+                  cached.timestamp.formatted())
+            return cached.events
+        } catch {
+            NSLog("[EventService] Failed to read disk cache: %@", error.localizedDescription)
+            return nil
+        }
+    }
+
     // MARK: - Fetch helpers
 
     /// Fetch ALL events. Tries CloudKit first; falls back to JSON feed.
-    private func fetchAllEvents() async throws -> [Event] {
+    func fetchAllEvents() async throws -> [Event] {
         // Return cache if fresh
         if let cached = cachedEvents, let ts = cacheTimestamp,
            Date().timeIntervalSince(ts) < cacheDuration {
@@ -46,6 +91,7 @@ actor EventService {
                 NSLog("[EventService] CloudKit: %d events", events.count)
                 cachedEvents = events
                 cacheTimestamp = Date()
+                saveToDiskCache(events)
                 return events
             }
         } catch {
@@ -54,28 +100,62 @@ actor EventService {
 
         // Fallback: fetch from JSON feed
         let events = try await fetchEventsFromJSON()
-        cachedEvents = events
-        cacheTimestamp = Date()
-        return events
-    }
-
-    /// Fetch events from the pipeline's GitHub-hosted JSON feed.
-    private func fetchEventsFromJSON() async throws -> [Event] {
-        let (data, response) = try await URLSession.shared.data(from: Self.eventsJSONURL)
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            NSLog("[EventService] JSON feed returned non-200 status")
-            return []
+        if !events.isEmpty {
+            cachedEvents = events
+            cacheTimestamp = Date()
+            saveToDiskCache(events)
+            return events
         }
 
-        let decoder = JSONDecoder()
-        let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
-        let events = pipelineEvents.compactMap { $0.toEvent() }
-        NSLog("[EventService] JSON feed: %d events (from %d raw)", events.count, pipelineEvents.count)
+        // Last resort: load from persistent disk cache (offline support)
+        if let diskCached = loadFromDiskCache() {
+            NSLog("[EventService] All sources failed, using disk cache (%d events)", diskCached.count)
+            cachedEvents = diskCached
+            cacheTimestamp = Date()
+            return diskCached
+        }
+
         return events
     }
 
+    /// Fetch events from bundled JSON (primary) or remote JSON feed (fallback).
+    private func fetchEventsFromJSON() async throws -> [Event] {
+        let decoder = JSONDecoder()
+
+        // 1. Try bundled events.json first (always available, updated at build time)
+        if let bundleURL = Bundle.main.url(forResource: "events", withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: bundleURL)
+                let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
+                let events = pipelineEvents.compactMap { $0.toEvent() }
+                NSLog("[EventService] Bundled JSON: %d events (from %d raw)", events.count, pipelineEvents.count)
+                if !events.isEmpty { return events }
+            } catch {
+                NSLog("[EventService] Bundled JSON parse error: %@", error.localizedDescription)
+            }
+        }
+
+        // 2. Fallback: try remote JSON feed
+        do {
+            let (data, response) = try await URLSession.shared.data(from: Self.eventsJSONURL)
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                NSLog("[EventService] Remote JSON feed returned non-200 status")
+                return []
+            }
+            let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
+            let events = pipelineEvents.compactMap { $0.toEvent() }
+            NSLog("[EventService] Remote JSON feed: %d events (from %d raw)", events.count, pipelineEvents.count)
+            return events
+        } catch {
+            NSLog("[EventService] Remote JSON feed failed: %@", error.localizedDescription)
+            return []
+        }
+    }
+
+    // MARK: - Filtered queries
+
+    /// Fetch events for a single calendar month.
     func fetchEvents(for month: Date) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         let startOfMonth = month.startOfMonth
@@ -83,6 +163,7 @@ actor EventService {
         return allEvents.filter { $0.startDate >= startOfMonth && $0.startDate <= endOfMonth }
     }
 
+    /// Fetch events for a specific day.
     func fetchEvents(forDay date: Date) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         let calendar = Calendar.current
@@ -91,16 +172,20 @@ actor EventService {
         return allEvents.filter { $0.startDate >= startOfDay && $0.startDate < endOfDay }
     }
 
-    func searchEvents(query: String) async throws -> [Event] {
+    /// Fetch events for a metro area across 3 months from today.
+    func fetchUpcomingEvents(forMetro metro: String) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
-        let lowerQuery = query.lowercased()
-        return allEvents.filter {
-            $0.title.lowercased().contains(lowerQuery) ||
-            $0.eventDescription.lowercased().contains(lowerQuery) ||
-            $0.city.lowercased().contains(lowerQuery)
-        }
+        let now = Calendar.current.startOfDay(for: Date())
+        let threeMonthsLater = Calendar.current.date(byAdding: .month, value: 3, to: now)!
+
+        return allEvents.filter { event in
+            let isUpcoming = event.startDate >= now && event.startDate <= threeMonthsLater
+            let matchesMetro = (event.metro ?? "los-angeles") == metro
+            return isUpcoming && matchesMetro
+        }.sorted { $0.startDate < $1.startDate }
     }
 
+    /// Fetch events for a metro area within a specific month.
     func fetchEvents(forMetro metro: String, month: Date) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         let startOfMonth = month.startOfMonth
@@ -110,6 +195,16 @@ actor EventService {
             let inMonth = event.startDate >= startOfMonth && event.startDate <= endOfMonth
             let matchesMetro = (event.metro ?? "los-angeles") == metro
             return inMonth && matchesMetro
+        }
+    }
+
+    func searchEvents(query: String) async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
+        let lowerQuery = query.lowercased()
+        return allEvents.filter {
+            $0.title.lowercased().contains(lowerQuery) ||
+            $0.eventDescription.lowercased().contains(lowerQuery) ||
+            $0.city.lowercased().contains(lowerQuery)
         }
     }
 
@@ -129,6 +224,24 @@ actor EventService {
     func fetchFeaturedEvents() async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         return allEvents.filter { $0.isFeatured }
+    }
+
+    /// Fetch events that the user has favorited.
+    func fetchFavoriteEvents(ids: Set<String>) async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
+        return allEvents.filter { ids.contains($0.id) }
+            .sorted { $0.startDate < $1.startDate }
+    }
+
+    /// Fetch popular/trending events (featured first, then by date).
+    func fetchPopularEvents(forMetro metro: String, limit: Int = 10) async throws -> [Event] {
+        let upcoming = try await fetchUpcomingEvents(forMetro: metro)
+        let sorted = upcoming.sorted { a, b in
+            if a.isFeatured != b.isFeatured { return a.isFeatured }
+            if a.hasLocation != b.hasLocation { return a.hasLocation }
+            return a.startDate < b.startDate
+        }
+        return Array(sorted.prefix(limit))
     }
 
     // MARK: - Admin CRUD
@@ -184,7 +297,6 @@ private struct PipelineEvent: Codable {
     let metro: String
 
     func toEvent() -> Event? {
-        // Parse the startDate string (ISO 8601 or date-only)
         guard let start = Self.parseDate(startDate) else { return nil }
         let end = endDate.flatMap { Self.parseDate($0) }
 
@@ -198,17 +310,17 @@ private struct PipelineEvent: Codable {
 
         return Event(
             id: recordName,
-            title: title,
-            eventDescription: description,
+            title: Self.decodeHTMLEntities(title),
+            eventDescription: Self.decodeHTMLEntities(description),
             startDate: start,
             endDate: end,
             isAllDay: isAllDay ?? false,
             category: categoryEnum,
-            city: city ?? "",
-            address: address,
+            city: Self.decodeHTMLEntities(city ?? ""),
+            address: address.map { Self.decodeHTMLEntities($0) },
             latitude: latitude,
             longitude: longitude,
-            locationName: locationName,
+            locationName: locationName.map { Self.decodeHTMLEntities($0) },
             imageURL: imageURL,
             externalURL: externalURL,
             isFeatured: isFeatured,
@@ -223,26 +335,45 @@ private struct PipelineEvent: Codable {
     }
 
     private static func parseDate(_ str: String) -> Date? {
-        // Try ISO 8601 with time
+        // 1. Try ISO 8601 with explicit timezone (e.g. "2026-03-12T10:00:00-07:00")
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime]
         if let d = iso.date(from: str) { return d }
 
-        // Try ISO 8601 without timezone
-        iso.formatOptions = [.withFullDate, .withFullTime]
+        // 2. Try ISO 8601 with fractional seconds (e.g. "2026-03-12T00:00:00.000Z")
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let d = iso.date(from: str) { return d }
 
-        // Try "yyyy-MM-dd'T'HH:mm:ss"
+        // 3. For dates WITHOUT timezone, interpret as LOCAL time
+        //    (so "2026-03-12T00:00:00" means midnight in the user's timezone)
         let fmt = DateFormatter()
         fmt.locale = Locale(identifier: "en_US_POSIX")
+        fmt.timeZone = TimeZone.current  // Local timezone
+
         fmt.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         if let d = fmt.date(from: str) { return d }
 
-        // Try date only "yyyy-MM-dd"
+        fmt.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        if let d = fmt.date(from: str) { return d }
+
         fmt.dateFormat = "yyyy-MM-dd"
         if let d = fmt.date(from: str) { return d }
 
         return nil
+    }
+
+    /// Decode common HTML entities (&#039; &amp; &lt; &gt; &quot;)
+    private static func decodeHTMLEntities(_ str: String) -> String {
+        var result = str
+        let entities: [(String, String)] = [
+            ("&#039;", "'"), ("&#39;", "'"), ("&apos;", "'"),
+            ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
+            ("&quot;", "\""), ("&#x27;", "'"), ("&nbsp;", " "),
+        ]
+        for (entity, char) in entities {
+            result = result.replacingOccurrences(of: entity, with: char)
+        }
+        return result
     }
 }
 

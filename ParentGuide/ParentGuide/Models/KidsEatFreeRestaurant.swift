@@ -31,7 +31,7 @@ nonisolated extension KidsEatFreeRestaurant {
         self.name = name
         self.cities = record["cities"] as? [String] ?? []
         self.dealDetails = record["dealDetails"] as? String ?? ""
-        self.imageURL = nil
+        self.imageURL = record["imageURL"] as? String
         self.websiteURL = record["websiteURL"] as? String
         self.phoneNumber = record["phoneNumber"] as? String
         self.address = record["address"] as? String

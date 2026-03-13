@@ -22,28 +22,19 @@ class EventCalendarViewModel {
     var isLoading = false
     var errorMessage: String?
 
-    // Use preview data for now; switch to CloudKit later
-    var usePreviewData = false
-
     func loadEvents() async {
         isLoading = true
         errorMessage = nil
 
-        if usePreviewData {
-            let generated = PreviewData.generateMonthEvents(for: currentMonth)
-            events = generated
-            groupEventsByDate()
-            isLoading = false
-            return
-        }
-
         do {
             let metroId = MetroService.shared.selectedMetro.id
-            let fetched = try await EventService.shared.fetchEvents(forMetro: metroId, month: currentMonth)
+            let fetched = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
             events = fetched
             groupEventsByDate()
+            NSLog("[EventCalendarVM] Loaded %d events for metro: %@", fetched.count, metroId)
         } catch {
             errorMessage = error.localizedDescription
+            NSLog("[EventCalendarVM] Error: %@", error.localizedDescription)
         }
 
         isLoading = false
@@ -51,12 +42,17 @@ class EventCalendarViewModel {
 
     func goToNextMonth() {
         currentMonth = currentMonth.adding(months: 1)
-        Task { await loadEvents() }
     }
 
     func goToPreviousMonth() {
         currentMonth = currentMonth.adding(months: -1)
-        Task { await loadEvents() }
+    }
+
+    /// Events for the currently displayed month.
+    var eventsForCurrentMonth: [Event] {
+        let startOfMonth = currentMonth.startOfMonth
+        let endOfMonth = currentMonth.endOfMonth
+        return events.filter { $0.startDate >= startOfMonth && $0.startDate <= endOfMonth }
     }
 
     func eventsForDate(_ date: Date) -> [Event] {

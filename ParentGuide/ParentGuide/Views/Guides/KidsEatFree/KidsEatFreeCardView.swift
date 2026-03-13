@@ -38,7 +38,7 @@ struct KidsEatFreeCardView: View {
                 )
 
                 if let urlString = restaurant.imageURL, let url = URL(string: urlString) {
-                    AsyncImage(url: url) { phase in
+                    CachedAsyncImagePhase(url: url) { phase in
                         switch phase {
                         case .success(let image):
                             image

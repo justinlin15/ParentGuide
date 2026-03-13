@@ -1,0 +1,329 @@
+[
+  {
+    "name": "Avila's El Ranchito",
+    "cities": [
+      "Orange",
+      "Laguna Niguel",
+      "Lake Forest",
+      "Foothill Ranch",
+      "San Clemente",
+      "Santa Ana"
+    ],
+    "deal": "Orange, Lake Forest, Laguna Niguel: Kids eat free on Mondays from 4-10pm\nFoothill Ranch: Kids eat free on Sundays\nSan Clemente & Santa Ana: Kids eat free on Wednesdays 4-10pm",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_67b1256b4153438881ae67e3cd419385~mv2.jpg",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "BLK Earth Spirits",
+    "cities": [
+      "Huntington Beach"
+    ],
+    "deal": "Free Kids Breakfast on Saturdays and Sundays from 10am-1pm with the purchase of a qualifying adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_fe8ef7f82e644f329a18ede029c60cb0~mv2.png",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Blind Coyote Cantina",
+    "cities": [
+      "Yorba Linda"
+    ],
+    "deal": "Kids Eat Free Sundays! Every Sunday from 4-8pm, kids 12 & under eat FREE with the purchase of an adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_b5fae817dc64499cac52",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Burger Lounge",
+    "cities": [
+      "Costa Mesa",
+      "Irvine"
+    ],
+    "deal": "Kids eat free every Tuesday and Sunday at Burger Lounge! Just purchase an entree and receive a complimentary Kid's Lounge Meal when you mention this offer or use code: KIDS",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_burger_lounge",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Cafe SAKANA",
+    "cities": [
+      "Newport Beach"
+    ],
+    "deal": "Kids get a full-size Plain Udon or California Roll for free with the purchase of an adult entree on Tuesdays and Thursdays.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_cafe_sakana",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Cha Cha's Latin Kitchen",
+    "cities": [
+      "Tustin",
+      "Irvine"
+    ],
+    "deal": "All day Sundays at Cha Cha's in Irvine, enjoy a FREE kids' meal with any entree purchase.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_cha_chas",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Chick-Fil-A Laguna Niguel",
+    "cities": [
+      "Laguna Niguel"
+    ],
+    "deal": "Kids Eat Free on Saturdays from 12pm-8pm. Order through the Chick-fil-A app to redeem.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_chickfila",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Claim Jumper South Coast Plaza",
+    "cities": [
+      "Costa Mesa"
+    ],
+    "deal": "Kids Eat Free Mondays with a purchase of an adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_claim_jumper",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Clean Juice Dana Point",
+    "cities": [
+      "Dana Point"
+    ],
+    "deal": "Kids get free smoothies Mondays with purchase of $7.25 smoothie.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_b73c974a031546a89d9c7b356099fe9a~mv2.png",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Deli Nerds",
+    "cities": [
+      "Costa Mesa"
+    ],
+    "deal": "Kids 11 and under get a free meal with the purchase of a $15 entree! One kids meal per adult meal.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_d58da977929a466a87c7f33b4f3bad2b~mv2.jpeg",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Denny's",
+    "cities": [
+      "Anaheim",
+      "Tustin",
+      "Santa Ana",
+      "Irvine",
+      "Garden Grove"
+    ],
+    "deal": "Santa Ana + Tustin: Kids eat free from 4-10pm every day with purchase of an adult meal.\nAnaheim 1610 Harbor Blvd: Kids eat free from 4-10pm every day with purchase of an adult meal.\n(Irvine, Anaheim Katella, and Garden Grove do not participate)",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_dennys",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "El Pollo Loco",
+    "cities": [
+      "Santa Ana",
+      "Costa Mesa",
+      "Orange",
+      "Tustin",
+      "Irvine"
+    ],
+    "deal": "Multiple locations - Kids eat free Wednesdays with purchase of adult combo meal. Check your local store for participation.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_elpollo",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Fuddruckers",
+    "cities": [
+      "Irvine"
+    ],
+    "deal": "Kids eat free Tuesdays with purchase of adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_fuddruckers",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Islands Fine Burgers",
+    "cities": [
+      "Lake Forest",
+      "Irvine",
+      "Laguna Niguel"
+    ],
+    "deal": "Kids eat free Tuesdays from 4pm-close with purchase of adult entree. Dine-in only.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_islands",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "IHOP",
+    "cities": [
+      "Irvine",
+      "Anaheim",
+      "Costa Mesa"
+    ],
+    "deal": "Kids eat free from 4-10pm every day with purchase of adult entree at participating locations.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_ihop",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Jimboy's Tacos",
+    "cities": [
+      "Mission Viejo"
+    ],
+    "deal": "Mission Viejo - Kids eat free Tuesdays with purchase of adult meal.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_jimboys",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Jimmy's Famous American Tavern",
+    "cities": [
+      "Dana Point"
+    ],
+    "deal": "Get one free kids' meal with purchase of an entree on Mondays, now through the end of the year! Dine-in only.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_db0bfab61d7c4466ac800541b73f285a~mv2.png",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Luna Grill",
+    "cities": [],
+    "deal": "Multiple locations - This restaurant frequently changes their Kids Eat Free deals, so check before you go to make sure they are honoring the deal!\nKids eat free Monday - Thursday.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_95f7989031704f31bf20cc864864bc2b~mv2.jpg",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Mama's Comfort Food and Cocktails",
+    "cities": [
+      "Huntington Beach",
+      "Los Alamitos"
+    ],
+    "deal": "Kids 12 & Under eat free all day/night every Thursday. Purchase of adult entree required. Kid's Free Meals from Lil Rascals Menu only.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_mamas",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Mimi's Cafe",
+    "cities": [
+      "Irvine",
+      "Tustin"
+    ],
+    "deal": "Kids eat free Tuesdays 4-9pm with purchase of adult entree at participating locations.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_mimis",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Norms Restaurant",
+    "cities": [
+      "Costa Mesa",
+      "Huntington Beach"
+    ],
+    "deal": "Kids 10 & under eat free every day all day with purchase of adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_norms",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Oggi's Pizza",
+    "cities": [
+      "Mission Viejo",
+      "Irvine"
+    ],
+    "deal": "Kids eat free on Tuesdays with purchase of adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_oggis",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Peter's Gourmade",
+    "cities": [
+      "Costa Mesa"
+    ],
+    "deal": "Kids eat free Tuesdays with purchase of adult meal.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_peters",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Pieology",
+    "cities": [
+      "Irvine",
+      "Mission Viejo",
+      "Laguna Niguel"
+    ],
+    "deal": "Kids get a free pizza with purchase of adult pizza on Tuesdays.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_pieology",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Rock & Brews",
+    "cities": [
+      "Tustin",
+      "Buena Park"
+    ],
+    "deal": "Kids 12 and under eat free Mondays!",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_2952975ae78542218c5d7111250f019b~mv2.png",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Ruby's Diner",
+    "cities": [
+      "Costa Mesa",
+      "Anaheim",
+      "Tustin",
+      "San Clemente",
+      "Laguna Beach",
+      "Santa Ana",
+      "Brea"
+    ],
+    "deal": "Kids eat free on Tuesday nights from 4pm until close with purchase of adult entree. Balboa Pier does not participate in this deal.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_c4ea29969c99444ba62fb895445073e0~mv2.jpg",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Sessions West Coast Deli",
+    "cities": [
+      "Huntington Beach",
+      "Irvine",
+      "Newport Beach",
+      "Mission Viejo"
+    ],
+    "deal": "Kids eat free every Tuesday with purchase of an adult meal!",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_sessions",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Shakey's Pizza",
+    "cities": [
+      "Irvine",
+      "Lake Forest"
+    ],
+    "deal": "Kids eat free on Tuesdays with purchase of adult meal.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_shakeys",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Slapfish",
+    "cities": [
+      "Huntington Beach",
+      "Laguna Beach"
+    ],
+    "deal": "Kids eat free Tuesdays with purchase of adult entree.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_slapfish",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "TGI Fridays",
+    "cities": [
+      "Irvine"
+    ],
+    "deal": "Kids eat free with purchase of adult entree. Check with your local location for current deals.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_tgifridays",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "The Halal Guys",
+    "cities": [
+      "Irvine",
+      "Costa Mesa"
+    ],
+    "deal": "Kids eat free on Wednesdays with purchase of adult platter.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_halalguys",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Wahoo's Fish Taco",
+    "cities": [
+      "Costa Mesa",
+      "Laguna Beach",
+      "Huntington Beach",
+      "Newport Beach"
+    ],
+    "deal": "Kids eat free on Tuesdays with purchase of adult meal at participating locations.",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_wahoos",
+    "metro": "los-angeles"
+  }
+]

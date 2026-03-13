@@ -34,7 +34,7 @@ struct KidsEatFreeDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Hero
-                AsyncImage(url: URL(string: restaurant.imageURL ?? "")) { phase in
+                CachedAsyncImagePhase(url: URL(string: restaurant.imageURL ?? "")) { phase in
                     switch phase {
                     case .success(let image):
                         image

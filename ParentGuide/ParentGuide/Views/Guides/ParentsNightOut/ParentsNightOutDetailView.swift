@@ -19,7 +19,7 @@ struct ParentsNightOutDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Hero image
-                AsyncImage(url: URL(string: provider.imageURL ?? "")) { phase in
+                CachedAsyncImagePhase(url: URL(string: provider.imageURL ?? "")) { phase in
                     switch phase {
                     case .success(let image):
                         image

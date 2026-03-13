@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Karate OC",
+    "cities": ["Fullerton", "Placentia"],
+    "description": "Games, Obstacle Courses, Laser Tag, Pizza, Drinks, and Movies! For ages 5+",
+    "websiteUrl": "https://karateoc.com/kidsparty/",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_22ef4825312e480489cd88ec0ecaaf84~mv2.jpg",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Valhallan Esports Lake Forest",
+    "cities": ["Lake Forest"],
+    "description": "These happen 2-3 times each month and include pizza, drinks, and a night of fun coached game play. Use code OCPG to get 50% off parents night out!",
+    "websiteUrl": "https://www.instagram.com/valhallan_lakeforest/",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_a80b434c6845470fbc4f7ea3a5139d35~mv2.png",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Cal Elite Kids",
+    "cities": ["Rancho Santa Margarita"],
+    "description": "Offered every Saturday night. Each week has a fun theme for the kids along with pizza, activities, and a movie.",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_cal_elite",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Sweet Peas Gymnastics",
+    "cities": ["Rancho Mission Viejo"],
+    "description": "Offered every Saturday night. Kids enjoy an evening of gymnastics, games, pizza, and fun! Kids must be 3-13 and potty trained. Rates range from $27-$30.",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_sweet_peas",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Lil' Chef School",
+    "cities": ["Irvine"],
+    "description": "Offered once a month. Each month is a different theme. Kids learn to cook while parents enjoy a night out!",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_lil_chef",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "City Parents Night Out Events",
+    "cities": ["Laguna Hills", "Cypress", "Buena Park", "Stanton"],
+    "description": "Offered occasionally. Totally free programs run by local cities. Check your city parks and rec department for upcoming dates.",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_city_pno",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Bumo Care",
+    "cities": ["Costa Mesa", "Irvine"],
+    "description": "Drop-in childcare available in Costa Mesa and Irvine. Ages 8 months to 11 years. Great for parents night out or anytime you need childcare!",
+    "websiteUrl": "https://bumocare.com",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_bumo",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Kidz Korner",
+    "cities": ["Orange"],
+    "description": "Drop-in childcare center with hourly rates. Open evenings and weekends. Perfect for parents night out!",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_kidz_korner",
+    "metro": "los-angeles"
+  },
+  {
+    "name": "Kids Park",
+    "cities": ["Irvine", "Anaheim"],
+    "description": "Hourly drop-in childcare center. Open 7 days a week with extended evening hours on weekends. Ages 2-12.",
+    "websiteUrl": "",
+    "imageUrl": "https://static.wixstatic.com/media/e13162_kids_park",
+    "metro": "los-angeles"
+  }
+]

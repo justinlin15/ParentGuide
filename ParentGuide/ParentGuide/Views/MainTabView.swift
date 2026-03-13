@@ -22,17 +22,23 @@ struct MainTabView: View {
                 }
                 .tag(1)
 
+            FavoritesView()
+                .tabItem {
+                    Label("Favorites", systemImage: "heart.fill")
+                }
+                .tag(2)
+
             GuidesContainerView()
                 .tabItem {
                     Label("Guides", systemImage: "book.fill")
                 }
-                .tag(2)
+                .tag(3)
 
             MoreMenuView()
                 .tabItem {
                     Label("More", systemImage: "ellipsis.circle")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(Color.brandBlue)
     }
