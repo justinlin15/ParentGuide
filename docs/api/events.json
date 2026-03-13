@@ -21,26 +21,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/lakids/county-ventura-st-patricks-day-parade",
-    "source": "mommypoppins",
-    "title": "County Ventura St. Patrick&#039;s Day Parade",
-    "description": "Head to Main Street for County Ventura St. Patrick&#039;s Day Parade. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Main Street",
-    "locationName": "Main Street",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/70/st_pat.jpg?itok=VMv3wvSC",
-    "externalURL": "https://mommypoppins.com/lakids/county-ventura-st-patricks-day-parade",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/saturday-mornings-at-the-opera",
     "source": "mommypoppins",
     "title": "Saturday Mornings At The Opera",
@@ -58,6 +38,26 @@
       "mommypoppins",
       "Events",
       "Shows &amp; Exhibitions"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/lakids/county-ventura-st-patricks-day-parade",
+    "source": "mommypoppins",
+    "title": "County Ventura St. Patrick&#039;s Day Parade",
+    "description": "Head to Main Street for County Ventura St. Patrick&#039;s Day Parade. This festival event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-14T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "Main Street",
+    "locationName": "Main Street",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/70/st_pat.jpg?itok=VMv3wvSC",
+    "externalURL": "https://mommypoppins.com/lakids/county-ventura-st-patricks-day-parade",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events"
     ],
     "metro": "los-angeles"
   },
@@ -190,27 +190,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
-    "source": "mommypoppins",
-    "title": "Disney California Adventure Food &amp; Wine Festival",
-    "description": "Discover Disney California Adventure Food &amp; Wine Festival in Disney California Adventure Park. A great food activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "food",
-    "city": "Disney California Adventure Park",
-    "locationName": "Disney California Adventure Park",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/6d/caramel-peanut_milk_chocolate_mickey_macaron_-_disney_california_adventure_food_wine_festival.jpg?itok=7bKostKv",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
     "source": "mommypoppins",
     "title": "Eggstravaganza 2026 at Disneyland Resort",
@@ -242,6 +221,27 @@
     "locationName": "The Academy Museum of Motion Pictures",
     "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/81/unnamed_51_0.jpg?itok=Ba_OgIor",
     "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/oscar-nominee-spotlights",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
+    "source": "mommypoppins",
+    "title": "Disney California Adventure Food &amp; Wine Festival",
+    "description": "Discover Disney California Adventure Food &amp; Wine Festival in Disney California Adventure Park. A great food activity the whole family will love.",
+    "startDate": "2026-03-14T00:00:00",
+    "isAllDay": true,
+    "category": "food",
+    "city": "Disney California Adventure Park",
+    "locationName": "Disney California Adventure Park",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/6d/caramel-peanut_milk_chocolate_mickey_macaron_-_disney_california_adventure_food_wine_festival.jpg?itok=7bKostKv",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -496,6 +496,27 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
+    "source": "mommypoppins",
+    "title": "Sunmist Fruit Farm",
+    "description": "Discover Sunmist Fruit Farm in Sunmist Fruit Farm. A great family activity the whole family will love.",
+    "startDate": "2026-03-14T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Sunmist Fruit Farm",
+    "locationName": "Sunmist Fruit Farm",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Tours &amp; Attractions",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/game-on-at-the-california-science-center",
     "source": "mommypoppins",
     "title": "Game On!  at the California Science Center",
@@ -513,27 +534,6 @@
       "mommypoppins",
       "Events",
       "Shows &amp; Exhibitions",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
-    "source": "mommypoppins",
-    "title": "Sunmist Fruit Farm",
-    "description": "Discover Sunmist Fruit Farm in Sunmist Fruit Farm. A great family activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Sunmist Fruit Farm",
-    "locationName": "Sunmist Fruit Farm",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Tours &amp; Attractions",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -805,27 +805,6 @@
     "locationName": "Academy Museum of Motion Pictures",
     "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/unnamed%20%2878%29.jpg?itok=wCegoTAl",
     "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/studio-ghiblis-ponyo-exhibition",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/hoppers-at-the-el-capitan",
-    "source": "mommypoppins",
-    "title": "Hoppers at the El Capitan",
-    "description": "Head to El Capitan Theatre for Hoppers at the El Capitan. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "El Capitan Theatre",
-    "locationName": "El Capitan Theatre",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/Hoppers.jpg?itok=D4inpd30",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/hoppers-at-the-el-capitan",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -1215,26 +1194,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -1251,6 +1210,26 @@
     "tags": [
       "mommypoppins",
       "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -1725,26 +1704,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-18T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -1761,6 +1720,26 @@
     "tags": [
       "mommypoppins",
       "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-18T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -2043,26 +2022,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-19T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -2079,6 +2038,26 @@
     "tags": [
       "mommypoppins",
       "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-19T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -2319,6 +2298,26 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-20T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -2335,26 +2334,6 @@
     "tags": [
       "mommypoppins",
       "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -3713,27 +3692,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/hoppers-at-the-el-capitan",
-    "source": "mommypoppins",
-    "title": "Hoppers at the El Capitan",
-    "description": "Head to El Capitan Theatre for Hoppers at the El Capitan. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-23T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "El Capitan Theatre",
-    "locationName": "El Capitan Theatre",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/Hoppers.jpg?itok=D4inpd30",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/hoppers-at-the-el-capitan",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
     "source": "mommypoppins",
     "title": "Eggstravaganza 2026 at Disneyland Resort",
@@ -4288,6 +4246,26 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-25T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -4304,26 +4282,6 @@
     "tags": [
       "mommypoppins",
       "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-25T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -4649,26 +4607,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
-    "startDate": "2026-03-26T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -4685,6 +4623,26 @@
     "tags": [
       "mommypoppins",
       "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Discover Eggstravaganza 2026 at Disneyland Resort in Disneyland Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-26T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
       "Various times"
     ],
     "metro": "los-angeles"
@@ -7693,184 +7651,6 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:amazing-animals-week",
-    "source": "nycfamily",
-    "title": "Amazing Animals Week",
-    "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "New York",
-    "locationName": "Center for Science Teaching and Learning-Tanglewood Preserve",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/12/wb2z2pxb.png?quality=51&amp;w=300",
-    "externalURL": "https://events.newyorkfamily.com/event/amazing-animals-week/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Animals"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:empire-skate-of-mind-grand-opening",
-    "source": "nycfamily",
-    "title": "Empire Skate of Mind",
-    "description": "Enjoy Empire Skate of Mind in Brooklyn. A wonderful family event for the whole family.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Brooklyn",
-    "locationName": "Brooklyn Children&#8217;s Museum",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/11/Empire-Skate-of-Mind-photo-credit-Winston-Williams-Brooklyn-Childrens-Museum-020-1400x934-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/empire-skate-of-mind-grand-opening/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions",
-      "Community"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:2026-dance-reflections-workshops-kids",
-    "source": "nycfamily",
-    "title": "2026 Dance Reflections Workshops – Kids",
-    "description": "2026 Dance Reflections Workshops – Kids is taking place in Manhattan. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "education",
-    "city": "Manhattan",
-    "locationName": "New York Center for Creativity &amp; Dance",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/01/Screenshot-2026-01-20-213347.png?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/2026-dance-reflections-workshops-kids/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Dance"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:family-hours-2",
-    "source": "nycfamily",
-    "title": "Swiss Institute Family Hours",
-    "description": "Looking for family fun in Lower East Side? Check out Swiss Institute Family Hours, a arts and crafts event the kids will enjoy.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "craft",
-    "city": "Lower East Side",
-    "locationName": "Swiss Institute",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/01/FHs.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/family-hours-2/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Art",
-      "Free"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:ofvs-toddies-crew",
-    "source": "nycfamily",
-    "title": "OFVS Toddies Crew",
-    "description": "Discover OFVS Toddies Crew in East Hampton. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "craft",
-    "city": "East Hampton",
-    "locationName": "The Studio on Main",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/01/Toddies-Crew.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/ofvs-toddies-crew/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Classes",
-      "Craft &amp; DIY"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:sol-invictus-discovery-dance-class-ages-8-and-up",
-    "source": "nycfamily",
-    "title": "Sol Invictus Discovery Dance Class",
-    "description": "Plan a family trip to Sol Invictus Discovery Dance Class in Manhattan. This educational event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "education",
-    "city": "Manhattan",
-    "locationName": "New York Center for Creativity &amp; Dance",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/The-Joyce-Theater-no-people-1-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/sol-invictus-discovery-dance-class-ages-8-and-up/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Classes",
-      "Dance"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:iconic-womens-week",
-    "source": "nycfamily",
-    "title": "Iconic Women’s Week",
-    "description": "Iconic Women’s Week is taking place in Manhattan. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Manhattan",
-    "locationName": "Children&#8217;s Museum of Manhattan",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Manhattan-Iconic-Womens-Week.png?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/iconic-womens-week/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions",
-      "History &amp; Culture"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:sail-away-presented-by-treehouse-shakers",
-    "source": "nycfamily",
-    "title": "Sail Away presented by Treehouse Shakers",
-    "description": "Sail Away presented by Treehouse Shakers is taking place in New York. Bring the kids for a memorable arts and crafts experience.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "craft",
-    "city": "New York",
-    "locationName": "Ailey Citigroup Theater",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Sail-Away-Dancing.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/sail-away-presented-by-treehouse-shakers/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Art",
-      "Dance"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:toddies-act-play-toddies-crew",
-    "source": "nycfamily",
-    "title": "Toddies Act + Play (Toddies Crew)",
-    "description": "Head to East Hampton for Toddies Act + Play (Toddies Crew). This educational event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-14T00:00:00",
-    "isAllDay": true,
-    "category": "education",
-    "city": "East Hampton",
-    "locationName": "The Studio on Main",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Toddies-Crew.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/toddies-act-play-toddies-crew/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Classes",
-      "Dance"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:child-adult-st-patricks-day-class-with-deborah-acquino",
     "source": "nycfamily",
     "title": "Child + Adult St Patrick&#8217;s Day Class with Deborah Acquino",
@@ -8252,6 +8032,26 @@
     "isRecurring": false,
     "tags": [
       "Free"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:sail-away-presented-by-treehouse-shakers",
+    "source": "nycfamily",
+    "title": "Sail Away presented by Treehouse Shakers",
+    "description": "Sail Away presented by Treehouse Shakers is taking place in New York. Bring the kids for a memorable arts and crafts experience.",
+    "startDate": "2026-03-14T00:00:00",
+    "isAllDay": true,
+    "category": "craft",
+    "city": "New York",
+    "locationName": "Ailey Citigroup Theater",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Sail-Away-Dancing.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/sail-away-presented-by-treehouse-shakers/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Art",
+      "Dance"
     ],
     "metro": "new-york"
   },
@@ -8878,7 +8678,7 @@
     "source": "nycfamily",
     "title": "Walt Whitman Birthplace Museum &#8211; Girl Scout Programs!",
     "description": "Looking for family fun in New York? Check out Walt Whitman Birthplace Museum &#8211; Girl Scout Programs!, a arts and crafts event the kids will enjoy.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "New York",
@@ -8898,7 +8698,7 @@
     "source": "nycfamily",
     "title": "Dorothy’s Adventures In Oz",
     "description": "Dorothy’s Adventures In Oz is taking place in Port Jefferson. Bring the kids for a memorable food experience.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "food",
     "city": "Port Jefferson",
@@ -8917,7 +8717,7 @@
     "source": "nycfamily",
     "title": "Pete the Cat",
     "description": "Plan a family trip to Pete the Cat in Garden City. This food event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "food",
     "city": "Garden City",
@@ -8937,7 +8737,7 @@
     "source": "nycfamily",
     "title": "Easter Bunny Photos",
     "description": "Easter Bunny Photos is taking place in Garden City. Bring the kids for a memorable seasonal experience.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Garden City",
@@ -8957,7 +8757,7 @@
     "source": "nycfamily",
     "title": "Easter Bunny Photos",
     "description": "Head to New York for Easter Bunny Photos. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "New York",
@@ -8977,7 +8777,7 @@
     "source": "nycfamily",
     "title": "Photos with The Bunny",
     "description": "Head to Staten Island for Photos with The Bunny. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Staten Island",
@@ -8997,7 +8797,7 @@
     "source": "nycfamily",
     "title": "Bunny Photo Experience",
     "description": "Plan a family trip to Bunny Photo Experience in New York. This seasonal event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "New York",
@@ -9017,7 +8817,7 @@
     "source": "nycfamily",
     "title": "Color Factory: Colors in Bloom",
     "description": "Discover Color Factory: Colors in Bloom in Brooklyn. A great family activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Brooklyn",
@@ -9034,7 +8834,7 @@
     "source": "nycfamily",
     "title": "Almost St. Patrick&#8217;s Day Party at GHBC!",
     "description": "Discover Almost St. Patrick&#8217;s Day Party at GHBC! in Peconic. A great reading activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "storytime",
     "city": "Peconic",
@@ -9054,7 +8854,7 @@
     "source": "nycfamily",
     "title": "Hicks Nurseries’ 36th Annual Flower &#038; Garden Show",
     "description": "Plan a family trip to Hicks Nurseries’ 36th Annual Flower &#038; Garden Show in Westbury. This outdoor event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "outdoorAdventure",
     "city": "Westbury",
@@ -9074,7 +8874,7 @@
     "source": "nycfamily",
     "title": "Junior Keepers: Doctor Zoolittle",
     "description": "Plan a family trip to Junior Keepers: Doctor Zoolittle in Manhattan. This family event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Manhattan",
@@ -9094,7 +8894,7 @@
     "source": "nycfamily",
     "title": "Children’s Leprechaun Scavenger Hunt",
     "description": "Looking for family fun in New York? Check out Children’s Leprechaun Scavenger Hunt, a family event the kids will enjoy.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "New York",
@@ -9114,7 +8914,7 @@
     "source": "nycfamily",
     "title": "Brooklyn St. Patrick&#8217;s 5K, 10K &amp; Half Marathon",
     "description": "Looking for family fun in Brooklyn? Check out Brooklyn St. Patrick&#8217;s 5K, 10K &amp; Half Marathon, a sports event the kids will enjoy.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "sports",
     "city": "Brooklyn",
@@ -9134,7 +8934,7 @@
     "source": "nycfamily",
     "title": "Girls Winter Softball Clinics",
     "description": "Discover Girls Winter Softball Clinics in Flushing. A great sports activity the whole family will love.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "sports",
     "city": "Flushing",
@@ -9154,7 +8954,7 @@
     "source": "nycfamily",
     "title": "Sea Squirts: Tune-A-Time",
     "description": "Enjoy Sea Squirts: Tune-A-Time in Brooklyn. A wonderful family event for the whole family.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Brooklyn",
@@ -9173,7 +8973,7 @@
     "source": "nycfamily",
     "title": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle",
     "description": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle is taking place in Bronx. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Bronx",
@@ -9188,11 +8988,50 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:amazing-animals-week",
+    "source": "nycfamily",
+    "title": "Amazing Animals Week",
+    "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
+    "startDate": "2026-03-15T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "New York",
+    "locationName": "Center for Science Teaching and Learning-Tanglewood Preserve",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/12/wb2z2pxb.png?quality=51&amp;w=300",
+    "externalURL": "https://events.newyorkfamily.com/event/amazing-animals-week/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Animals"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:empire-skate-of-mind-grand-opening",
+    "source": "nycfamily",
+    "title": "Empire Skate of Mind",
+    "description": "Enjoy Empire Skate of Mind in Brooklyn. A wonderful family event for the whole family.",
+    "startDate": "2026-03-15T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Brooklyn",
+    "locationName": "Brooklyn Children&#8217;s Museum",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/11/Empire-Skate-of-Mind-photo-credit-Winston-Williams-Brooklyn-Childrens-Museum-020-1400x934-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/empire-skate-of-mind-grand-opening/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions",
+      "Community"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:sunday-morning-family-jams",
     "source": "nycfamily",
     "title": "Sunday Morning Family Jams with Musiquita",
     "description": "Plan a family trip to Sunday Morning Family Jams with Musiquita in Forest Hills. This music event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "music",
     "city": "Forest Hills",
@@ -9212,7 +9051,7 @@
     "source": "nycfamily",
     "title": "St. Patrick&#8217;s Day: Family Program",
     "description": "Plan a family trip to St. Patrick&#8217;s Day: Family Program in Manhattan. This family event offers something special for everyone.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Manhattan",
@@ -9227,11 +9066,31 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:iconic-womens-week",
+    "source": "nycfamily",
+    "title": "Iconic Women’s Week",
+    "description": "Iconic Women’s Week is taking place in Manhattan. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-15T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Manhattan",
+    "locationName": "Children&#8217;s Museum of Manhattan",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Manhattan-Iconic-Womens-Week.png?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/iconic-womens-week/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions",
+      "History &amp; Culture"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:wellness-workshop-with-pilin-anice-3",
     "source": "nycfamily",
     "title": "Wellness Workshop with Pilin Anice",
     "description": "Wellness Workshop with Pilin Anice is taking place in Manhattan. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-14T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "education",
     "city": "Manhattan",
@@ -9514,26 +9373,6 @@
     "isRecurring": false,
     "tags": [
       "Music"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:girls-winter-softball-clinics",
-    "source": "nycfamily",
-    "title": "Girls Winter Softball Clinics",
-    "description": "Discover Girls Winter Softball Clinics in Flushing. A great sports activity the whole family will love.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "sports",
-    "city": "Flushing",
-    "locationName": "Al Oerter Recreation Center",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/family-placeholder-sports-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/girls-winter-softball-clinics/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Free",
-      "Sports"
     ],
     "metro": "new-york"
   },
@@ -10119,205 +9958,11 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:dorothys-adventures-in-oz",
-    "source": "nycfamily",
-    "title": "Dorothy’s Adventures In Oz",
-    "description": "Dorothy’s Adventures In Oz is taking place in Port Jefferson. Bring the kids for a memorable food experience.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "food",
-    "city": "Port Jefferson",
-    "locationName": "Theatre Three",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/lif-calendar-Dorothys-Adventures-In-Oz-2026-03.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/dorothys-adventures-in-oz/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Theater"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:pete-the-cat-4",
-    "source": "nycfamily",
-    "title": "Pete the Cat",
-    "description": "Plan a family trip to Pete the Cat in Garden City. This food event offers something special for everyone.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "food",
-    "city": "Garden City",
-    "locationName": "Long Island Children&#8217;s Museum",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/lif-calendar-pete-the-cat-2026-04.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/pete-the-cat-4/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions",
-      "Theater"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:easter-bunny-photos-2",
-    "source": "nycfamily",
-    "title": "Easter Bunny Photos",
-    "description": "Easter Bunny Photos is taking place in Garden City. Bring the kids for a memorable seasonal experience.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "seasonal",
-    "city": "Garden City",
-    "locationName": "Roosevelt Field",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/easter-bunny-photos-2/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Easter",
-      "Holiday"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:easter-bunny-photos-2024-03-08",
-    "source": "nycfamily",
-    "title": "Easter Bunny Photos",
-    "description": "Head to New York for Easter Bunny Photos. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "seasonal",
-    "city": "New York",
-    "locationName": "Smith Haven Mall",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2024/03/Long-Island-Easter-Bunny-Photos.png?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/easter-bunny-photos-2024-03-08/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Easter",
-      "Holiday"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:photos-with-the-bunny-2-2024-03-14",
-    "source": "nycfamily",
-    "title": "Photos with The Bunny",
-    "description": "Head to Staten Island for Photos with The Bunny. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "seasonal",
-    "city": "Staten Island",
-    "locationName": "Staten Island Mall",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2024/03/Staten-Island-Photos-with-The-Bunny.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.siparent.com/event/photos-with-the-bunny-2-2024-03-14/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Easter",
-      "Holiday"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:bunny-photo-experience-2024-03-02",
-    "source": "nycfamily",
-    "title": "Bunny Photo Experience",
-    "description": "Plan a family trip to Bunny Photo Experience in New York. This seasonal event offers something special for everyone.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "seasonal",
-    "city": "New York",
-    "locationName": "Walt Whitman Mall",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2024/02/lif-calendar-Bunny-Photo-Experience-2024-03.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/bunny-photo-experience-2024-03-02/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Easter",
-      "Holiday"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:color-factory-colors-in-bloom",
-    "source": "nycfamily",
-    "title": "Color Factory: Colors in Bloom",
-    "description": "Discover Color Factory: Colors in Bloom in Brooklyn. A great family activity the whole family will love.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "Brooklyn",
-    "locationName": "Color Factory New York",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/03/NYC-COLORS-IN-BLOOM.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/color-factory-colors-in-bloom/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:hicks-nurseries-35th-annual-flower-garden-show",
-    "source": "nycfamily",
-    "title": "Hicks Nurseries’ 36th Annual Flower &#038; Garden Show",
-    "description": "Plan a family trip to Hicks Nurseries’ 36th Annual Flower &#038; Garden Show in Westbury. This outdoor event offers something special for everyone.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "outdoorAdventure",
-    "city": "Westbury",
-    "locationName": "Hicks Nurseries",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/hicks-nurseries-35th-annual-flower-garden-show/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions",
-      "Free"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:mathnasium-learning-center-pi-day-celebration",
-    "source": "nycfamily",
-    "title": "Mathnasium Pi Day Takeover at the Museum of Ice Cream",
-    "description": "Plan a family trip to Mathnasium Pi Day Takeover at the Museum of Ice Cream in Manhattan. This museum event offers something special for everyone.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "museum",
-    "city": "Manhattan",
-    "locationName": "Museum of Ice Cream NYC",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/mathnasium-learning-center-pi-day-celebration/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:amazing-animals-week",
-    "source": "nycfamily",
-    "title": "Amazing Animals Week",
-    "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "other",
-    "city": "New York",
-    "locationName": "Center for Science Teaching and Learning-Tanglewood Preserve",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/12/wb2z2pxb.png?quality=51&amp;w=300",
-    "externalURL": "https://events.newyorkfamily.com/event/amazing-animals-week/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Animals"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:checkmate-at-bfpl",
     "source": "nycfamily",
     "title": "Checkmate at BFPL",
     "description": "Plan a family trip to Checkmate at BFPL in Tribeca. This family event offers something special for everyone.",
-    "startDate": "2026-03-16T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Tribeca",
@@ -10333,69 +9978,11 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:face-value-celebrity-press-photography",
-    "source": "nycfamily",
-    "title": "Face Value: Celebrity Press Photography",
-    "description": "Discover Face Value: Celebrity Press Photography in Manhattan. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "craft",
-    "city": "Manhattan",
-    "locationName": "The Museum of Modern Art",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/06/Face-Value.jpg?quality=51&amp;w=308",
-    "externalURL": "https://events.newyorkfamily.com/event/face-value-celebrity-press-photography/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Art"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:the-museum-of-modern-art-presents-a-view-from-the-vaults-the-1980s",
-    "source": "nycfamily",
-    "title": "The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s",
-    "description": "Enjoy The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s in Hudson Yards. A wonderful movie event for the whole family.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "freeMovie",
-    "city": "Hudson Yards",
-    "locationName": "The Museum of Modern Art",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/the-museum-of-modern-art-presents-a-view-from-the-vaults-the-1980s/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Film"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:childrens-access-workshops-for-children-with-physical-disabilities-ages-4-12",
-    "source": "nycfamily",
-    "title": "Children&#8217;s Access Workshops",
-    "description": "Children&#8217;s Access Workshops is taking place in Upper West Side. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "education",
-    "city": "Upper West Side",
-    "locationName": "New York City Ballet Rehearsal Studios  Samuel B. &#038; David Rose Building",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/10/childrens-access-pic.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/childrens-access-workshops-for-children-with-physical-disabilities-ages-4-12/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Dance",
-      "Special Needs"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:little-sprouts-jump-and-play-2",
     "source": "nycfamily",
     "title": "Little Sprouts: Jump and Play",
     "description": "Little Sprouts: Jump and Play is taking place in Astoria. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-16T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Astoria",
@@ -10410,31 +9997,11 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:blooming-wonders-a-celebration-of-spring",
-    "source": "nycfamily",
-    "title": "Blooming Wonders: A Celebration of Spring",
-    "description": "Head to Manhattan for Blooming Wonders: A Celebration of Spring. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Manhattan",
-    "locationName": "ARTECHOUSE NYC",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/18-BLOOMING-WONDERS.-Photo-by-ATH-Studio.jpeg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/blooming-wonders-a-celebration-of-spring/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Attractions",
-      "Community"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:march-into-monster-madness-in-long-island",
     "source": "nycfamily",
     "title": "March into Monster Madness in Long Island",
     "description": "Plan a family trip to March into Monster Madness in Long Island in Garden City. This family event offers something special for everyone.",
-    "startDate": "2026-03-16T00:00:00",
+    "startDate": "2026-03-15T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Garden City",
@@ -10683,6 +10250,25 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:mathnasium-learning-center-pi-day-celebration",
+    "source": "nycfamily",
+    "title": "Mathnasium Pi Day Takeover at the Museum of Ice Cream",
+    "description": "Plan a family trip to Mathnasium Pi Day Takeover at the Museum of Ice Cream in Manhattan. This museum event offers something special for everyone.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "museum",
+    "city": "Manhattan",
+    "locationName": "Museum of Ice Cream NYC",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/mathnasium-learning-center-pi-day-celebration/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:the-orchid-show-mr-flower-fantastics-concrete-jungle",
     "source": "nycfamily",
     "title": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle",
@@ -10698,6 +10284,25 @@
     "isRecurring": false,
     "tags": [
       "Attractions"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:amazing-animals-week",
+    "source": "nycfamily",
+    "title": "Amazing Animals Week",
+    "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "New York",
+    "locationName": "Center for Science Teaching and Learning-Tanglewood Preserve",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/12/wb2z2pxb.png?quality=51&amp;w=300",
+    "externalURL": "https://events.newyorkfamily.com/event/amazing-animals-week/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Animals"
     ],
     "metro": "new-york"
   },
@@ -10718,6 +10323,84 @@
     "tags": [
       "Attractions",
       "History &amp; Culture"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:checkmate-at-bfpl",
+    "source": "nycfamily",
+    "title": "Checkmate at BFPL",
+    "description": "Plan a family trip to Checkmate at BFPL in Tribeca. This family event offers something special for everyone.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Tribeca",
+    "locationName": "Brookfield Place",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/03/BFPL-Checkmate_2.jpeg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/checkmate-at-bfpl/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Community",
+      "Free"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:face-value-celebrity-press-photography",
+    "source": "nycfamily",
+    "title": "Face Value: Celebrity Press Photography",
+    "description": "Discover Face Value: Celebrity Press Photography in Manhattan. A great arts and crafts activity the whole family will love.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "craft",
+    "city": "Manhattan",
+    "locationName": "The Museum of Modern Art",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/06/Face-Value.jpg?quality=51&amp;w=308",
+    "externalURL": "https://events.newyorkfamily.com/event/face-value-celebrity-press-photography/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Art"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:the-museum-of-modern-art-presents-a-view-from-the-vaults-the-1980s",
+    "source": "nycfamily",
+    "title": "The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s",
+    "description": "Enjoy The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s in Hudson Yards. A wonderful movie event for the whole family.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "freeMovie",
+    "city": "Hudson Yards",
+    "locationName": "The Museum of Modern Art",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/the-museum-of-modern-art-presents-a-view-from-the-vaults-the-1980s/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Film"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:childrens-access-workshops-for-children-with-physical-disabilities-ages-4-12",
+    "source": "nycfamily",
+    "title": "Children&#8217;s Access Workshops",
+    "description": "Children&#8217;s Access Workshops is taking place in Upper West Side. Bring the kids for a memorable educational experience.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "education",
+    "city": "Upper West Side",
+    "locationName": "New York City Ballet Rehearsal Studios  Samuel B. &#038; David Rose Building",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/10/childrens-access-pic.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/childrens-access-workshops-for-children-with-physical-disabilities-ages-4-12/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Dance",
+      "Special Needs"
     ],
     "metro": "new-york"
   },
@@ -10766,7 +10449,7 @@
     "source": "nycfamily",
     "title": "Blooming Wonders: A Celebration of Spring",
     "description": "Head to Manhattan for Blooming Wonders: A Celebration of Spring. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "festival",
     "city": "Manhattan",
@@ -10786,7 +10469,7 @@
     "source": "nycfamily",
     "title": "March into Monster Madness in Long Island",
     "description": "Plan a family trip to March into Monster Madness in Long Island in Garden City. This family event offers something special for everyone.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Garden City",
@@ -10801,30 +10484,11 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:in-motion-workshops-for-children-ages-8-12",
-    "source": "nycfamily",
-    "title": "In Motion Workshops: For children ages 8-12",
-    "description": "Discover In Motion Workshops: For children ages 8-12 in Upper West Side. A great educational activity the whole family will love.",
-    "startDate": "2026-03-17T00:00:00",
-    "isAllDay": true,
-    "category": "education",
-    "city": "Upper West Side",
-    "locationName": "New York City Ballet Rehearsal Studios  Samuel B. &#038; David Rose Building",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2025/10/in-motion-pic.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/in-motion-workshops-for-children-ages-8-12/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Dance"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:teen-craft-shamrock-glasses-fortune-tellers",
     "source": "nycfamily",
     "title": "Teen Craft: Shamrock Glasses &#038; Fortune Tellers",
     "description": "Discover Teen Craft: Shamrock Glasses &#038; Fortune Tellers in Staten Island. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "Staten Island",
@@ -10843,7 +10507,7 @@
     "source": "nycfamily",
     "title": "Irish Heritage Finger Puppets",
     "description": "Discover Irish Heritage Finger Puppets in Garden City. A great family activity the whole family will love.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Garden City",
@@ -10862,7 +10526,7 @@
     "source": "nycfamily",
     "title": "3D Printed Labubus",
     "description": "Discover 3D Printed Labubus in Bridgehampton. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "Bridgehampton",
@@ -10882,7 +10546,7 @@
     "source": "nycfamily",
     "title": "5th Annual 40 Shades of Green",
     "description": "Enjoy 5th Annual 40 Shades of Green in Long Island City. A wonderful family event for the whole family.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Long Island City",
@@ -10902,7 +10566,7 @@
     "source": "nycfamily",
     "title": "Luck of the Stars: Library Star Search Talent Show",
     "description": "Luck of the Stars: Library Star Search Talent Show is taking place in Bayside. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Bayside",
@@ -10922,7 +10586,7 @@
     "source": "nycfamily",
     "title": "St. Patrick&#8217;s Day Storytime+Craft",
     "description": "Looking for family fun in Staten Island? Check out St. Patrick&#8217;s Day Storytime+Craft, a reading event the kids will enjoy.",
-    "startDate": "2026-03-17T00:00:00",
+    "startDate": "2026-03-16T00:00:00",
     "isAllDay": true,
     "category": "storytime",
     "city": "Staten Island",
@@ -11368,7 +11032,7 @@
     "source": "nycfamily",
     "title": "Children&#8217;s Access Workshops",
     "description": "Children&#8217;s Access Workshops is taking place in Upper West Side. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "education",
     "city": "Upper West Side",
@@ -11384,31 +11048,11 @@
     "metro": "new-york"
   },
   {
-    "sourceId": "nycfamily:kindie-rock",
-    "source": "nycfamily",
-    "title": "Kindie Rock",
-    "description": "Kindie Rock is taking place in Battery Park City. Bring the kids for a memorable music experience.",
-    "startDate": "2026-03-18T00:00:00",
-    "isAllDay": true,
-    "category": "music",
-    "city": "Battery Park City",
-    "locationName": "6 River Terrace",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/family-placeholder-music.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/kindie-rock/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Free",
-      "Music"
-    ],
-    "metro": "new-york"
-  },
-  {
     "sourceId": "nycfamily:little-sprouts-jump-and-play-2",
     "source": "nycfamily",
     "title": "Little Sprouts: Jump and Play",
     "description": "Little Sprouts: Jump and Play is taking place in Astoria. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Astoria",
@@ -11427,7 +11071,7 @@
     "source": "nycfamily",
     "title": "Little Movers Storytime: Pajama Party!",
     "description": "Enjoy Little Movers Storytime: Pajama Party! in Staten Island. A wonderful reading event for the whole family.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "storytime",
     "city": "Staten Island",
@@ -11446,7 +11090,7 @@
     "source": "nycfamily",
     "title": "Celebrate 45 Years of PAC-MAN at The Paley Museum",
     "description": "Looking for family fun in New York? Check out Celebrate 45 Years of PAC-MAN at The Paley Museum, a museum event the kids will enjoy.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "museum",
     "city": "New York",
@@ -11466,7 +11110,7 @@
     "source": "nycfamily",
     "title": "Blooming Wonders: A Celebration of Spring",
     "description": "Head to Manhattan for Blooming Wonders: A Celebration of Spring. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "festival",
     "city": "Manhattan",
@@ -11486,7 +11130,7 @@
     "source": "nycfamily",
     "title": "Survivor Exhibit at The Paley Museum",
     "description": "Enjoy Survivor Exhibit at The Paley Museum in New York. A wonderful movie event for the whole family.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "freeMovie",
     "city": "New York",
@@ -11506,7 +11150,7 @@
     "source": "nycfamily",
     "title": "Visit a Brand-New Survivor Exhibit at The Paley Museum",
     "description": "Head to New York for Visit a Brand-New Survivor Exhibit at The Paley Museum. This movie event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "freeMovie",
     "city": "New York",
@@ -11526,7 +11170,7 @@
     "source": "nycfamily",
     "title": "March into Monster Madness in Long Island",
     "description": "Plan a family trip to March into Monster Madness in Long Island in Garden City. This family event offers something special for everyone.",
-    "startDate": "2026-03-18T00:00:00",
+    "startDate": "2026-03-17T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Garden City",
@@ -11970,7 +11614,7 @@
     "source": "nycfamily",
     "title": "Face Value: Celebrity Press Photography",
     "description": "Discover Face Value: Celebrity Press Photography in Manhattan. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "Manhattan",
@@ -11989,7 +11633,7 @@
     "source": "nycfamily",
     "title": "The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s",
     "description": "Enjoy The Museum of Modern Art Presents A View from the Vaults: The 1980&#8217;s in Hudson Yards. A wonderful movie event for the whole family.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "freeMovie",
     "city": "Hudson Yards",
@@ -12008,7 +11652,7 @@
     "source": "nycfamily",
     "title": "Shannon-igans",
     "description": "Plan a family trip to Shannon-igans in Bridgehampton. This family event offers something special for everyone.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Bridgehampton",
@@ -12027,7 +11671,7 @@
     "source": "nycfamily",
     "title": "Children&#8217;s Access Workshops",
     "description": "Children&#8217;s Access Workshops is taking place in Upper West Side. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "education",
     "city": "Upper West Side",
@@ -12047,7 +11691,7 @@
     "source": "nycfamily",
     "title": "Museum Adventure Activity: Sea Survival Challenge",
     "description": "Enjoy Museum Adventure Activity: Sea Survival Challenge in New York. A wonderful arts and crafts event for the whole family.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "New York",
@@ -12067,7 +11711,7 @@
     "source": "nycfamily",
     "title": "Pot O&#8217; Gold Scavenger Hunt",
     "description": "Discover Pot O&#8217; Gold Scavenger Hunt in New York. A great family activity the whole family will love.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "New York",
@@ -12086,7 +11730,7 @@
     "source": "nycfamily",
     "title": "Celebrate 45 Years of PAC-MAN at The Paley Museum",
     "description": "Looking for family fun in New York? Check out Celebrate 45 Years of PAC-MAN at The Paley Museum, a museum event the kids will enjoy.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "museum",
     "city": "New York",
@@ -12106,7 +11750,7 @@
     "source": "nycfamily",
     "title": "&#8220;Video Games: The Great Connector&#8221;",
     "description": "Head to Stony Brook for &#8220;Video Games: The Great Connector&#8221;. This food event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "food",
     "city": "Stony Brook",
@@ -12126,7 +11770,7 @@
     "source": "nycfamily",
     "title": "&#8220;50 Years of Apple Computers: The Kevin Lenane Collection&#8221;",
     "description": "Head to Stony Brook for &#8220;50 Years of Apple Computers: The Kevin Lenane Collection&#8221;. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-19T00:00:00",
+    "startDate": "2026-03-18T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Stony Brook",
@@ -12512,7 +12156,7 @@
     "source": "nycfamily",
     "title": "FIRST Long Island Regional FIRST® Robotics Competition",
     "description": "Plan a family trip to FIRST Long Island Regional FIRST® Robotics Competition in Hempstead. This family event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Hempstead",
@@ -12531,7 +12175,7 @@
     "source": "nycfamily",
     "title": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle",
     "description": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle is taking place in Bronx. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Bronx",
@@ -12550,7 +12194,7 @@
     "source": "nycfamily",
     "title": "Amazing Animals Week",
     "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "New York",
@@ -12569,7 +12213,7 @@
     "source": "nycfamily",
     "title": "Celebrate Eid al-Fitr",
     "description": "Celebrate Eid al-Fitr is taking place in Manhattan. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Manhattan",
@@ -12589,7 +12233,7 @@
     "source": "nycfamily",
     "title": "Sail Away presented by Treehouse Shakers",
     "description": "Sail Away presented by Treehouse Shakers is taking place in New York. Bring the kids for a memorable arts and crafts experience.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "New York",
@@ -12609,7 +12253,7 @@
     "source": "nycfamily",
     "title": "Season Opening Weekend at The Adventure Park at Long Island",
     "description": "Head to New York for Season Opening Weekend at The Adventure Park at Long Island. This outdoor event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "outdoorAdventure",
     "city": "New York",
@@ -12629,7 +12273,7 @@
     "source": "nycfamily",
     "title": "Easter Egg Hunt in the Trees",
     "description": "Looking for family fun in New York? Check out Easter Egg Hunt in the Trees, a festival event the kids will enjoy.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "festival",
     "city": "New York",
@@ -12649,7 +12293,7 @@
     "source": "nycfamily",
     "title": "Checkmate at BFPL",
     "description": "Plan a family trip to Checkmate at BFPL in Tribeca. This family event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Tribeca",
@@ -12669,7 +12313,7 @@
     "source": "nycfamily",
     "title": "Face Value: Celebrity Press Photography",
     "description": "Discover Face Value: Celebrity Press Photography in Manhattan. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-19T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "Manhattan",
@@ -12795,6 +12439,26 @@
     "isFeatured": false,
     "isRecurring": false,
     "tags": [],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:sail-away-presented-by-treehouse-shakers",
+    "source": "nycfamily",
+    "title": "Sail Away presented by Treehouse Shakers",
+    "description": "Sail Away presented by Treehouse Shakers is taking place in New York. Bring the kids for a memorable arts and crafts experience.",
+    "startDate": "2026-03-20T00:00:00",
+    "isAllDay": true,
+    "category": "craft",
+    "city": "New York",
+    "locationName": "Ailey Citigroup Theater",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/Sail-Away-Dancing.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/sail-away-presented-by-treehouse-shakers/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Art",
+      "Dance"
+    ],
     "metro": "new-york"
   },
   {
@@ -13245,7 +12909,7 @@
     "source": "nycfamily",
     "title": "Dorothy’s Adventures In Oz",
     "description": "Dorothy’s Adventures In Oz is taking place in Port Jefferson. Bring the kids for a memorable food experience.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "food",
     "city": "Port Jefferson",
@@ -13264,7 +12928,7 @@
     "source": "nycfamily",
     "title": "Pete the Cat",
     "description": "Plan a family trip to Pete the Cat in Garden City. This food event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "food",
     "city": "Garden City",
@@ -13284,7 +12948,7 @@
     "source": "nycfamily",
     "title": "Easter Bunny Photos",
     "description": "Easter Bunny Photos is taking place in Garden City. Bring the kids for a memorable seasonal experience.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Garden City",
@@ -13304,7 +12968,7 @@
     "source": "nycfamily",
     "title": "Easter Bunny Photos",
     "description": "Head to New York for Easter Bunny Photos. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "New York",
@@ -13320,11 +12984,31 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:photos-with-the-bunny-2-2024-03-14",
+    "source": "nycfamily",
+    "title": "Photos with The Bunny",
+    "description": "Head to Staten Island for Photos with The Bunny. This seasonal event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "seasonal",
+    "city": "Staten Island",
+    "locationName": "Staten Island Mall",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2024/03/Staten-Island-Photos-with-The-Bunny.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.siparent.com/event/photos-with-the-bunny-2-2024-03-14/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Easter",
+      "Holiday"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:photos-with-bunny-2024-03-17",
     "source": "nycfamily",
     "title": "Photos with Bunny",
     "description": "Discover Photos with Bunny in Bronx. A great seasonal activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Bronx",
@@ -13344,7 +13028,7 @@
     "source": "nycfamily",
     "title": "Bunny Photo Experience",
     "description": "Plan a family trip to Bunny Photo Experience in New York. This seasonal event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "seasonal",
     "city": "New York",
@@ -13364,7 +13048,7 @@
     "source": "nycfamily",
     "title": "Color Factory: Colors in Bloom",
     "description": "Discover Color Factory: Colors in Bloom in Brooklyn. A great family activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "other",
     "city": "Brooklyn",
@@ -13381,7 +13065,7 @@
     "source": "nycfamily",
     "title": "Hicks Nurseries’ 36th Annual Flower &#038; Garden Show",
     "description": "Plan a family trip to Hicks Nurseries’ 36th Annual Flower &#038; Garden Show in Westbury. This outdoor event offers something special for everyone.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "outdoorAdventure",
     "city": "Westbury",
@@ -13397,11 +13081,30 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:first-long-island-regional-first-robotics-competition",
+    "source": "nycfamily",
+    "title": "FIRST Long Island Regional FIRST® Robotics Competition",
+    "description": "Plan a family trip to FIRST Long Island Regional FIRST® Robotics Competition in Hempstead. This family event offers something special for everyone.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Hempstead",
+    "locationName": "Hofstra University David S. Mack Sports and Exhibition Complex",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/FRC-2025-photo-1-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/first-long-island-regional-first-robotics-competition/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Free"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:runner-in-red-5k-run-walk",
     "source": "nycfamily",
     "title": "Runner In Red 5K Run/Walk",
     "description": "Discover Runner In Red 5K Run/Walk in East Meadow. A great sports activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "sports",
     "city": "East Meadow",
@@ -13421,7 +13124,7 @@
     "source": "nycfamily",
     "title": "The Debbie Moschello 4-Leaf Clover 5K Race",
     "description": "Discover The Debbie Moschello 4-Leaf Clover 5K Race in New York. A great sports activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "sports",
     "city": "New York",
@@ -13437,11 +13140,69 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:the-orchid-show-mr-flower-fantastics-concrete-jungle",
+    "source": "nycfamily",
+    "title": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle",
+    "description": "The Orchid Show: Mr. Flower Fantastic&#8217;s Concrete Jungle is taking place in Bronx. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Bronx",
+    "locationName": "New York Botanical Garden",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/the-orchid-show-mr-flower-fantastics-concrete-jungle/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:amazing-animals-week",
+    "source": "nycfamily",
+    "title": "Amazing Animals Week",
+    "description": "Plan a family trip to Amazing Animals Week in New York. This family event offers something special for everyone.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "New York",
+    "locationName": "Center for Science Teaching and Learning-Tanglewood Preserve",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/12/wb2z2pxb.png?quality=51&amp;w=300",
+    "externalURL": "https://events.newyorkfamily.com/event/amazing-animals-week/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Animals"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:empire-skate-of-mind-grand-opening",
+    "source": "nycfamily",
+    "title": "Empire Skate of Mind",
+    "description": "Enjoy Empire Skate of Mind in Brooklyn. A wonderful family event for the whole family.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Brooklyn",
+    "locationName": "Brooklyn Children&#8217;s Museum",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2025/11/Empire-Skate-of-Mind-photo-credit-Winston-Williams-Brooklyn-Childrens-Museum-020-1400x934-1.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/empire-skate-of-mind-grand-opening/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions",
+      "Community"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:ofvs-toddies-crew",
     "source": "nycfamily",
     "title": "OFVS Toddies Crew",
     "description": "Discover OFVS Toddies Crew in East Hampton. A great arts and crafts activity the whole family will love.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "East Hampton",
@@ -13461,7 +13222,7 @@
     "source": "nycfamily",
     "title": "Toddies Act + Play (Toddies Crew)",
     "description": "Head to East Hampton for Toddies Act + Play (Toddies Crew). This educational event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "education",
     "city": "East Hampton",
@@ -13477,11 +13238,51 @@
     "metro": "new-york"
   },
   {
+    "sourceId": "nycfamily:season-opening-weekend-at-the-adventure-park-at-long-island",
+    "source": "nycfamily",
+    "title": "Season Opening Weekend at The Adventure Park at Long Island",
+    "description": "Head to New York for Season Opening Weekend at The Adventure Park at Long Island. This outdoor event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "outdoorAdventure",
+    "city": "New York",
+    "locationName": "The Adventure Park at Long Island",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/135681-Season-Opening-Weekend-at-The-Adventure-Park-at-Long-Island.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/season-opening-weekend-at-the-adventure-park-at-long-island/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Attractions",
+      "Sports"
+    ],
+    "metro": "new-york"
+  },
+  {
+    "sourceId": "nycfamily:easter-egg-hunt-in-the-trees-2",
+    "source": "nycfamily",
+    "title": "Easter Egg Hunt in the Trees",
+    "description": "Looking for family fun in New York? Check out Easter Egg Hunt in the Trees, a festival event the kids will enjoy.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "New York",
+    "locationName": "The Adventure Park at Long Island",
+    "imageURL": "https://events.amny.com/wp-content/uploads/2026/03/Easter-Egg-Hunt-in-the-Trees.jpg?quality=51&amp;w=384",
+    "externalURL": "https://events.newyorkfamily.com/event/easter-egg-hunt-in-the-trees-2/",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "Easter",
+      "Festivals"
+    ],
+    "metro": "new-york"
+  },
+  {
     "sourceId": "nycfamily:spring-equinox-party-at-childrens-museum-of-the-east-end-cmee",
     "source": "nycfamily",
     "title": "Spring Equinox Party at Children&#8217;s Museum of the East End (CMEE)",
     "description": "Head to Bridgehampton for Spring Equinox Party at Children&#8217;s Museum of the East End (CMEE). This arts and crafts event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-20T00:00:00",
+    "startDate": "2026-03-21T00:00:00",
     "isAllDay": true,
     "category": "craft",
     "city": "Bridgehampton",
@@ -13511,23 +13312,6 @@
       "Community",
       "Free"
     ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:spring-equinox-party-at-childrens-museum-of-the-east-end-cmee-2",
-    "source": "nycfamily",
-    "title": "Spring Equinox Party at Children&#8217;s Museum of the East End (CMEE)",
-    "description": "Spring Equinox Party at Children&#8217;s Museum of the East End (CMEE) is taking place in Bridgehampton. Bring the kids for a memorable arts and crafts experience.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "craft",
-    "city": "Bridgehampton",
-    "locationName": "CMEE",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/03/eG_VniDX-1-e1773302248335.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/spring-equinox-party-at-childrens-museum-of-the-east-end-cmee-2/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [],
     "metro": "new-york"
   },
   {
@@ -14496,45 +14280,6 @@
     "tags": [
       "Art",
       "Classes"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:photos-with-the-bunny-at-queens-center-2024-03-29",
-    "source": "nycfamily",
-    "title": "Photos with the Bunny at Queens Center",
-    "description": "Enjoy Photos with the Bunny at Queens Center in Queens. A wonderful seasonal event for the whole family.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "seasonal",
-    "city": "Queens",
-    "locationName": "Queens Center",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2022/11/ny-parenting-liberty-logo-family-brandcolors-placeholder-1.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/photos-with-the-bunny-at-queens-center-2024-03-29/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Easter",
-      "Holiday"
-    ],
-    "metro": "new-york"
-  },
-  {
-    "sourceId": "nycfamily:dorothys-adventures-in-oz",
-    "source": "nycfamily",
-    "title": "Dorothy’s Adventures In Oz",
-    "description": "Dorothy’s Adventures In Oz is taking place in Port Jefferson. Bring the kids for a memorable food experience.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "food",
-    "city": "Port Jefferson",
-    "locationName": "Theatre Three",
-    "imageURL": "https://events.amny.com/wp-content/uploads/2026/02/lif-calendar-Dorothys-Adventures-In-Oz-2026-03.jpg?quality=51&amp;w=384",
-    "externalURL": "https://events.newyorkfamily.com/event/dorothys-adventures-in-oz/",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "Theater"
     ],
     "metro": "new-york"
   },
@@ -17488,27 +17233,6 @@
     "metro": "dallas"
   },
   {
-    "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
-    "source": "mommypoppins",
-    "title": "Spring Break in the Park",
-    "description": "Head to Klyde Warren Park for Spring Break in the Park. This outdoor event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-20T00:00:00",
-    "isAllDay": true,
-    "category": "outdoorAdventure",
-    "city": "Klyde Warren Park",
-    "locationName": "Klyde Warren Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "dallas"
-  },
-  {
     "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/flp-circus-at-riders-field",
     "source": "mommypoppins",
     "title": "FL!P Circus at Riders Field",
@@ -17520,6 +17244,27 @@
     "locationName": "Riders Field",
     "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
     "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/flp-circus-at-riders-field",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "dallas"
+  },
+  {
+    "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
+    "source": "mommypoppins",
+    "title": "Spring Break in the Park",
+    "description": "Head to Klyde Warren Park for Spring Break in the Park. This outdoor event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-20T00:00:00",
+    "isAllDay": true,
+    "category": "outdoorAdventure",
+    "city": "Klyde Warren Park",
+    "locationName": "Klyde Warren Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -17947,27 +17692,6 @@
     "metro": "dallas"
   },
   {
-    "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
-    "source": "mommypoppins",
-    "title": "Spring Break in the Park",
-    "description": "Head to Klyde Warren Park for Spring Break in the Park. This outdoor event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "outdoorAdventure",
-    "city": "Klyde Warren Park",
-    "locationName": "Klyde Warren Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "dallas"
-  },
-  {
     "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/flp-circus-at-riders-field",
     "source": "mommypoppins",
     "title": "FL!P Circus at Riders Field",
@@ -17979,6 +17703,27 @@
     "locationName": "Riders Field",
     "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
     "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/flp-circus-at-riders-field",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "dallas"
+  },
+  {
+    "sourceId": "mommypoppins:/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
+    "source": "mommypoppins",
+    "title": "Spring Break in the Park",
+    "description": "Head to Klyde Warren Park for Spring Break in the Park. This outdoor event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "outdoorAdventure",
+    "city": "Klyde Warren Park",
+    "locationName": "Klyde Warren Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/dallas-fort-worth-kids/event/events/spring-break-in-the-park",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -20065,26 +19810,6 @@
     "metro": "chicago"
   },
   {
-    "sourceId": "mommypoppins:/chicago-kids/event/events/northwest-side-irish-parade",
-    "source": "mommypoppins",
-    "title": "Northwest Side Irish Parade",
-    "description": "Head to William J. Onahan Public School for Northwest Side Irish Parade. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "William J. Onahan Public School",
-    "locationName": "William J. Onahan Public School",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/chicago-kids/event/events/northwest-side-irish-parade",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events"
-    ],
-    "metro": "chicago"
-  },
-  {
     "sourceId": "mommypoppins:/chicago-kids/event/events/south-side-irish-parade",
     "source": "mommypoppins",
     "title": "South Side Irish Parade",
@@ -20096,6 +19821,26 @@
     "locationName": "South Side of Chicago",
     "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
     "externalURL": "https://mommypoppins.com/chicago-kids/event/events/south-side-irish-parade",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mommypoppins:/chicago-kids/event/events/northwest-side-irish-parade",
+    "source": "mommypoppins",
+    "title": "Northwest Side Irish Parade",
+    "description": "Head to William J. Onahan Public School for Northwest Side Irish Parade. This festival event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-15T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "William J. Onahan Public School",
+    "locationName": "William J. Onahan Public School",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/chicago-kids/event/events/northwest-side-irish-parade",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -21425,6 +21170,646 @@
     "metro": "chicago"
   },
   {
+    "sourceId": "mykidlist:https://mykidlist.com/event/drop-in-crafts-rolling-meadows/2026-03-13",
+    "source": "mykidlist",
+    "title": "Drop In Crafts",
+    "description": "Plan a family trip to Drop In Crafts in Rolling Meadows. This arts and crafts event offers something special for everyone.",
+    "startDate": "2026-03-13T09:00:00-05:00",
+    "isAllDay": false,
+    "category": "craft",
+    "city": "Rolling Meadows",
+    "address": "3110 Martin Lane",
+    "locationName": "Rolling Meadows Library",
+    "externalURL": "https://mykidlist.com/event/drop-in-crafts-rolling-meadows/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/morning-glories/2026-03-13",
+    "source": "mykidlist",
+    "title": "Morning Glories",
+    "description": "Enjoy Morning Glories in Chicago. A wonderful family event for the whole family.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Chicago",
+    "address": "300 North Central Park Avenue",
+    "locationName": "Garfield Park Conservatory",
+    "externalURL": "https://mykidlist.com/event/morning-glories/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/rhea-lanas-of-west-chicagoland/2026-03-13",
+    "source": "mykidlist",
+    "title": "Rhea Lana's of West Chicagoland",
+    "description": "Rhea Lana's of West Chicagoland is taking place in Lombard. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Lombard",
+    "address": "1000 N. Rohlwing Road",
+    "locationName": "Landings of Lombard",
+    "externalURL": "https://mykidlist.com/event/rhea-lanas-of-west-chicagoland/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/first-time-parents-meetup/2026-03-13",
+    "source": "mykidlist",
+    "title": "First-Time Parents' Meetup",
+    "description": "Looking for family fun in Arlington Heights? Check out First-Time Parents' Meetup, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Arlington Heights",
+    "address": "500 North Dunton Avenue",
+    "locationName": "Arlington Heights Memorial Library",
+    "externalURL": "https://mykidlist.com/event/first-time-parents-meetup/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/marching-forward/2026-03-13",
+    "source": "mykidlist",
+    "title": "Marching Forward",
+    "description": "Looking for family fun in St. Charles? Check out Marching Forward, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "St. Charles",
+    "address": "1 South 6th Avenue",
+    "locationName": "St. Charles Public Library",
+    "externalURL": "https://mykidlist.com/event/marching-forward/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/artstravaganza/2026-03-13",
+    "source": "mykidlist",
+    "title": "ARTstravaganza",
+    "description": "Discover ARTstravaganza in Lisle. A great arts and crafts activity the whole family will love.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "craft",
+    "city": "Lisle",
+    "address": "777 Front Street",
+    "locationName": "Lisle Library District",
+    "externalURL": "https://mykidlist.com/event/artstravaganza/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/lucky-babies/2026-03-13",
+    "source": "mykidlist",
+    "title": "Lucky Babies",
+    "description": "Looking for family fun in Downers Grove? Check out Lucky Babies, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Downers Grove",
+    "address": "1050 Curtiss Street",
+    "locationName": "Downers Grove Public Library",
+    "externalURL": "https://mykidlist.com/event/lucky-babies/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/fridays-in-the-field-little-red/2026-03-13",
+    "source": "mykidlist",
+    "title": "Fridays in the Field",
+    "description": "Fridays in the Field is taking place in Willow Springs. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Willow Springs",
+    "address": "9800 Willow Springs Road",
+    "locationName": "Little Red Schoolhouse Nature Center",
+    "externalURL": "https://mykidlist.com/event/fridays-in-the-field-little-red/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/science-detectives/2026-03-13",
+    "source": "mykidlist",
+    "title": "Science Detectives",
+    "description": "Head to Lincolnshire for Science Detectives. This educational event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "education",
+    "city": "Lincolnshire",
+    "address": "300 Olde Half Day Road",
+    "locationName": "Vernon Area Public Library",
+    "externalURL": "https://mykidlist.com/event/science-detectives/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/pop-in-play-play-dough-2/2026-03-13",
+    "source": "mykidlist",
+    "title": "Pop-in Play: Play Dough",
+    "description": "Plan a family trip to Pop-in Play: Play Dough in Lombard. This family event offers something special for everyone.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Lombard",
+    "address": "411 South Main Street",
+    "locationName": "Helen Plum Library",
+    "externalURL": "https://mykidlist.com/event/pop-in-play-play-dough-2/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/spring-craft-and-vendor-market/2026-03-13",
+    "source": "mykidlist",
+    "title": "Spring Craft and Vendor Market",
+    "description": "Enjoy Spring Craft and Vendor Market in Lombard. A wonderful arts and crafts event for the whole family.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "craft",
+    "city": "Lombard",
+    "address": "203 Yorktown Shopping Center",
+    "locationName": "Yorktown Center",
+    "externalURL": "https://mykidlist.com/event/spring-craft-and-vendor-market/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/shamrock-scavenger-hunt/2026-03-13",
+    "source": "mykidlist",
+    "title": "Shamrock Scavenger Hunt",
+    "description": "Discover Shamrock Scavenger Hunt in Oak Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-13T10:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Oak Park",
+    "address": "615 Garfield Street",
+    "locationName": "Oak Park Conservatory",
+    "externalURL": "https://mykidlist.com/event/shamrock-scavenger-hunt/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/storytime-with-miss-alex/2026-03-13",
+    "source": "mykidlist",
+    "title": "Storytime with Miss Alex",
+    "description": "Head to Batavia for Storytime with Miss Alex. This reading event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-13T10:30:00-05:00",
+    "isAllDay": false,
+    "category": "storytime",
+    "city": "Batavia",
+    "address": "12 S Water St",
+    "locationName": "Rosewood Farm & Market - Batavia",
+    "externalURL": "https://mykidlist.com/event/storytime-with-miss-alex/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/scales-n-tales-storytime/2026-03-13",
+    "source": "mykidlist",
+    "title": "Scales-N-Tales Storytime",
+    "description": "Looking for family fun in Franklin Park? Check out Scales-N-Tales Storytime, a reading event the kids will enjoy.",
+    "startDate": "2026-03-13T11:00:00-05:00",
+    "isAllDay": false,
+    "category": "storytime",
+    "city": "Franklin Park",
+    "address": "10311 Grand Avenue",
+    "locationName": "Franklin Park Public Library",
+    "externalURL": "https://mykidlist.com/event/scales-n-tales-storytime/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/friday-storytime/2026-03-13",
+    "source": "mykidlist",
+    "title": "Friday Storytime",
+    "description": "Plan a family trip to Friday Storytime in Bolingbrook. This reading event offers something special for everyone.",
+    "startDate": "2026-03-13T11:00:00-05:00",
+    "isAllDay": false,
+    "category": "storytime",
+    "city": "Bolingbrook",
+    "address": "631 E Boughton Rd Suite 100",
+    "locationName": "Barnes & Noble",
+    "externalURL": "https://mykidlist.com/event/friday-storytime/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/chinese-story-time/2026-03-13",
+    "source": "mykidlist",
+    "title": "Chinese Story Time",
+    "description": "Discover Chinese Story Time in Barrington. A great reading activity the whole family will love.",
+    "startDate": "2026-03-13T11:00:00-05:00",
+    "isAllDay": false,
+    "category": "storytime",
+    "city": "Barrington",
+    "address": "505 North Northwest Highway",
+    "locationName": "Barrington Area Library",
+    "externalURL": "https://mykidlist.com/event/chinese-story-time/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/cuentos-en-espanol/2026-03-13",
+    "source": "mykidlist",
+    "title": "Cuentos en Español",
+    "description": "Enjoy Cuentos en Español in Elmwood Park. A wonderful family event for the whole family.",
+    "startDate": "2026-03-13T11:30:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Elmwood Park",
+    "address": "1 Conti Parkway",
+    "locationName": "Elmwood Park Public Library",
+    "externalURL": "https://mykidlist.com/event/cuentos-en-espanol/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/tiny-twistars-preschool-pop-up/2026-03-13",
+    "source": "mykidlist",
+    "title": "Tiny Twistars Preschool Pop Up",
+    "description": "Enjoy Tiny Twistars Preschool Pop Up in La Grange. A wonderful toddler-friendly event for the whole family.",
+    "startDate": "2026-03-13T12:00:00-05:00",
+    "isAllDay": false,
+    "category": "toddlerActivity",
+    "city": "La Grange",
+    "address": "330 Washington Avenue",
+    "locationName": "Gemini Gymnastics Academy",
+    "externalURL": "https://mykidlist.com/event/tiny-twistars-preschool-pop-up/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/diy-drive-in-movie/2026-03-13",
+    "source": "mykidlist",
+    "title": "DIY Drive-In Movie",
+    "description": "Enjoy DIY Drive-In Movie in Downers Grove. A wonderful movie event for the whole family.",
+    "startDate": "2026-03-13T13:00:00-05:00",
+    "isAllDay": false,
+    "category": "freeMovie",
+    "city": "Downers Grove",
+    "address": "1050 Curtiss Street",
+    "locationName": "Downers Grove Public Library",
+    "externalURL": "https://mykidlist.com/event/diy-drive-in-movie/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/family-open-lab/2026-03-13",
+    "source": "mykidlist",
+    "title": "Family Open Lab",
+    "description": "Looking for family fun in Batavia? Check out Family Open Lab, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T13:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Batavia",
+    "address": "336 McKee Street, Suite P",
+    "locationName": "SciTech",
+    "externalURL": "https://mykidlist.com/event/family-open-lab/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/game-day-fridays/2026-03-13",
+    "source": "mykidlist",
+    "title": "Game Day Fridays",
+    "description": "Game Day Fridays is taking place in Maywood. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-13T15:30:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Maywood",
+    "address": "121 South 5th Avenue",
+    "locationName": "Maywood Public Library",
+    "externalURL": "https://mykidlist.com/event/game-day-fridays/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/young-artists-workshops-prehistoric-cave-art/2026-03-13",
+    "source": "mykidlist",
+    "title": "Young Artists Workshops: Prehistoric Cave Art",
+    "description": "Discover Young Artists Workshops: Prehistoric Cave Art in Prospect Heights. A great arts and crafts activity the whole family will love.",
+    "startDate": "2026-03-13T16:00:00-05:00",
+    "isAllDay": false,
+    "category": "craft",
+    "city": "Prospect Heights",
+    "address": "12 N Elm Street",
+    "locationName": "Prospect Heights Public Library District",
+    "externalURL": "https://mykidlist.com/event/young-artists-workshops-prehistoric-cave-art/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/youth-stem-club/2026-03-13",
+    "source": "mykidlist",
+    "title": "Youth STEM Club",
+    "description": "Plan a family trip to Youth STEM Club in Bellwood. This educational event offers something special for everyone.",
+    "startDate": "2026-03-13T16:00:00-05:00",
+    "isAllDay": false,
+    "category": "education",
+    "city": "Bellwood",
+    "address": "600 Bohland Avenue",
+    "locationName": "Bellwood Public Library",
+    "externalURL": "https://mykidlist.com/event/youth-stem-club/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/stories-and-snacks/2026-03-13",
+    "source": "mykidlist",
+    "title": "Stories and Snacks",
+    "description": "Discover Stories and Snacks in Schiller Park. A great family activity the whole family will love.",
+    "startDate": "2026-03-13T16:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Schiller Park",
+    "address": "4200 Old River Road",
+    "locationName": "Schiller Park Public Library",
+    "externalURL": "https://mykidlist.com/event/stories-and-snacks/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/herstory-trivia/2026-03-13",
+    "source": "mykidlist",
+    "title": "HerStory Trivia",
+    "description": "Plan a family trip to HerStory Trivia in Schaumburg. This family event offers something special for everyone.",
+    "startDate": "2026-03-13T16:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Schaumburg",
+    "address": "130 South Roselle Road",
+    "locationName": "Schaumburg Township District Library",
+    "externalURL": "https://mykidlist.com/event/herstory-trivia/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/american-girl-doll-adventures/2026-03-13",
+    "source": "mykidlist",
+    "title": "American Girl Doll Adventures",
+    "description": "Head to Glen Ellyn for American Girl Doll Adventures. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-13T16:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Glen Ellyn",
+    "address": "400 Duane Street",
+    "locationName": "Glen Ellyn Public Library",
+    "externalURL": "https://mykidlist.com/event/american-girl-doll-adventures/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/irish-dancers-bailey-murray-academy/2026-03-13",
+    "source": "mykidlist",
+    "title": "Irish Dancers - Bailey Murray Academy",
+    "description": "Looking for family fun in Lemont? Check out Irish Dancers - Bailey Murray Academy, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T16:30:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Lemont",
+    "address": "310 Canal Street",
+    "locationName": "Three Stories Books",
+    "externalURL": "https://mykidlist.com/event/irish-dancers-bailey-murray-academy/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/build-and-watch-madagascar/2026-03-13",
+    "source": "mykidlist",
+    "title": "Build and Watch: Madagascar",
+    "description": "Looking for family fun in Mount Prospect? Check out Build and Watch: Madagascar, a family event the kids will enjoy.",
+    "startDate": "2026-03-13T17:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Mount Prospect",
+    "address": "1711 West Algonquin Road",
+    "locationName": "Mount Prospect Public Library - South Branch",
+    "externalURL": "https://mykidlist.com/event/build-and-watch-madagascar/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/naperville-chinese-story-time/2026-03-13",
+    "source": "mykidlist",
+    "title": "Naperville Chinese Story Time",
+    "description": "Naperville Chinese Story Time is taking place in Naperville. Bring the kids for a memorable reading experience.",
+    "startDate": "2026-03-13T18:00:00-05:00",
+    "isAllDay": false,
+    "category": "storytime",
+    "city": "Naperville",
+    "address": "301 North Washington Street",
+    "locationName": "DuPage Children's Museum",
+    "externalURL": "https://mykidlist.com/event/naperville-chinese-story-time/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/easter-egg-decorating/2026-03-13",
+    "source": "mykidlist",
+    "title": "Easter Egg Decorating",
+    "description": "Discover Easter Egg Decorating in Elmwood Park. A great seasonal activity the whole family will love.",
+    "startDate": "2026-03-13T18:30:00-05:00",
+    "isAllDay": false,
+    "category": "seasonal",
+    "city": "Elmwood Park",
+    "address": "1 Conti Parkway",
+    "locationName": "Elmwood Park Public Library",
+    "externalURL": "https://mykidlist.com/event/easter-egg-decorating/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/movies-at-the-commons/2026-03-13",
+    "source": "mykidlist",
+    "title": "Movies at the Commons",
+    "description": "Plan a family trip to Movies at the Commons in North Riverside. This movie event offers something special for everyone.",
+    "startDate": "2026-03-13T18:30:00-05:00",
+    "isAllDay": false,
+    "category": "freeMovie",
+    "city": "North Riverside",
+    "address": "2401 Des Plaines Avenue",
+    "locationName": "Village Commons (North Riverside)",
+    "externalURL": "https://mykidlist.com/event/movies-at-the-commons/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
+    "sourceId": "mykidlist:https://mykidlist.com/event/second-fridays-derek-byrne-and-paddygrass/2026-03-13",
+    "source": "mykidlist",
+    "title": "Second Fridays: Derek Byrne and Paddygrass [FULL]",
+    "description": "Discover Second Fridays: Derek Byrne and Paddygrass [FULL] in Barrington. A great family activity the whole family will love.",
+    "startDate": "2026-03-13T19:00:00-05:00",
+    "isAllDay": false,
+    "category": "other",
+    "city": "Barrington",
+    "address": "505 North Northwest Highway",
+    "locationName": "Barrington Area Library",
+    "externalURL": "https://mykidlist.com/event/second-fridays-derek-byrne-and-paddygrass/2026-03-13",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mykidlist",
+      "chicago"
+    ],
+    "metro": "chicago"
+  },
+  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/atlanta-science-festival",
     "source": "mommypoppins",
     "title": "Atlanta Science Festival",
@@ -22083,6 +22468,27 @@
     "metro": "atlanta"
   },
   {
+    "sourceId": "mommypoppins:/atlanta-kids/event/shows-exhibitions/flight-of-the-butterflies-exhibit-at-fernbank",
+    "source": "mommypoppins",
+    "title": "Flight of the Butterflies Exhibit at Fernbank",
+    "description": "Enjoy Flight of the Butterflies Exhibit at Fernbank in Fernbank Museum of Natural History. A wonderful museum event for the whole family.",
+    "startDate": "2026-03-15T00:00:00",
+    "isAllDay": true,
+    "category": "museum",
+    "city": "Fernbank Museum of Natural History",
+    "locationName": "Fernbank Museum of Natural History",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/englewood-arts-collective-jovonna-jackson-janell-nelson-lead-artists.jpg?itok=e7qI4ksw",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/shows-exhibitions/flight-of-the-butterflies-exhibit-at-fernbank",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Shows &amp; Exhibitions",
+      "Various times"
+    ],
+    "metro": "atlanta"
+  },
+  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/day-out-with-thomas-in-cordele-ga",
     "source": "mommypoppins",
     "title": "Day Out With Thomas in Cordele, GA",
@@ -22099,27 +22505,6 @@
     "tags": [
       "mommypoppins",
       "Events",
-      "Shows &amp; Exhibitions",
-      "Various times"
-    ],
-    "metro": "atlanta"
-  },
-  {
-    "sourceId": "mommypoppins:/atlanta-kids/event/shows-exhibitions/flight-of-the-butterflies-exhibit-at-fernbank",
-    "source": "mommypoppins",
-    "title": "Flight of the Butterflies Exhibit at Fernbank",
-    "description": "Enjoy Flight of the Butterflies Exhibit at Fernbank in Fernbank Museum of Natural History. A wonderful museum event for the whole family.",
-    "startDate": "2026-03-15T00:00:00",
-    "isAllDay": true,
-    "category": "museum",
-    "city": "Fernbank Museum of Natural History",
-    "locationName": "Fernbank Museum of Natural History",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/englewood-arts-collective-jovonna-jackson-janell-nelson-lead-artists.jpg?itok=e7qI4ksw",
-    "externalURL": "https://mommypoppins.com/atlanta-kids/event/shows-exhibitions/flight-of-the-butterflies-exhibit-at-fernbank",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
       "Shows &amp; Exhibitions",
       "Various times"
     ],
@@ -22253,27 +22638,6 @@
     "metro": "atlanta"
   },
   {
-    "sourceId": "mommypoppins:/atlanta-kids/event/events/coolray-field-carnival-0",
-    "source": "mommypoppins",
-    "title": "Coolray Field Carnival",
-    "description": "Plan a family trip to Coolray Field Carnival in Coolray Field. This festival event offers something special for everyone.",
-    "startDate": "2026-03-16T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Coolray Field",
-    "locationName": "Coolray Field",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/619511326_18555699820035467_5317775317409382454_n.jpg?itok=baUclIg-",
-    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/coolray-field-carnival-0",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "atlanta"
-  },
-  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/atlanta-fair",
     "source": "mommypoppins",
     "title": "Atlanta Fair",
@@ -22285,6 +22649,27 @@
     "locationName": "Gray lot across from Georgia State&#039;s stadium",
     "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/90/crw-1285h-723.jpeg?itok=qAbViesh",
     "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/atlanta-fair",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "atlanta"
+  },
+  {
+    "sourceId": "mommypoppins:/atlanta-kids/event/events/coolray-field-carnival-0",
+    "source": "mommypoppins",
+    "title": "Coolray Field Carnival",
+    "description": "Plan a family trip to Coolray Field Carnival in Coolray Field. This festival event offers something special for everyone.",
+    "startDate": "2026-03-16T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "Coolray Field",
+    "locationName": "Coolray Field",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/619511326_18555699820035467_5317775317409382454_n.jpg?itok=baUclIg-",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/coolray-field-carnival-0",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -22506,27 +22891,6 @@
     "metro": "atlanta"
   },
   {
-    "sourceId": "mommypoppins:/atlanta-kids/event/events/atlanta-fair",
-    "source": "mommypoppins",
-    "title": "Atlanta Fair",
-    "description": "Atlanta Fair is taking place in Gray lot across from Georgia State&#039;s stadium. Bring the kids for a memorable festival experience.",
-    "startDate": "2026-03-17T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Gray lot across from Georgia State&#039;s stadium",
-    "locationName": "Gray lot across from Georgia State&#039;s stadium",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/90/crw-1285h-723.jpeg?itok=qAbViesh",
-    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/atlanta-fair",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "atlanta"
-  },
-  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/coolray-field-carnival-0",
     "source": "mommypoppins",
     "title": "Coolray Field Carnival",
@@ -22538,6 +22902,27 @@
     "locationName": "Coolray Field",
     "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/619511326_18555699820035467_5317775317409382454_n.jpg?itok=baUclIg-",
     "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/coolray-field-carnival-0",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "atlanta"
+  },
+  {
+    "sourceId": "mommypoppins:/atlanta-kids/event/events/atlanta-fair",
+    "source": "mommypoppins",
+    "title": "Atlanta Fair",
+    "description": "Atlanta Fair is taking place in Gray lot across from Georgia State&#039;s stadium. Bring the kids for a memorable festival experience.",
+    "startDate": "2026-03-17T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "Gray lot across from Georgia State&#039;s stadium",
+    "locationName": "Gray lot across from Georgia State&#039;s stadium",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/90/crw-1285h-723.jpeg?itok=qAbViesh",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/atlanta-fair",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -23566,27 +23951,6 @@
     "metro": "atlanta"
   },
   {
-    "sourceId": "mommypoppins:/atlanta-kids/event/events/coolray-field-carnival-0",
-    "source": "mommypoppins",
-    "title": "Coolray Field Carnival",
-    "description": "Plan a family trip to Coolray Field Carnival in Coolray Field. This festival event offers something special for everyone.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Coolray Field",
-    "locationName": "Coolray Field",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/619511326_18555699820035467_5317775317409382454_n.jpg?itok=baUclIg-",
-    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/coolray-field-carnival-0",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "atlanta"
-  },
-  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/atlanta-fair",
     "source": "mommypoppins",
     "title": "Atlanta Fair",
@@ -23598,6 +23962,27 @@
     "locationName": "Gray lot across from Georgia State&#039;s stadium",
     "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/90/crw-1285h-723.jpeg?itok=qAbViesh",
     "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/atlanta-fair",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "atlanta"
+  },
+  {
+    "sourceId": "mommypoppins:/atlanta-kids/event/events/coolray-field-carnival-0",
+    "source": "mommypoppins",
+    "title": "Coolray Field Carnival",
+    "description": "Plan a family trip to Coolray Field Carnival in Coolray Field. This festival event offers something special for everyone.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "Coolray Field",
+    "locationName": "Coolray Field",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/619511326_18555699820035467_5317775317409382454_n.jpg?itok=baUclIg-",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/coolray-field-carnival-0",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -23756,6 +24141,27 @@
     "metro": "atlanta"
   },
   {
+    "sourceId": "mommypoppins:/atlanta-kids/event/events/conyers-cherry-blossom-festival",
+    "source": "mommypoppins",
+    "title": "Conyers Cherry Blossom Festival",
+    "description": "Plan a family trip to Conyers Cherry Blossom Festival in Georgia International Horse Park. This festival event offers something special for everyone.",
+    "startDate": "2026-03-21T00:00:00",
+    "isAllDay": true,
+    "category": "festival",
+    "city": "Georgia International Horse Park",
+    "locationName": "Georgia International Horse Park",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/CBF_2026_Final_Logo_-_Rooted_Together_-_white_background%281%29.jpg?itok=CxEdJ2fS",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/conyers-cherry-blossom-festival",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "10:00 am\n\n                                                -\n              5:00 pm"
+    ],
+    "metro": "atlanta"
+  },
+  {
     "sourceId": "mommypoppins:/atlanta-kids/event/events/bunny-brunch-at-custer-park-sports-and-fitness-center",
     "source": "mommypoppins",
     "title": "Bunny Brunch at Custer Park Sports and Fitness Center",
@@ -23792,27 +24198,6 @@
     "tags": [
       "mommypoppins",
       "Events"
-    ],
-    "metro": "atlanta"
-  },
-  {
-    "sourceId": "mommypoppins:/atlanta-kids/event/events/conyers-cherry-blossom-festival",
-    "source": "mommypoppins",
-    "title": "Conyers Cherry Blossom Festival",
-    "description": "Plan a family trip to Conyers Cherry Blossom Festival in Georgia International Horse Park. This festival event offers something special for everyone.",
-    "startDate": "2026-03-21T00:00:00",
-    "isAllDay": true,
-    "category": "festival",
-    "city": "Georgia International Horse Park",
-    "locationName": "Georgia International Horse Park",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/CBF_2026_Final_Logo_-_Rooted_Together_-_white_background%281%29.jpg?itok=CxEdJ2fS",
-    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/conyers-cherry-blossom-festival",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "10:00 am\n\n                                                -\n              5:00 pm"
     ],
     "metro": "atlanta"
   },
@@ -25108,6 +25493,27 @@
     "metro": "atlanta"
   },
   {
+    "sourceId": "mommypoppins:/atlanta-kids/event/events/screen-on-the-green-at-atlantic-station-0",
+    "source": "mommypoppins",
+    "title": "Screen on the Green at Atlantic Station",
+    "description": "Head to Atlantic Station for Screen on the Green at Atlantic Station. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-26T00:00:00",
+    "isAllDay": true,
+    "category": "other",
+    "city": "Atlantic Station",
+    "locationName": "Atlantic Station",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/515503136_1064953772431558_3507397902904807114_n.jpg?itok=IKNALliO",
+    "externalURL": "https://mommypoppins.com/atlanta-kids/event/events/screen-on-the-green-at-atlantic-station-0",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "7:00 pm\n\n                                                -\n              9:00 pm"
+    ],
+    "metro": "atlanta"
+  },
+  {
     "sourceId": "mommypoppins:/atlanta-kids/event/tours-attractions/great-big-game-show-atlanta-0",
     "source": "mommypoppins",
     "title": "Great Big Game Show - Atlanta",
@@ -25154,7 +25560,7 @@
     "source": "atlantaparent",
     "title": "Finding Nemo JR.",
     "description": "Head to Atlanta for Finding Nemo JR.. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-13T04:23:44.825Z",
+    "startDate": "2026-03-13T13:25:11.485Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25171,7 +25577,7 @@
     "source": "atlantaparent",
     "title": "Luck of Avalon",
     "description": "Luck of Avalon is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:23:47.997Z",
+    "startDate": "2026-03-13T13:25:14.425Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25188,7 +25594,7 @@
     "source": "atlantaparent",
     "title": "Mad Hatter’s Tea Party",
     "description": "Head to Atlanta for Mad Hatter’s Tea Party. This arts and crafts event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-13T04:23:54.143Z",
+    "startDate": "2026-03-13T13:25:20.311Z",
     "isAllDay": true,
     "category": "craft",
     "city": "Atlanta",
@@ -25205,7 +25611,7 @@
     "source": "atlantaparent",
     "title": "DIY Days",
     "description": "Looking for family fun in Atlanta? Check out DIY Days, a arts and crafts event the kids will enjoy.",
-    "startDate": "2026-03-13T04:23:57.598Z",
+    "startDate": "2026-03-13T13:25:23.238Z",
     "isAllDay": true,
     "category": "craft",
     "city": "Atlanta",
@@ -25222,7 +25628,7 @@
     "source": "atlantaparent",
     "title": "Atlanta St. Patrick&#8217;s Day Parade",
     "description": "Head to Atlanta for Atlanta St. Patrick&#8217;s Day Parade. This festival event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-13T04:24:00.631Z",
+    "startDate": "2026-03-13T13:25:26.146Z",
     "isAllDay": true,
     "category": "festival",
     "city": "Atlanta",
@@ -25239,7 +25645,7 @@
     "source": "atlantaparent",
     "title": "Chinatown Memories",
     "description": "Enjoy Chinatown Memories in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:24:03.664Z",
+    "startDate": "2026-03-13T13:25:29.094Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25256,7 +25662,7 @@
     "source": "atlantaparent",
     "title": "Flight of Butterflies",
     "description": "Discover Flight of Butterflies in Atlanta. A great family activity the whole family will love.",
-    "startDate": "2026-03-13T04:24:06.699Z",
+    "startDate": "2026-03-13T13:25:32.015Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25273,7 +25679,7 @@
     "source": "atlantaparent",
     "title": "Catching the Moon: The Story of a Young Girl’s Baseball Dream",
     "description": "Enjoy Catching the Moon: The Story of a Young Girl’s Baseball Dream in Atlanta. A wonderful sports event for the whole family.",
-    "startDate": "2026-03-13T04:24:09.874Z",
+    "startDate": "2026-03-13T13:25:35.017Z",
     "isAllDay": true,
     "category": "sports",
     "city": "Atlanta",
@@ -25290,7 +25696,7 @@
     "source": "atlantaparent",
     "title": "River Roots Science Stations",
     "description": "River Roots Science Stations is taking place in Atlanta. Bring the kids for a memorable educational experience.",
-    "startDate": "2026-03-13T04:24:13.187Z",
+    "startDate": "2026-03-13T13:25:37.936Z",
     "isAllDay": true,
     "category": "education",
     "city": "Atlanta",
@@ -25307,7 +25713,7 @@
     "source": "atlantaparent",
     "title": "Bubble Planet",
     "description": "Bubble Planet is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:24:18.046Z",
+    "startDate": "2026-03-13T13:25:42.732Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25324,7 +25730,7 @@
     "source": "atlantaparent",
     "title": "Measurement Rules",
     "description": "Measurement Rules is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:24:21.194Z",
+    "startDate": "2026-03-13T13:25:45.768Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25341,7 +25747,7 @@
     "source": "atlantaparent",
     "title": "DinoVerse Atlanta",
     "description": "Enjoy DinoVerse Atlanta in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:24:24.362Z",
+    "startDate": "2026-03-13T13:25:49.098Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25358,7 +25764,7 @@
     "source": "atlantaparent",
     "title": "Journey to Space",
     "description": "Enjoy Journey to Space in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:24:27.487Z",
+    "startDate": "2026-03-13T13:25:52.021Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25375,7 +25781,7 @@
     "source": "atlantaparent",
     "title": "Heisman: Legends &#038; Legacy",
     "description": "Looking for family fun in Atlanta? Check out Heisman: Legends &#038; Legacy, a family event the kids will enjoy.",
-    "startDate": "2026-03-13T04:24:30.628Z",
+    "startDate": "2026-03-13T13:25:55.432Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25392,7 +25798,7 @@
     "source": "atlantaparent",
     "title": "Into the Burrow: A Peter Rabbit Tale",
     "description": "Into the Burrow: A Peter Rabbit Tale is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:24:36.947Z",
+    "startDate": "2026-03-13T13:26:01.339Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25409,7 +25815,7 @@
     "source": "atlantaparent",
     "title": "Planet Ice",
     "description": "Looking for family fun in Atlanta? Check out Planet Ice, a family event the kids will enjoy.",
-    "startDate": "2026-03-13T04:24:40.065Z",
+    "startDate": "2026-03-13T13:26:04.265Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25426,7 +25832,7 @@
     "source": "atlantaparent",
     "title": "Orchid Daze",
     "description": "Looking for family fun in Atlanta? Check out Orchid Daze, a family event the kids will enjoy.",
-    "startDate": "2026-03-13T04:24:43.092Z",
+    "startDate": "2026-03-13T13:26:07.622Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25443,7 +25849,7 @@
     "source": "atlantaparent",
     "title": "Naked Mole Rat Gets Dressed: The Rock Experience",
     "description": "Enjoy Naked Mole Rat Gets Dressed: The Rock Experience in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:24:49.223Z",
+    "startDate": "2026-03-13T13:26:13.696Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25460,7 +25866,7 @@
     "source": "atlantaparent",
     "title": "Public Notice: The 2025 U.S. International Poster Biennial",
     "description": "Looking for family fun in Atlanta? Check out Public Notice: The 2025 U.S. International Poster Biennial, a family event the kids will enjoy.",
-    "startDate": "2026-03-13T04:24:52.261Z",
+    "startDate": "2026-03-13T13:26:16.580Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25477,7 +25883,7 @@
     "source": "atlantaparent",
     "title": "Harry Potter and the Cursed Child",
     "description": "Enjoy Harry Potter and the Cursed Child in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:24:55.483Z",
+    "startDate": "2026-03-13T13:26:19.577Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25494,7 +25900,7 @@
     "source": "atlantaparent",
     "title": "Rhythm &#038; Thread",
     "description": "Rhythm &#038; Thread is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:24:58.661Z",
+    "startDate": "2026-03-13T13:26:22.591Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25511,7 +25917,7 @@
     "source": "atlantaparent",
     "title": "Picture Easter",
     "description": "Discover Picture Easter in Atlanta. A great seasonal activity the whole family will love.",
-    "startDate": "2026-03-13T04:25:01.787Z",
+    "startDate": "2026-03-13T13:26:25.488Z",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Atlanta",
@@ -25528,7 +25934,7 @@
     "source": "atlantaparent",
     "title": "Mary Poppins JR.",
     "description": "Discover Mary Poppins JR. in Atlanta. A great family activity the whole family will love.",
-    "startDate": "2026-03-13T04:25:04.865Z",
+    "startDate": "2026-03-13T13:26:28.419Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25545,7 +25951,7 @@
     "source": "atlantaparent",
     "title": "Women&#8217;s History Month",
     "description": "Enjoy Women&#8217;s History Month in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:25:08.087Z",
+    "startDate": "2026-03-13T13:26:31.322Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25562,7 +25968,7 @@
     "source": "atlantaparent",
     "title": "Bunny Photo Time",
     "description": "Plan a family trip to Bunny Photo Time in Atlanta. This family event offers something special for everyone.",
-    "startDate": "2026-03-13T04:25:11.132Z",
+    "startDate": "2026-03-13T13:26:34.264Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25579,7 +25985,7 @@
     "source": "atlantaparent",
     "title": "Atlanta Fair",
     "description": "Discover Atlanta Fair in Atlanta. A great festival activity the whole family will love.",
-    "startDate": "2026-03-13T04:25:14.320Z",
+    "startDate": "2026-03-13T13:26:37.199Z",
     "isAllDay": true,
     "category": "festival",
     "city": "Atlanta",
@@ -25596,7 +26002,7 @@
     "source": "atlantaparent",
     "title": "Dino Fest",
     "description": "Dino Fest is taking place in Atlanta. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-13T04:25:24.404Z",
+    "startDate": "2026-03-13T13:26:46.781Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25613,7 +26019,7 @@
     "source": "atlantaparent",
     "title": "Queen Bess",
     "description": "Discover Queen Bess in Atlanta. A great family activity the whole family will love.",
-    "startDate": "2026-03-13T04:25:30.539Z",
+    "startDate": "2026-03-13T13:26:52.707Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25630,7 +26036,7 @@
     "source": "atlantaparent",
     "title": "The Tales of Edgar Allan Poe",
     "description": "Enjoy The Tales of Edgar Allan Poe in Atlanta. A wonderful family event for the whole family.",
-    "startDate": "2026-03-13T04:25:47.696Z",
+    "startDate": "2026-03-13T13:27:09.350Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25647,7 +26053,7 @@
     "source": "atlantaparent",
     "title": "Bunny Brunch",
     "description": "Plan a family trip to Bunny Brunch in Atlanta. This family event offers something special for everyone.",
-    "startDate": "2026-03-13T04:25:50.850Z",
+    "startDate": "2026-03-13T13:27:12.303Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25664,7 +26070,7 @@
     "source": "atlantaparent",
     "title": "Easter Bunny",
     "description": "Enjoy Easter Bunny in Atlanta. A wonderful seasonal event for the whole family.",
-    "startDate": "2026-03-13T04:25:53.987Z",
+    "startDate": "2026-03-13T13:27:15.198Z",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Atlanta",
@@ -25681,7 +26087,7 @@
     "source": "atlantaparent",
     "title": "Town Center at Cobb Carnival",
     "description": "Discover Town Center at Cobb Carnival in Atlanta. A great festival activity the whole family will love.",
-    "startDate": "2026-03-13T04:26:00.983Z",
+    "startDate": "2026-03-13T13:27:21.758Z",
     "isAllDay": true,
     "category": "festival",
     "city": "Atlanta",
@@ -25698,7 +26104,7 @@
     "source": "atlantaparent",
     "title": "Space Explorers: THE INFINITE",
     "description": "Looking for family fun in Atlanta? Check out Space Explorers: THE INFINITE, a family event the kids will enjoy.",
-    "startDate": "2026-03-13T04:26:04.087Z",
+    "startDate": "2026-03-13T13:27:24.690Z",
     "isAllDay": true,
     "category": "other",
     "city": "Atlanta",
@@ -25715,7 +26121,7 @@
     "source": "atlantaparent",
     "title": "Spring Break Family Fun",
     "description": "Head to Atlanta for Spring Break Family Fun. This seasonal event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-13T04:26:07.322Z",
+    "startDate": "2026-03-13T13:27:27.592Z",
     "isAllDay": true,
     "category": "seasonal",
     "city": "Atlanta",
@@ -25732,7 +26138,7 @@
     "source": "atlantaparent",
     "title": "Dogwood Festival",
     "description": "Discover Dogwood Festival in Atlanta. A great festival activity the whole family will love.",
-    "startDate": "2026-03-13T04:26:10.442Z",
+    "startDate": "2026-03-13T13:27:30.515Z",
     "isAllDay": true,
     "category": "festival",
     "city": "Atlanta",
