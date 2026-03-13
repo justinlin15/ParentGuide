@@ -1,0 +1,32 @@
+DEFINE SCHEMA
+
+    RECORD TYPE Event (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        sourceId        STRING,
+        source          STRING QUERYABLE,
+        title           STRING QUERYABLE,
+        description     STRING,
+        startDate       INT64 QUERYABLE SORTABLE,
+        endDate         INT64,
+        isAllDay        INT64,
+        category        STRING QUERYABLE,
+        city            STRING QUERYABLE,
+        address         STRING,
+        latitude        DOUBLE,
+        longitude       DOUBLE,
+        locationName    STRING,
+        imageURL        STRING,
+        externalURL     STRING,
+        isFeatured      INT64 QUERYABLE,
+        isRecurring     INT64,
+        tags            STRING_LIST,
+        metro           STRING QUERYABLE,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );

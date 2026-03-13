@@ -66,6 +66,18 @@ jobs:
           fi
           npx tsx src/index.ts $ARGS
 
+      - name: Commit events JSON to repo
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp pipeline/output/all-events.json docs/api/events.json 2>/dev/null || {
+            mkdir -p docs/api
+            cp pipeline/output/all-events.json docs/api/events.json
+          }
+          git add docs/api/events.json
+          git diff --cached --quiet || git commit -m "Update events data [pipeline]" && git push
+
       - name: Upload output artifacts
         if: always()
         uses: actions/upload-artifact@v4
