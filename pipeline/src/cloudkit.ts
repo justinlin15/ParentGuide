@@ -154,6 +154,11 @@ function toCloudKitRecord(event: PipelineEvent) {
       isRecurring: { value: event.isRecurring ? 1 : 0 },
       tags: { value: event.tags },
       metro: { value: event.metro },
+      price: { value: event.price || "" },
+      ageRange: { value: event.ageRange || "" },
+      websiteURL: { value: event.websiteURL || "" },
+      phone: { value: event.phone || "" },
+      contactEmail: { value: event.contactEmail || "" },
     },
   };
 }

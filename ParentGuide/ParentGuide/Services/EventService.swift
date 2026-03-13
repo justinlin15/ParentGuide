@@ -226,11 +226,18 @@ actor EventService {
         return allEvents.filter { $0.isFeatured }
     }
 
-    /// Fetch events that the user has favorited.
+    /// Fetch events that the user has favorited (deduplicated by id).
     func fetchFavoriteEvents(ids: Set<String>) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
-        return allEvents.filter { ids.contains($0.id) }
+        var seen = Set<String>()
+        return allEvents
+            .filter { ids.contains($0.id) }
             .sorted { $0.startDate < $1.startDate }
+            .filter { event in
+                guard !seen.contains(event.id) else { return false }
+                seen.insert(event.id)
+                return true
+            }
     }
 
     /// Fetch popular/trending events (featured first, then by date).
@@ -296,6 +303,13 @@ private struct PipelineEvent: Codable {
     let tags: [String]?
     let metro: String
 
+    // Enriched fields
+    let price: String?
+    let ageRange: String?
+    let websiteURL: String?
+    let phone: String?
+    let contactEmail: String?
+
     func toEvent() -> Event? {
         guard let start = Self.parseDate(startDate) else { return nil }
         let end = endDate.flatMap { Self.parseDate($0) }
@@ -330,7 +344,12 @@ private struct PipelineEvent: Codable {
             source: source,
             manuallyEdited: false,
             createdAt: Date(),
-            modifiedAt: Date()
+            modifiedAt: Date(),
+            price: price,
+            ageRange: ageRange,
+            websiteURL: websiteURL,
+            phone: phone,
+            contactEmail: contactEmail
         )
     }
 

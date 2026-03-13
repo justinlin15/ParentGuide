@@ -30,6 +30,13 @@ struct Event: Identifiable, Hashable, Codable {
     let createdAt: Date
     let modifiedAt: Date
 
+    // Enriched fields from detail pages
+    var price: String? = nil
+    var ageRange: String? = nil
+    var websiteURL: String? = nil
+    var phone: String? = nil
+    var contactEmail: String? = nil
+
     var hasLocation: Bool {
         latitude != nil && longitude != nil
     }
@@ -118,6 +125,18 @@ nonisolated extension Event {
         self.manuallyEdited = Event.readBool(from: record, key: "manuallyEdited")
         self.createdAt = record.creationDate ?? Date()
         self.modifiedAt = record.modificationDate ?? Date()
+
+        // Enriched fields (may be empty strings from pipeline, treat as nil)
+        let priceVal = record["price"] as? String
+        self.price = (priceVal?.isEmpty == false) ? priceVal : nil
+        let ageVal = record["ageRange"] as? String
+        self.ageRange = (ageVal?.isEmpty == false) ? ageVal : nil
+        let webVal = record["websiteURL"] as? String
+        self.websiteURL = (webVal?.isEmpty == false) ? webVal : nil
+        let phoneVal = record["phone"] as? String
+        self.phone = (phoneVal?.isEmpty == false) ? phoneVal : nil
+        let emailVal = record["contactEmail"] as? String
+        self.contactEmail = (emailVal?.isEmpty == false) ? emailVal : nil
     }
 
     /// Convert to a new CKRecord for creating an event
@@ -152,5 +171,10 @@ nonisolated extension Event {
         record["tags"] = tags as CKRecordValue
         record["metro"] = (metro ?? "") as CKRecordValue
         record["manuallyEdited"] = Int64(manuallyEdited ? 1 : 0) as CKRecordValue
+        record["price"] = (price ?? "") as CKRecordValue
+        record["ageRange"] = (ageRange ?? "") as CKRecordValue
+        record["websiteURL"] = (websiteURL ?? "") as CKRecordValue
+        record["phone"] = (phone ?? "") as CKRecordValue
+        record["contactEmail"] = (contactEmail ?? "") as CKRecordValue
     }
 }

@@ -19,6 +19,13 @@ export interface PipelineEvent {
   isRecurring: boolean;
   tags: string[];
   metro: string; // "los-angeles" | "new-york" | etc.
+
+  // Enriched fields (from detail pages)
+  price?: string; // e.g. "Free", "$15-$25", "Child: $38; Adult: $25"
+  ageRange?: string; // e.g. "All ages", "3-10", "18-24 months"
+  websiteURL?: string; // official event/venue website
+  phone?: string; // venue phone number
+  contactEmail?: string; // event contact email
 }
 
 // Category mapping: keywords → app EventCategory raw values

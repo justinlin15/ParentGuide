@@ -94,26 +94,52 @@ struct EventDetailView: View {
                     }
                     .foregroundStyle(.secondary)
 
-                    // Category tag
-                    Label(event.category.rawValue, systemImage: event.category.iconName)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(event.category.color)
-                        .clipShape(Capsule())
+                    // Quick info pills (category, price, age)
+                    FlowLayout(spacing: 8) {
+                        Label(event.category.rawValue, systemImage: event.category.iconName)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(event.category.color)
+                            .clipShape(Capsule())
+
+                        if let price = event.price, !price.isEmpty {
+                            Label(price, systemImage: "dollarsign.circle.fill")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.green.opacity(0.8))
+                                .clipShape(Capsule())
+                        }
+
+                        if let ageRange = event.ageRange, !ageRange.isEmpty {
+                            Label(ageRange, systemImage: "figure.and.child.holdinghands")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.purple.opacity(0.7))
+                                .clipShape(Capsule())
+                        }
+                    }
 
                     Divider()
 
                     // About section
-                    Text("About")
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                    if !event.eventDescription.isEmpty {
+                        Text("About")
+                            .font(.title3)
+                            .fontWeight(.semibold)
 
-                    Text(event.eventDescription)
-                        .font(.body)
-                        .foregroundStyle(.secondary)
+                        Text(event.eventDescription)
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                    }
 
                     // Location section
                     if event.hasLocation {
@@ -161,6 +187,38 @@ struct EventDetailView: View {
                                     .background(Color.brandBlue)
                                     .foregroundStyle(.white)
                                     .cornerRadius(10)
+                            }
+                        }
+                    }
+
+                    // Contact details
+                    if event.phone != nil || event.contactEmail != nil || event.websiteURL != nil {
+                        Divider()
+
+                        Text("Contact")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            if let phone = event.phone {
+                                Link(destination: URL(string: "tel:\(phone.replacingOccurrences(of: " ", with: ""))")!) {
+                                    Label(phone, systemImage: "phone.fill")
+                                        .font(.subheadline)
+                                }
+                            }
+
+                            if let email = event.contactEmail {
+                                Link(destination: URL(string: "mailto:\(email)")!) {
+                                    Label(email, systemImage: "envelope.fill")
+                                        .font(.subheadline)
+                                }
+                            }
+
+                            if let webURL = event.websiteURL, let url = URL(string: webURL) {
+                                Link(destination: url) {
+                                    Label("Visit Website", systemImage: "globe")
+                                        .font(.subheadline)
+                                }
                             }
                         }
                     }
