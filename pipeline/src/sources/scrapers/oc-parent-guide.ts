@@ -371,6 +371,7 @@ async function extractEventsFromCalendar(
       title: string;
       dateText: string;
       timeText: string;
+      endTimeText: string;
     }> = [];
     const seen = new Set<string>();
 
@@ -403,7 +404,7 @@ async function extractEventsFromCalendar(
             !seen.has(`${dateAttr}-${title}`)
           ) {
             seen.add(`${dateAttr}-${title}`);
-            results.push({ title, dateText: dateAttr, timeText });
+            results.push({ title, dateText: dateAttr, timeText, endTimeText: "" });
           }
         });
       });
@@ -415,12 +416,14 @@ async function extractEventsFromCalendar(
         ".fc-list-day, [class*='list-day']"
       );
       listDays.forEach((dayRow) => {
+        // Prefer data-date attribute (YYYY-MM-DD) over text content
+        const dataDate = dayRow.getAttribute("data-date") || "";
         const dateEl = dayRow.querySelector(
           ".fc-list-day-text, .fc-list-day-cushion, [class*='day-text']"
         );
-        const dateText = dateEl
+        const dateText = dataDate || (dateEl
           ? (dateEl as HTMLElement).textContent?.trim() || ""
-          : "";
+          : "");
 
         // Events follow each day header as sibling rows
         let sibling = dayRow.nextElementSibling;
@@ -438,9 +441,11 @@ async function extractEventsFromCalendar(
           const title = titleEl?.textContent?.trim() || "";
           const timeText = timeEl?.textContent?.trim() || "";
 
-          if (title && title.length > 3 && !seen.has(title)) {
-            seen.add(title);
-            results.push({ title, dateText, timeText });
+          // Dedup by date+title so multi-day events keep each occurrence
+          const dedupKey = `${dateText}-${title}`;
+          if (title && title.length > 3 && !seen.has(dedupKey)) {
+            seen.add(dedupKey);
+            results.push({ title, dateText, timeText, endTimeText: "" });
           }
           sibling = sibling.nextElementSibling;
         }
@@ -462,7 +467,7 @@ async function extractEventsFromCalendar(
           !seen.has(title)
         ) {
           seen.add(title);
-          results.push({ title, dateText: "", timeText: "" });
+          results.push({ title, dateText: "", timeText: "", endTimeText: "" });
         }
       });
     }
@@ -480,7 +485,7 @@ async function extractEventsFromCalendar(
             !seen.has(title)
           ) {
             seen.add(title);
-            results.push({ title, dateText: "", timeText: "" });
+            results.push({ title, dateText: "", timeText: "", endTimeText: "" });
           }
         });
     }
@@ -508,7 +513,14 @@ async function extractEventsFromCalendar(
   return rawEvents
     .filter((e) => e.title.length > 3 && !e.title.startsWith("+"))
     .map((e) => {
-      const startDate = parseEventDate(e.dateText, e.timeText, monthYear);
+      // Parse time range from timeText (e.g., "10:00am - 5:00pm" or "9:30a - 11:00a")
+      const { startTime, endTime } = parseTimeRange(e.timeText);
+      const startDate = parseEventDate(e.dateText, startTime, monthYear);
+      let endDate: string | undefined;
+      if (endTime && startDate) {
+        const datePart = startDate.split("T")[0];
+        endDate = `${datePart}T${endTime}`;
+      }
 
       return {
         sourceId: `${SOURCE}-${slugify(e.title)}-${e.dateText || "nodate"}`,
@@ -516,8 +528,8 @@ async function extractEventsFromCalendar(
         title: e.title,
         description: "",
         startDate: startDate || new Date().toISOString(),
-        endDate: undefined,
-        isAllDay: !e.timeText,
+        endDate,
+        isAllDay: !startTime,
         category: categorizeEvent(e.title, ""),
         city: extractCity(e.title) || "Orange County",
         address: "",
@@ -553,27 +565,62 @@ function parseEventDate(
   if (dateAttr && /^\d{4}-\d{2}-\d{2}$/.test(dateAttr)) {
     if (timeText) {
       const time = parseTimeText(timeText);
-      if (time) return new Date(`${dateAttr}T${time}`).toISOString();
+      if (time) return `${dateAttr}T${time}`;
     }
-    return new Date(dateAttr + "T00:00:00").toISOString();
+    return `${dateAttr}T00:00:00`;
   }
 
-  // Try parsing dateText as a human-readable date (e.g. "March 12, 2026")
+  // Try parsing dateText as a human-readable date
+  // Handles: "Saturday, March 15", "March 15, 2026", "Thu Mar 15", etc.
   if (dateAttr) {
+    // Strip day-of-week prefix like "Saturday, " or "Mon "
+    const cleaned = dateAttr.replace(/^[A-Za-z]+,?\s+/, "").trim();
     try {
-      const d = new Date(dateAttr);
-      if (!isNaN(d.getTime())) return d.toISOString();
-    } catch {}
-  }
-
-  // Fallback: parse from month/year header
-  if (monthYear) {
-    try {
-      const d = new Date(monthYear + " 1");
+      const d = new Date(cleaned);
       if (!isNaN(d.getTime())) {
-        return d.toISOString();
+        const iso = d.toISOString().split("T")[0];
+        if (timeText) {
+          const time = parseTimeText(timeText);
+          if (time) return `${iso}T${time}`;
+        }
+        return `${iso}T00:00:00`;
       }
     } catch {}
+    // Also try the original string
+    try {
+      const d = new Date(dateAttr);
+      if (!isNaN(d.getTime())) {
+        const iso = d.toISOString().split("T")[0];
+        if (timeText) {
+          const time = parseTimeText(timeText);
+          if (time) return `${iso}T${time}`;
+        }
+        return `${iso}T00:00:00`;
+      }
+    } catch {}
+  }
+
+  // Fallback: extract year from monthYear header (e.g., "March 8 – 14, 2026")
+  // and combine with any day number in dateAttr
+  if (monthYear && dateAttr) {
+    const yearMatch = monthYear.match(/(\d{4})/);
+    const monthMatch = monthYear.match(
+      /(January|February|March|April|May|June|July|August|September|October|November|December)/i
+    );
+    const dayMatch = dateAttr.match(/(\d{1,2})/);
+    if (yearMatch && monthMatch && dayMatch) {
+      try {
+        const d = new Date(`${monthMatch[1]} ${dayMatch[1]}, ${yearMatch[1]}`);
+        if (!isNaN(d.getTime())) {
+          const iso = d.toISOString().split("T")[0];
+          if (timeText) {
+            const time = parseTimeText(timeText);
+            if (time) return `${iso}T${time}`;
+          }
+          return `${iso}T00:00:00`;
+        }
+      } catch {}
+    }
   }
 
   return null;
@@ -591,6 +638,28 @@ function parseTimeText(timeStr: string): string | null {
   if ((period === "am" || period === "a") && hours === 12) hours = 0;
 
   return `${hours.toString().padStart(2, "0")}:${minutes}:00`;
+}
+
+/**
+ * Parse a time range string like "10:00am - 5:00pm" or "9:30a - 11a"
+ * into separate start and end time strings (HH:MM:SS format).
+ */
+function parseTimeRange(timeStr: string): { startTime: string; endTime: string } {
+  if (!timeStr) return { startTime: "", endTime: "" };
+
+  // Match patterns like "10:00am - 5:00pm", "9:30a-11a", "10:00 AM - 5:00 PM"
+  const rangeMatch = timeStr.match(
+    /(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))\s*[-–]\s*(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))/i
+  );
+  if (rangeMatch) {
+    const start = parseTimeText(rangeMatch[1]);
+    const end = parseTimeText(rangeMatch[2]);
+    return { startTime: start || "", endTime: end || "" };
+  }
+
+  // Single time like "10:00am"
+  const singleTime = parseTimeText(timeStr);
+  return { startTime: singleTime || "", endTime: "" };
 }
 
 function extractCity(title: string): string {

@@ -183,18 +183,46 @@ function parseEventCards(
           .filter((t) => t && !/^pick$/i.test(t))
       : [];
 
-    const afterTitle = html.slice(titleBlockEnd, titleBlockEnd + 600);
-    const timeMatch = afterTitle.match(/<time\s+datetime="([^"]+)"[^>]*>/i);
+    // Search a wider window (1200 chars) for <time> elements — they appear
+    // ~700-850 chars after the title block in the Drupal markup.
+    const afterTitle = html.slice(titleBlockEnd, titleBlockEnd + 1200);
+    const timeMatch = afterTitle.match(
+      /<time\s+datetime="([^"]+)"[^>]*>([\s\S]*?)<\/time>/i
+    );
     let startDate: string;
     let endDate: string | undefined;
     let isAllDay = false;
 
     if (timeMatch) {
-      startDate = timeMatch[1];
+      const datetime = timeMatch[1]; // e.g. "2026-03-16T10:00:00Z"
+      const timeLabel = timeMatch[2]?.trim() || ""; // e.g. "10:00 am" or "Various times"
+
+      // "Various times" or T00:00:00 means the event has no specific start time
+      if (/various/i.test(timeLabel) || datetime.includes("T00:00:00")) {
+        startDate = `${fallbackDate}T00:00:00`;
+        isAllDay = true;
+      } else {
+        // Use the datetime, but override the date with fallbackDate since
+        // the datetime may reference the event's first occurrence, not this day
+        const timePart = datetime.includes("T")
+          ? datetime.split("T")[1].replace("Z", "")
+          : "00:00:00";
+        startDate = `${fallbackDate}T${timePart}`;
+      }
+
+      // Look for end time: <time>...</time> - <time datetime="END">...</time>
       const endTimeMatch = afterTitle.match(
-        /<time\s+datetime="[^"]+"[^>]*>[^<]*<\/time>\s*-\s*<time\s+datetime="([^"]+)"[^>]*>/i
+        /<time\s+datetime="[^"]+"[^>]*>[\s\S]*?<\/time>\s*[-–]\s*<time\s+datetime="([^"]+)"[^>]*>([\s\S]*?)<\/time>/i
       );
-      if (endTimeMatch) endDate = endTimeMatch[1];
+      if (endTimeMatch && !isAllDay) {
+        const endDatetime = endTimeMatch[1];
+        const endTimePart = endDatetime.includes("T")
+          ? endDatetime.split("T")[1].replace("Z", "")
+          : undefined;
+        if (endTimePart && endTimePart !== "00:00:00") {
+          endDate = `${fallbackDate}T${endTimePart}`;
+        }
+      }
     } else {
       startDate = `${fallbackDate}T00:00:00`;
       isAllDay = true;
