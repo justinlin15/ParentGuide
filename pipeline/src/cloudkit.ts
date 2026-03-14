@@ -251,7 +251,24 @@ export async function uploadToCloudKit(
     return;
   }
 
-  const records = events.map(toCloudKitRecord);
+  const allRecords = events.map(toCloudKitRecord);
+
+  // Deduplicate by recordName — different sourceIds can map to the same
+  // recordName after character replacement, causing "Record updated multiple
+  // times in one batch" errors.
+  const seen = new Set<string>();
+  const records = allRecords.filter((r) => {
+    if (seen.has(r.recordName)) return false;
+    seen.add(r.recordName);
+    return true;
+  });
+
+  if (records.length < allRecords.length) {
+    log.info(
+      "cloudkit",
+      `Deduplicated ${allRecords.length - records.length} records with colliding names`
+    );
+  }
 
   log.info(
     "cloudkit",
