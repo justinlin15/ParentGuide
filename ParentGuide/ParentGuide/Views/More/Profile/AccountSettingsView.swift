@@ -6,48 +6,10 @@
 import SwiftUI
 
 struct AccountSettingsView: View {
-    @State private var subscriptionService = SubscriptionService.shared
     @State private var metroService = MetroService.shared
-
-    private var planName: String {
-        if subscriptionService.isSubscribed {
-            if subscriptionService.activeProductID == SubscriptionService.annualID {
-                return "Annual"
-            } else {
-                return "Monthly"
-            }
-        }
-        return "Free"
-    }
 
     var body: some View {
         List {
-            Section("Subscription") {
-                HStack {
-                    Text("Current Plan")
-                    Spacer()
-                    Text(planName)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let expiry = subscriptionService.expirationDate {
-                    HStack {
-                        Text("Renews")
-                        Spacer()
-                        Text(expiry.formatted(date: .abbreviated, time: .omitted))
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                NavigationLink("Manage Subscription") {
-                    PlansView()
-                }
-
-                Button("Restore Purchases") {
-                    Task { await subscriptionService.restorePurchases() }
-                }
-            }
-
             Section("Location") {
                 NavigationLink {
                     LocationSettingsView()

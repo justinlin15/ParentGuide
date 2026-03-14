@@ -5,6 +5,7 @@
 
 import SwiftUI
 import MapKit
+import EventKit
 
 struct EventDetailView: View {
     let event: Event
@@ -14,9 +15,14 @@ struct EventDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var adminService = AdminService.shared
     @State private var favoritesService = FavoritesService.shared
+    @State private var calendarService = CalendarService.shared
     @State private var showEditSheet = false
     @State private var showDeleteAlert = false
     @State private var isDeleting = false
+    @State private var showCalendarSuccess = false
+    @State private var showCalendarDenied = false
+    @State private var calendarErrorMessage: String?
+    @State private var isAddingToCalendar = false
 
     private var isFavorite: Bool {
         favoritesService.isFavorite(event.id)
@@ -57,7 +63,7 @@ struct EventDetailView: View {
 
                         Button {
                             withAnimation(.spring(response: 0.3)) {
-                                favoritesService.toggleFavorite(event.id)
+                                favoritesService.toggleFavorite(for: event)
                             }
                         } label: {
                             Image(systemName: isFavorite ? "heart.fill" : "heart")
@@ -105,14 +111,14 @@ struct EventDetailView: View {
                             .background(event.category.color)
                             .clipShape(Capsule())
 
-                        if let price = event.price, !price.isEmpty {
-                            Label(price, systemImage: "dollarsign.circle.fill")
+                        if let tierDisplay = event.priceTierDisplay {
+                            Label(tierDisplay, systemImage: event.isFree ? "checkmark.circle.fill" : "dollarsign.circle.fill")
                                 .font(.caption)
-                                .fontWeight(.medium)
+                                .fontWeight(.bold)
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
-                                .background(Color.green.opacity(0.8))
+                                .background(priceTierBadgeColor)
                                 .clipShape(Capsule())
                         }
 
@@ -223,14 +229,38 @@ struct EventDetailView: View {
                         }
                     }
 
-                    // External link
-                    if let urlString = event.externalURL, let url = URL(string: urlString) {
-                        Link(destination: url) {
-                            Label("More Information", systemImage: "safari")
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(10)
+                    // Action buttons
+                    Divider()
+
+                    VStack(spacing: 12) {
+                        // Add to Calendar button
+                        Button {
+                            addToCalendar()
+                        } label: {
+                            Label(
+                                isAddingToCalendar ? "Adding..." : "Add to Calendar",
+                                systemImage: "calendar.badge.plus"
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.brandBlue)
+                            .foregroundStyle(.white)
+                            .font(.headline)
+                            .cornerRadius(12)
+                        }
+                        .disabled(isAddingToCalendar)
+
+                        // External link
+                        if let urlString = event.externalURL, let url = URL(string: urlString) {
+                            Link(destination: url) {
+                                Label("More Information", systemImage: "safari")
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color(.systemGray6))
+                                    .foregroundStyle(.primary)
+                                    .font(.headline)
+                                    .cornerRadius(12)
+                            }
                         }
                     }
                 }
@@ -269,6 +299,47 @@ struct EventDetailView: View {
         } message: {
             Text("Are you sure you want to delete \"\(event.title)\"? This cannot be undone.")
         }
+        .alert("Added to Calendar!", isPresented: $showCalendarSuccess) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("\"\(event.title)\" has been added to your calendar with a 1-hour reminder.")
+        }
+        .alert("Calendar Access Required", isPresented: $showCalendarDenied) {
+            Button("Open Settings") {
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Please allow calendar access in Settings to add events to your calendar.")
+        }
+        .alert("Calendar Error", isPresented: .init(
+            get: { calendarErrorMessage != nil },
+            set: { if !$0 { calendarErrorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(calendarErrorMessage ?? "An error occurred.")
+        }
+    }
+
+    private func addToCalendar() {
+        isAddingToCalendar = true
+        Task {
+            let result = await calendarService.addToCalendar(event)
+            await MainActor.run {
+                isAddingToCalendar = false
+                switch result {
+                case .success:
+                    showCalendarSuccess = true
+                case .denied:
+                    showCalendarDenied = true
+                case .error(let message):
+                    calendarErrorMessage = message
+                }
+            }
+        }
     }
 
     private func deleteEvent() {
@@ -299,6 +370,18 @@ struct EventDetailView: View {
             .background(event.category.color.opacity(0.85))
             .clipShape(Capsule())
             .padding(12)
+    }
+
+    private var priceTierBadgeColor: Color {
+        switch event.priceTier {
+        case 0:  return .green
+        case 1:  return .green.opacity(0.8)
+        case 2:  return .blue.opacity(0.8)
+        case 3:  return .orange
+        case 4:  return .red.opacity(0.8)
+        case 5:  return .red
+        default: return .gray
+        }
     }
 
     private var heroPlaceholder: some View {

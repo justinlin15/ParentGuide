@@ -240,12 +240,22 @@ actor EventService {
             }
     }
 
-    /// Fetch popular/trending events (featured first, then by date).
+    /// Fetch popular/trending events (favorited → featured → has image → by date).
     func fetchPopularEvents(forMetro metro: String, limit: Int = 10) async throws -> [Event] {
         let upcoming = try await fetchUpcomingEvents(forMetro: metro)
+        let favoriteIDs = FavoritesService.shared.favoriteIDs
+
         let sorted = upcoming.sorted { a, b in
+            // Favorited events rank higher (popular = frequently favorited)
+            let aFav = favoriteIDs.contains(a.id)
+            let bFav = favoriteIDs.contains(b.id)
+            if aFav != bFav { return aFav }
+            // Featured events rank next
             if a.isFeatured != b.isFeatured { return a.isFeatured }
-            if a.hasLocation != b.hasLocation { return a.hasLocation }
+            // Events with images rank higher (better for carousel)
+            let aHasImage = a.imageURL != nil && !(a.imageURL?.isEmpty ?? true)
+            let bHasImage = b.imageURL != nil && !(b.imageURL?.isEmpty ?? true)
+            if aHasImage != bHasImage { return aHasImage }
             return a.startDate < b.startDate
         }
         return Array(sorted.prefix(limit))

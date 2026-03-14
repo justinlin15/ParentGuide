@@ -25,7 +25,8 @@ nonisolated enum AppConstants {
     }
 
     static let metroAreas: [Metro] = [
-        Metro(id: "los-angeles", name: "Los Angeles / Orange County", latitude: 33.9425, longitude: -118.255),
+        Metro(id: "los-angeles", name: "Los Angeles", latitude: 34.0522, longitude: -118.2437),
+        Metro(id: "orange-county", name: "Orange County", latitude: 33.7175, longitude: -117.8311),
         Metro(id: "new-york", name: "New York City / Tri-State", latitude: 40.7128, longitude: -74.006),
         Metro(id: "dallas", name: "Dallas-Fort Worth", latitude: 32.7767, longitude: -96.797),
         Metro(id: "chicago", name: "Chicago", latitude: 41.8781, longitude: -87.6298),

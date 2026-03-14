@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Parent Guide needs calendar access to add family events to your calendar.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Parent Guide needs calendar access to add family events to your calendar.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Parent Guide uses your location to find family-friendly events near you.</string>
 	<key>UIBackgroundModes</key>

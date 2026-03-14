@@ -14,16 +14,25 @@ export interface MetroArea {
 export const METRO_AREAS: MetroArea[] = [
   {
     id: "los-angeles",
-    name: "Los Angeles / Orange County",
-    latitude: 33.9425,
-    longitude: -118.255,
-    radiusMiles: 50,
+    name: "Los Angeles",
+    latitude: 34.0522,
+    longitude: -118.2437,
+    radiusMiles: 35,
     macaroniKidSlugs: [
-      "orangecounty",
       "losangeles",
       "longbeach",
       "pasadena",
       "santamonica",
+    ],
+  },
+  {
+    id: "orange-county",
+    name: "Orange County",
+    latitude: 33.7175,
+    longitude: -117.8311,
+    radiusMiles: 25,
+    macaroniKidSlugs: [
+      "orangecounty",
       "irvine",
     ],
   },

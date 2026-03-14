@@ -6,6 +6,11 @@ import {
 } from "../../normalize.js";
 import { log } from "../../utils/logger.js";
 import { geocodeAddress, delay } from "../../utils/geocoder.js";
+import {
+  searchForVenueLocation,
+  searchForEventImage,
+  extractAddressFromText,
+} from "../../utils/web-enricher.js";
 
 // MommyPoppins covers all 5 metros with identical Drupal template.
 // Listing pages show events for a given date. We scrape multiple days
@@ -14,6 +19,7 @@ import { geocodeAddress, delay } from "../../utils/geocoder.js";
 
 const REGION_MAP: Record<string, { id: number; slug: string }> = {
   "los-angeles": { id: 115, slug: "los-angeles" },
+  "orange-county": { id: 115, slug: "los-angeles" }, // Shares MommyPoppins region with LA; city-level filtering in iOS
   "new-york": { id: 118, slug: "new-york-city" },
   "dallas": { id: 2479, slug: "dallas-fort-worth" },
   "chicago": { id: 1424, slug: "chicago" },
@@ -25,6 +31,8 @@ const DETAIL_FETCH_LIMIT = 60; // max detail pages per metro
 const DETAIL_DELAY_MS = 500; // delay between detail fetches
 const GEOCODE_LIMIT = 40; // max geocode requests per metro (Nominatim rate limit: 1/sec)
 const GEOCODE_DELAY_MS = 1100; // slightly over 1 second for Nominatim
+const WEB_ENRICH_LIMIT = 30; // max web lookups for missing addresses/images per metro
+const IMAGE_FETCH_DELAY_MS = 600; // delay between og:image fetches
 
 const HEADERS = {
   "User-Agent":
@@ -66,6 +74,9 @@ export async function scrapeMommyPoppins(
 
   // Phase 3: Geocode events with addresses but no coordinates
   await geocodeEvents(allEvents);
+
+  // Phase 4: Web search fallback for events still missing addresses or images
+  await enrichMissingFromWeb(allEvents, metro.id);
 
   log.info(
     "mommy-poppins",
@@ -579,4 +590,112 @@ async function geocodeEvents(events: PipelineEvent[]): Promise<void> {
   }
 
   log.info("mommy-poppins", `  Geocoded ${geocoded}/${toGeocode.length} addresses`);
+}
+
+// ─── Web search fallback for missing data ─────────────────────────────────
+
+/**
+ * Phase 4: For events still missing addresses or images after detail enrichment
+ * and geocoding, search the web using the event description and venue name.
+ */
+async function enrichMissingFromWeb(
+  events: PipelineEvent[],
+  metroId: string
+): Promise<void> {
+  // Find events missing coordinates or images (deduplicate by externalURL)
+  const needsLocation: PipelineEvent[] = [];
+  const needsImage: PipelineEvent[] = [];
+  const seenUrls = new Set<string>();
+
+  for (const event of events) {
+    const url = event.externalURL || event.sourceId;
+    if (seenUrls.has(url)) continue;
+    seenUrls.add(url);
+
+    if (!event.latitude || !event.longitude) {
+      needsLocation.push(event);
+    }
+    if (!event.imageURL || event.imageURL.trim() === "") {
+      needsImage.push(event);
+    }
+  }
+
+  const locationBatch = needsLocation.slice(0, WEB_ENRICH_LIMIT);
+  const imageBatch = needsImage.slice(0, WEB_ENRICH_LIMIT);
+
+  if (locationBatch.length === 0 && imageBatch.length === 0) return;
+
+  log.info(
+    "mommy-poppins",
+    `  Web enrichment: ${locationBatch.length} need locations, ${imageBatch.length} need images`
+  );
+
+  // ── Address/location fallback ──
+  let locationsFound = 0;
+  for (const event of locationBatch) {
+    // Try extracting address from description first (no API call needed)
+    const descAddress = extractAddressFromText(event.description || "");
+    if (descAddress && !event.address) {
+      event.address = descAddress;
+    }
+
+    // Build search context from all available text
+    const searchName = event.locationName || event.title;
+    const searchDesc = [
+      event.description || "",
+      event.address || "",
+      event.city || "",
+    ].join(" ");
+
+    const result = await searchForVenueLocation(searchName, searchDesc, metroId);
+    if (result) {
+      if (result.address && !event.address) event.address = result.address;
+      event.latitude = result.latitude;
+      event.longitude = result.longitude;
+
+      // Apply to all instances of this event (different dates)
+      const url = event.externalURL;
+      if (url) {
+        for (const e of events) {
+          if (e.externalURL === url && (!e.latitude || !e.longitude)) {
+            if (result.address && !e.address) e.address = result.address;
+            e.latitude = result.latitude;
+            e.longitude = result.longitude;
+          }
+        }
+      }
+      locationsFound++;
+    }
+  }
+
+  // ── Image fallback ──
+  let imagesFound = 0;
+  for (const event of imageBatch) {
+    const imageUrl = await searchForEventImage(
+      event.externalURL,
+      event.websiteURL
+    );
+    if (imageUrl) {
+      event.imageURL = imageUrl;
+      // Apply to all instances
+      const url = event.externalURL;
+      if (url) {
+        for (const e of events) {
+          if (
+            e.externalURL === url &&
+            (!e.imageURL || e.imageURL.trim() === "")
+          ) {
+            e.imageURL = imageUrl;
+          }
+        }
+      }
+      imagesFound++;
+    }
+    await delay(IMAGE_FETCH_DELAY_MS);
+  }
+
+  log.info(
+    "mommy-poppins",
+    `  Web enrichment: found ${locationsFound}/${locationBatch.length} locations, ${imagesFound}/${imageBatch.length} images`
+  );
 }

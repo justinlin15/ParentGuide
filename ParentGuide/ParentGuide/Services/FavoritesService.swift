@@ -26,8 +26,24 @@ class FavoritesService {
     func toggleFavorite(_ eventID: String) {
         if favoriteIDs.contains(eventID) {
             favoriteIDs.remove(eventID)
+            NotificationService.shared.cancelReminder(for: eventID)
         } else {
             favoriteIDs.insert(eventID)
+        }
+        persist()
+    }
+
+    /// Toggle favorite for an event, scheduling a reminder notification if favorited.
+    func toggleFavorite(for event: Event) {
+        if favoriteIDs.contains(event.id) {
+            favoriteIDs.remove(event.id)
+            NotificationService.shared.cancelReminder(for: event.id)
+        } else {
+            favoriteIDs.insert(event.id)
+            // Schedule a reminder notification
+            Task {
+                await NotificationService.shared.scheduleReminder(for: event)
+            }
         }
         persist()
     }
@@ -39,6 +55,7 @@ class FavoritesService {
 
     func removeFavorite(_ eventID: String) {
         favoriteIDs.remove(eventID)
+        NotificationService.shared.cancelReminder(for: eventID)
         persist()
     }
 

@@ -98,97 +98,117 @@ class ParentsNightOutViewModel {
 
     static let bundledProviders: [ParentsNightOutProvider] = [
 
-        // ───── Los Angeles / Orange County ─────
+        // ───── Los Angeles ─────
 
         ParentsNightOutProvider(
-            id: "b-pno-la-01", name: "KidsPark",
+            id: "b-pno-la-02", name: "My Gym",
+            cities: ["Pasadena", "Sherman Oaks", "Santa Monica"],
+            providerDescription: "Monthly Parents Night Out events featuring gymnastics, games, pizza, and a movie on the big screen. Drop off your kids for 3 hours of active supervised fun.",
+            ageRequirement: "Ages 3–9", pricing: "$30–$40/child",
+            promoCode: nil, promoDetails: nil, imageURL: nil,
+            externalURL: "https://www.mygym.com", isActive: true, sortOrder: 0,
+            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+
+        ParentsNightOutProvider(
+            id: "b-pno-la-03", name: "The Little Gym",
+            cities: ["Encino", "Manhattan Beach", "Culver City"],
+            providerDescription: "Parents Night Out events held monthly on Friday or Saturday evenings. Kids enjoy gymnastics, games, arts and crafts, and pizza in a safe, supervised environment.",
+            ageRequirement: "Ages 3–8", pricing: "$25–$35/child",
+            promoCode: nil, promoDetails: nil, imageURL: nil,
+            externalURL: "https://www.thelittlegym.com", isActive: true, sortOrder: 1,
+            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+
+        ParentsNightOutProvider(
+            id: "b-pno-la-04", name: "Pump It Up",
+            cities: ["Torrance", "Glendale"],
+            providerDescription: "Parents Night Out bounce events on select Friday and Saturday evenings. Kids bounce on giant inflatables, play games, and enjoy pizza and drinks for 3 hours.",
+            ageRequirement: "Ages 4–12", pricing: "$25–$30/child",
+            promoCode: nil, promoDetails: nil, imageURL: nil,
+            externalURL: "https://www.pumpitupparty.com", isActive: true, sortOrder: 2,
+            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+
+        ParentsNightOutProvider(
+            id: "b-pno-la-09", name: "Sky Zone",
+            cities: ["Van Nuys", "Torrance"],
+            providerDescription: "Parents Night Out with unlimited trampolines, foam pits, dodgeball, and pizza. Events held monthly on Friday or Saturday evenings. Advance registration required.",
+            ageRequirement: "Ages 5–14", pricing: "$30–$40/child",
+            promoCode: nil, promoDetails: nil, imageURL: nil,
+            externalURL: "https://www.skyzone.com", isActive: true, sortOrder: 3,
+            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+
+        // ───── Orange County ─────
+
+        ParentsNightOutProvider(
+            id: "b-pno-oc-01", name: "KidsPark",
             cities: ["Irvine", "Aliso Viejo", "Mission Viejo"],
             providerDescription: "Licensed drop-in childcare center. Open evenings for Parents Night Out. Activities include arts and crafts, games, movies, and supervised free play. No reservations needed.",
             ageRequirement: "Ages 2–12, potty trained", pricing: "$12–$15/hour",
             promoCode: nil, promoDetails: nil, imageURL: nil,
             externalURL: "https://www.kidspark.com", isActive: true, sortOrder: 0,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-02", name: "My Gym",
-            cities: ["Costa Mesa", "Laguna Niguel", "Mission Viejo", "Yorba Linda", "Pasadena"],
+            id: "b-pno-oc-02", name: "My Gym",
+            cities: ["Costa Mesa", "Laguna Niguel", "Mission Viejo", "Yorba Linda"],
             providerDescription: "Monthly Parents Night Out events featuring gymnastics, games, pizza, and a movie on the big screen. Drop off your kids for 3 hours of active supervised fun.",
             ageRequirement: "Ages 3–9", pricing: "$30–$40/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
             externalURL: "https://www.mygym.com", isActive: true, sortOrder: 1,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-03", name: "The Little Gym",
-            cities: ["Irvine", "Brea", "Rancho Santa Margarita", "Encino", "Manhattan Beach"],
+            id: "b-pno-oc-03", name: "The Little Gym",
+            cities: ["Irvine", "Brea", "Rancho Santa Margarita"],
             providerDescription: "Parents Night Out events held monthly on Friday or Saturday evenings. Kids enjoy gymnastics, games, arts and crafts, and pizza in a safe, supervised environment.",
             ageRequirement: "Ages 3–8", pricing: "$25–$35/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
             externalURL: "https://www.thelittlegym.com", isActive: true, sortOrder: 2,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-04", name: "Pump It Up",
-            cities: ["Mission Viejo", "Anaheim", "Torrance"],
-            providerDescription: "Parents Night Out bounce events on select Friday and Saturday evenings. Kids bounce on giant inflatables, play games, and enjoy pizza and drinks for 3 hours.",
-            ageRequirement: "Ages 4–12", pricing: "$25–$30/child",
-            promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.pumpitupparty.com", isActive: true, sortOrder: 3,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
-
-        ParentsNightOutProvider(
-            id: "b-pno-la-05", name: "Pretend City Children's Museum",
+            id: "b-pno-oc-04", name: "Pretend City Children's Museum",
             cities: ["Irvine"],
             providerDescription: "Monthly Parents Night Out at the museum. Kids explore all 17 interactive rooms after hours with supervised activities, crafts, dinner, and a movie. Registration required.",
             ageRequirement: "Ages 3–8", pricing: "$40–$50/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.pretendcity.org", isActive: true, sortOrder: 4,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            externalURL: "https://www.pretendcity.org", isActive: true, sortOrder: 3,
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-06", name: "Karate OC",
+            id: "b-pno-oc-05", name: "Karate OC",
             cities: ["Fullerton", "Placentia"],
             providerDescription: "Games, obstacle courses, laser tag, pizza, drinks, and movies! A high-energy Parents Night Out for kids who love action and adventure.",
             ageRequirement: "Ages 5+", pricing: "$25–$35/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.karateoc.com", isActive: true, sortOrder: 5,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            externalURL: "https://www.karateoc.com", isActive: true, sortOrder: 4,
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-07", name: "Sweet Peas Gymnastics",
+            id: "b-pno-oc-06", name: "Sweet Peas Gymnastics",
             cities: ["Rancho Mission Viejo"],
             providerDescription: "Offered every Saturday night. Kids enjoy an evening of gymnastics, obstacle courses, trampolines, bounce houses, games, crafts, and more!",
             ageRequirement: "Ages 3–13, potty trained", pricing: "$27–$30/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.sweetpeasgymnastics.com", isActive: true, sortOrder: 6,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            externalURL: "https://www.sweetpeasgymnastics.com", isActive: true, sortOrder: 5,
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-08", name: "Urban Air Adventure Park",
-            cities: ["Anaheim", "Rancho Cucamonga", "Riverside"],
+            id: "b-pno-oc-07", name: "Urban Air Adventure Park",
+            cities: ["Anaheim"],
             providerDescription: "Parents Night Out events featuring trampolines, climbing walls, dodgeball, obstacle courses, pizza, and drinks. Kids get the run of the park for 3 hours.",
             ageRequirement: "Ages 5–13", pricing: "$25–$35/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.urbanair.com", isActive: true, sortOrder: 7,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            externalURL: "https://www.urbanair.com", isActive: true, sortOrder: 6,
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         ParentsNightOutProvider(
-            id: "b-pno-la-09", name: "Sky Zone",
-            cities: ["Anaheim", "Van Nuys", "Torrance"],
+            id: "b-pno-oc-08", name: "Sky Zone",
+            cities: ["Anaheim"],
             providerDescription: "Parents Night Out with unlimited trampolines, foam pits, dodgeball, and pizza. Events held monthly on Friday or Saturday evenings. Advance registration required.",
             ageRequirement: "Ages 5–14", pricing: "$30–$40/child",
             promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.skyzone.com", isActive: true, sortOrder: 8,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
-
-        ParentsNightOutProvider(
-            id: "b-pno-la-10", name: "Club Pilates Kids Night",
-            cities: ["Costa Mesa", "Newport Beach", "Laguna Niguel"],
-            providerDescription: "Select locations host quarterly Kids Night Out events where children enjoy crafts, games, and movies while parents enjoy an evening off.",
-            ageRequirement: "Ages 4–10", pricing: "$20–$25/child",
-            promoCode: nil, promoDetails: nil, imageURL: nil,
-            externalURL: "https://www.clubpilates.com", isActive: true, sortOrder: 9,
-            metro: "los-angeles", source: "bundled", createdAt: Date(), modifiedAt: Date()),
+            externalURL: "https://www.skyzone.com", isActive: true, sortOrder: 7,
+            metro: "orange-county", source: "bundled", createdAt: Date(), modifiedAt: Date()),
 
         // ───── New York / Tri-State ─────
 

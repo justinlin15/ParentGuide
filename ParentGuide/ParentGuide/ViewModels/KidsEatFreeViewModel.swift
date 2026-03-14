@@ -116,11 +116,11 @@ class KidsEatFreeViewModel {
 
     static let bundledRestaurants: [KidsEatFreeRestaurant] = [
 
-        // ───── Los Angeles / Orange County ─────
+        // ───── Los Angeles ─────
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-01", name: "Denny's",
-            cities: ["Tustin", "Santa Ana", "Anaheim", "Los Angeles", "Burbank", "Long Beach"],
+            cities: ["Los Angeles", "Burbank", "Long Beach", "Torrance", "Glendale"],
             dealDetails: "Kids 10 & under eat free on Tuesdays from 4–10 PM with purchase of an adult entrée. Limit two free kids meals per adult entrée.",
             imageURL: nil, websiteURL: "https://www.dennys.com", phoneNumber: nil,
             address: nil, isActive: true, sortOrder: 0, metro: "los-angeles", source: "bundled",
@@ -128,7 +128,7 @@ class KidsEatFreeViewModel {
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-02", name: "IKEA",
-            cities: ["Costa Mesa", "Burbank", "Carson"],
+            cities: ["Burbank", "Carson"],
             dealDetails: "Free kids meal for children 12 & under with purchase of an adult entrée on Wednesdays. Kids crafts on Wednesday evenings at select locations.",
             imageURL: nil, websiteURL: "https://www.ikea.com", phoneNumber: nil,
             address: nil, isActive: true, sortOrder: 1, metro: "los-angeles", source: "bundled",
@@ -136,7 +136,7 @@ class KidsEatFreeViewModel {
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-03", name: "Red Robin",
-            cities: ["Brea", "Torrance", "Lakewood", "West Covina", "Burbank"],
+            cities: ["Torrance", "Lakewood", "West Covina", "Burbank"],
             dealDetails: "Kids eat free every day with purchase of an adult entrée and a drink. One free kids meal per adult entrée.",
             imageURL: nil, websiteURL: "https://www.redrobin.com", phoneNumber: nil,
             address: nil, isActive: true, sortOrder: 2, metro: "los-angeles", source: "bundled",
@@ -144,7 +144,7 @@ class KidsEatFreeViewModel {
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-04", name: "Mimi's Cafe",
-            cities: ["Tustin", "Brea", "Monrovia", "Torrance"],
+            cities: ["Monrovia", "Torrance"],
             dealDetails: "Kids 12 & under eat free on Tuesdays from 4 PM to close with purchase of an adult entrée.",
             imageURL: nil, websiteURL: "https://www.mimiscafe.com", phoneNumber: nil,
             address: nil, isActive: true, sortOrder: 3, metro: "los-angeles", source: "bundled",
@@ -152,18 +152,10 @@ class KidsEatFreeViewModel {
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-05", name: "Chili's Grill & Bar",
-            cities: ["Anaheim", "Cerritos", "Huntington Beach", "Pasadena", "West Covina"],
+            cities: ["Cerritos", "Pasadena", "West Covina", "Downey"],
             dealDetails: "Kids eat free with every adult entrée purchase. Available all day, every day. One free kids meal per adult entrée.",
             imageURL: nil, websiteURL: "https://www.chilis.com", phoneNumber: nil,
             address: nil, isActive: true, sortOrder: 4, metro: "los-angeles", source: "bundled",
-            createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(
-            id: "b-kef-la-06", name: "CiCi's Pizza",
-            cities: ["Anaheim", "Fullerton", "Riverside"],
-            dealDetails: "Kids 3 & under eat free from the buffet with a paying adult. Ages 4–12 enjoy discounted buffet pricing all day, every day.",
-            imageURL: nil, websiteURL: "https://www.cicis.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 5, metro: "los-angeles", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         KidsEatFreeRestaurant(
@@ -171,47 +163,105 @@ class KidsEatFreeViewModel {
             cities: ["Burbank", "Calimesa"],
             dealDetails: "Kids 10 & under eat free on Sundays with purchase of an adult entrée. Dine-in only. Limit one free kids meal per adult.",
             imageURL: nil, websiteURL: "https://www.bfrg.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 6, metro: "los-angeles", source: "bundled",
-            createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(
-            id: "b-kef-la-08", name: "Ruby's Diner",
-            cities: ["Anaheim", "Brea", "Corona Del Mar", "Costa Mesa", "Laguna Beach", "San Clemente", "Tustin"],
-            dealDetails: "Kids eat free on Tuesday nights from 4 PM until close with purchase of an adult entrée.",
-            imageURL: nil, websiteURL: "https://www.rubys.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 7, metro: "los-angeles", source: "bundled",
+            address: nil, isActive: true, sortOrder: 5, metro: "los-angeles", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         KidsEatFreeRestaurant(
             id: "b-kef-la-09", name: "Claim Jumper",
-            cities: ["Brea", "Irvine", "Torrance"],
+            cities: ["Torrance"],
             dealDetails: "Kids 12 & under eat free on Tuesdays with purchase of an adult entrée. Dine-in only.",
             imageURL: nil, websiteURL: "https://www.claimjumper.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 8, metro: "los-angeles", source: "bundled",
+            address: nil, isActive: true, sortOrder: 6, metro: "los-angeles", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        // ───── Orange County ─────
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-01", name: "Denny's",
+            cities: ["Tustin", "Santa Ana", "Anaheim", "Lake Forest", "Mission Viejo"],
+            dealDetails: "Kids 10 & under eat free on Tuesdays from 4–10 PM with purchase of an adult entrée. Limit two free kids meals per adult entrée.",
+            imageURL: nil, websiteURL: "https://www.dennys.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 0, metro: "orange-county", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         KidsEatFreeRestaurant(
-            id: "b-kef-la-10", name: "Avila's El Ranchito",
+            id: "b-kef-oc-02", name: "IKEA",
+            cities: ["Costa Mesa"],
+            dealDetails: "Free kids meal for children 12 & under with purchase of an adult entrée on Wednesdays. Kids crafts on Wednesday evenings.",
+            imageURL: nil, websiteURL: "https://www.ikea.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 1, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-03", name: "Red Robin",
+            cities: ["Brea", "Mission Viejo", "Rancho Santa Margarita"],
+            dealDetails: "Kids eat free every day with purchase of an adult entrée and a drink. One free kids meal per adult entrée.",
+            imageURL: nil, websiteURL: "https://www.redrobin.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 2, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-04", name: "Ruby's Diner",
+            cities: ["Anaheim", "Brea", "Corona Del Mar", "Costa Mesa", "Laguna Beach", "San Clemente", "Tustin"],
+            dealDetails: "Kids eat free on Tuesday nights from 4 PM until close with purchase of an adult entrée.",
+            imageURL: nil, websiteURL: "https://www.rubys.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 3, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-05", name: "Avila's El Ranchito",
             cities: ["Orange", "Laguna Niguel", "Lake Forest", "Foothill Ranch", "San Clemente", "Santa Ana"],
             dealDetails: "Orange, Lake Forest, Laguna Niguel: Kids eat free on Mondays from 4–10 PM. Foothill Ranch: Kids eat free on Sundays. San Clemente & Santa Ana: Kids eat free on Wednesdays 4–10 PM.",
             imageURL: nil, websiteURL: "https://www.avilaselranchito.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 9, metro: "los-angeles", source: "bundled",
+            address: nil, isActive: true, sortOrder: 4, metro: "orange-county", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         KidsEatFreeRestaurant(
-            id: "b-kef-la-11", name: "Wienerschnitzel",
+            id: "b-kef-oc-06", name: "Chili's Grill & Bar",
+            cities: ["Anaheim", "Huntington Beach", "Mission Viejo", "Tustin"],
+            dealDetails: "Kids eat free with every adult entrée purchase. Available all day, every day. One free kids meal per adult entrée.",
+            imageURL: nil, websiteURL: "https://www.chilis.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 5, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-07", name: "CiCi's Pizza",
+            cities: ["Anaheim", "Fullerton"],
+            dealDetails: "Kids 3 & under eat free from the buffet with a paying adult. Ages 4–12 enjoy discounted buffet pricing all day, every day.",
+            imageURL: nil, websiteURL: "https://www.cicis.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 6, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-08", name: "Mimi's Cafe",
+            cities: ["Tustin", "Brea"],
+            dealDetails: "Kids 12 & under eat free on Tuesdays from 4 PM to close with purchase of an adult entrée.",
+            imageURL: nil, websiteURL: "https://www.mimiscafe.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 7, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-09", name: "Wienerschnitzel",
             cities: ["Anaheim", "Costa Mesa", "Fullerton", "Orange", "Santa Ana"],
             dealDetails: "Kids meals starting at $1.99 with purchase of an adult combo. Available every day at participating locations.",
             imageURL: nil, websiteURL: "https://www.wienerschnitzel.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 10, metro: "los-angeles", source: "bundled",
+            address: nil, isActive: true, sortOrder: 8, metro: "orange-county", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         KidsEatFreeRestaurant(
-            id: "b-kef-la-12", name: "Polly's Pies",
-            cities: ["Costa Mesa", "Fullerton", "Huntington Beach", "Norco"],
+            id: "b-kef-oc-10", name: "Polly's Pies",
+            cities: ["Costa Mesa", "Fullerton", "Huntington Beach"],
             dealDetails: "Kids 10 & under eat free on Mondays with purchase of an adult entrée. Dine-in only. One free kids meal per adult entrée.",
             imageURL: nil, websiteURL: "https://www.pollyspies.com", phoneNumber: nil,
-            address: nil, isActive: true, sortOrder: 11, metro: "los-angeles", source: "bundled",
+            address: nil, isActive: true, sortOrder: 9, metro: "orange-county", source: "bundled",
+            createdAt: Date(), modifiedAt: Date()),
+
+        KidsEatFreeRestaurant(
+            id: "b-kef-oc-11", name: "Claim Jumper",
+            cities: ["Brea", "Irvine"],
+            dealDetails: "Kids 12 & under eat free on Tuesdays with purchase of an adult entrée. Dine-in only.",
+            imageURL: nil, websiteURL: "https://www.claimjumper.com", phoneNumber: nil,
+            address: nil, isActive: true, sortOrder: 10, metro: "orange-county", source: "bundled",
             createdAt: Date(), modifiedAt: Date()),
 
         // ───── New York / Tri-State ─────

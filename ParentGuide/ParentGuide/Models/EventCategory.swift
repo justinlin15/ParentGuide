@@ -25,6 +25,8 @@ nonisolated enum EventCategory: String, CaseIterable, Identifiable, Codable, Sen
 
     var id: String { rawValue }
 
+    var displayName: String { rawValue }
+
     var color: Color {
         switch self {
         case .storytime:

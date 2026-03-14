@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct HeroSectionView: View {
+    @State private var authService = AuthService.shared
+
     var body: some View {
         ZStack {
             LinearGradient(
@@ -26,14 +28,14 @@ struct HeroSectionView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Access to over 1,500 monthly events, exclusive subscriber meet-ups, local partner discounts and free giveaways!")
+                Text("Discover 1,500+ family-friendly events each month. Create a free account to save favorites, RSVP, and get personalized recommendations!")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
 
-                NavigationLink(destination: PlansView()) {
-                    Text("Start free trial")
+                NavigationLink(destination: LoginView()) {
+                    Text("Create Free Account")
                         .font(.system(.headline, design: .rounded))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)

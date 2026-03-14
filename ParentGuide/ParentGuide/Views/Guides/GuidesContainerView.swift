@@ -12,25 +12,12 @@ enum GuideTab: String, CaseIterable {
 
 struct GuidesContainerView: View {
     @State private var selectedGuide: GuideTab = .kidsEatFree
-    @State private var subscriptionService = SubscriptionService.shared
-    @State private var adminService = AdminService.shared
-
-    /// Whether the user has access (subscribed or admin).
-    private var hasAccess: Bool {
-        subscriptionService.isSubscribed || adminService.isAdmin
-    }
 
     var body: some View {
         NavigationStack {
-            Group {
-                if hasAccess {
-                    guidesContent
-                } else {
-                    PaywallView(lockedContentName: "Guides")
-                }
-            }
-            .navigationTitle("Guides")
-            .navigationBarTitleDisplayMode(.inline)
+            guidesContent
+                .navigationTitle("Guides")
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 

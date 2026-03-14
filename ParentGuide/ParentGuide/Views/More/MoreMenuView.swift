@@ -18,8 +18,8 @@ struct MoreMenuView: View {
                     NavigationLink(destination: ResourcesView()) {
                         Label("Resources", systemImage: "doc.fill")
                     }
-                    NavigationLink(destination: PlansView()) {
-                        Label("Plans & Pricing", systemImage: "creditcard")
+                    NavigationLink(destination: LoginView()) {
+                        Label("Create Account", systemImage: "person.badge.plus")
                     }
                 }
 

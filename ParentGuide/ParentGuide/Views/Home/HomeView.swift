@@ -114,16 +114,9 @@ struct HomeView: View {
                 }
             }
 
-            // Popular events
+            // Popular events carousel
             if !popularEvents.isEmpty {
-                feedSection(title: "Popular Near You", icon: "flame.fill") {
-                    ForEach(popularEvents.prefix(8)) { event in
-                        NavigationLink(destination: EventDetailView(event: event)) {
-                            CompactEventCard(event: event)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
+                PopularCarouselSection(events: Array(popularEvents.prefix(5)))
             }
 
             // Map
@@ -145,14 +138,14 @@ struct HomeView: View {
                 description: "An up-to-date, curated list of over 1,500 affordable, family-friendly events each month."
             )
             FeatureHighlightView(
-                icon: "person.3.fill",
-                title: "Subscriber meetups",
-                description: "Free and discounted subscriber meetups — Mom's Night Out, Escape Rooms, and more!"
+                icon: "heart.fill",
+                title: "Save & RSVP",
+                description: "Favorite events, RSVP to activities, and build your family's personalized calendar."
             )
             FeatureHighlightView(
-                icon: "tag.fill",
-                title: "Partner perks",
-                description: "Exclusive discounts to family photographers, art classes, music classes, and play places."
+                icon: "mappin.and.ellipse",
+                title: "Events near you",
+                description: "Discover what's happening in your area with our interactive map and location-based recommendations."
             )
         }
         .padding(.horizontal, 20)
@@ -160,14 +153,7 @@ struct HomeView: View {
 
         // Popular events preview (even for guests)
         if !popularEvents.isEmpty {
-            feedSection(title: "Popular Events", icon: "flame.fill") {
-                ForEach(popularEvents.prefix(5)) { event in
-                    NavigationLink(destination: EventDetailView(event: event)) {
-                        CompactEventCard(event: event)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
+            PopularCarouselSection(events: Array(popularEvents.prefix(5)))
         }
 
         HomeMapView()

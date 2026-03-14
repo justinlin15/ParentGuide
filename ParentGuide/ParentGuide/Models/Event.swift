@@ -55,6 +55,95 @@ struct Event: Identifiable, Hashable, Codable {
         }
         return startDate.formatted(date: .omitted, time: .shortened)
     }
+
+    // MARK: - Price Tier (Yelp-style $ to $$$$$)
+
+    /// Whether this event is explicitly free
+    var isFree: Bool {
+        guard let price = price?.lowercased().trimmingCharacters(in: .whitespaces) else { return false }
+        return price == "free" || price == "$0" || price == "0" || price.contains("free")
+    }
+
+    /// Yelp-style price tier: 1 ($) to 5 ($$$$$), or nil if unknown
+    var priceTier: Int? {
+        guard let priceStr = price?.trimmingCharacters(in: .whitespaces), !priceStr.isEmpty else {
+            return nil
+        }
+
+        let lower = priceStr.lowercased()
+        if lower == "free" || lower == "$0" || lower == "0" || lower.contains("free") {
+            return 0 // Free
+        }
+
+        // Extract dollar amounts from the price string
+        let amounts = extractDollarAmounts(from: priceStr)
+        guard let maxAmount = amounts.max() else {
+            // If no dollar amounts found but price exists, default to $
+            return priceStr.isEmpty ? nil : 1
+        }
+
+        // Use the highest amount to determine tier
+        switch maxAmount {
+        case 0:           return 0 // Free
+        case 1...10:      return 1 // $
+        case 11...25:     return 2 // $$
+        case 26...50:     return 3 // $$$
+        case 51...100:    return 4 // $$$$
+        default:          return 5 // $$$$$
+        }
+    }
+
+    /// Display string for price tier: "FREE", "$", "$$", etc.
+    var priceTierDisplay: String? {
+        guard let tier = priceTier else { return nil }
+        if tier == 0 { return "FREE" }
+        return String(repeating: "$", count: tier)
+    }
+
+    /// Color for the price tier badge
+    var priceTierColor: String {
+        guard let tier = priceTier else { return "gray" }
+        switch tier {
+        case 0:  return "green"   // Free - green
+        case 1:  return "green"   // $ - green
+        case 2:  return "blue"    // $$ - blue
+        case 3:  return "orange"  // $$$ - orange
+        case 4:  return "red"     // $$$$ - red
+        case 5:  return "red"     // $$$$$ - red
+        default: return "gray"
+        }
+    }
+
+    private func extractDollarAmounts(from text: String) -> [Double] {
+        var amounts: [Double] = []
+        // Match patterns like $15, $25.50, $5
+        let pattern = #"\$\s*(\d+(?:\.\d{1,2})?)"#
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let range = NSRange(text.startIndex..., in: text)
+            let matches = regex.matches(in: text, range: range)
+            for match in matches {
+                if let amountRange = Range(match.range(at: 1), in: text),
+                   let amount = Double(text[amountRange]) {
+                    amounts.append(amount)
+                }
+            }
+        }
+        // Also try plain numbers
+        if amounts.isEmpty {
+            let numPattern = #"(\d+(?:\.\d{1,2})?)"#
+            if let regex = try? NSRegularExpression(pattern: numPattern) {
+                let range = NSRange(text.startIndex..., in: text)
+                let matches = regex.matches(in: text, range: range)
+                for match in matches {
+                    if let amountRange = Range(match.range(at: 1), in: text),
+                       let amount = Double(text[amountRange]) {
+                        amounts.append(amount)
+                    }
+                }
+            }
+        }
+        return amounts
+    }
 }
 
 // MARK: - CloudKit Conversion

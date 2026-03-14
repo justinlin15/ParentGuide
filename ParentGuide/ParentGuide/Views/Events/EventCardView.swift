@@ -28,6 +28,14 @@ struct EventCardView: View {
                     .lineLimit(1)
 
                 HStack(spacing: 8) {
+                    // Price tier label
+                    if let tierDisplay = event.priceTierDisplay {
+                        Text(tierDisplay)
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(event.isFree ? .green : .orange)
+                    }
+
                     // Time
                     HStack(spacing: 4) {
                         Image(systemName: "clock")
@@ -53,7 +61,7 @@ struct EventCardView: View {
             // Favorite heart button
             Button {
                 withAnimation(.spring(response: 0.3)) {
-                    favoritesService.toggleFavorite(event.id)
+                    favoritesService.toggleFavorite(for: event)
                 }
             } label: {
                 Image(systemName: isFavorite ? "heart.fill" : "heart")
