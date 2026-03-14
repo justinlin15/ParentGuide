@@ -27,6 +27,26 @@ struct KidsEatFreeCardView: View {
         }
     }
 
+    /// Try the restaurant's logo via Clearbit, fall back to letter avatar
+    @ViewBuilder
+    private var logoOrAvatar: some View {
+        if let logoStr = restaurant.logoURL, let logoUrl = URL(string: logoStr) {
+            CachedAsyncImagePhase(url: logoUrl) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .padding(12)
+                default:
+                    restaurantLetterAvatar
+                }
+            }
+        } else {
+            restaurantLetterAvatar
+        }
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             // Restaurant image/avatar
@@ -44,12 +64,16 @@ struct KidsEatFreeCardView: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
+                        case .failure:
+                            // Primary image failed — try restaurant logo
+                            logoOrAvatar
                         default:
-                            restaurantLetterAvatar
+                            ProgressView()
+                                .tint(avatarColor)
                         }
                     }
                 } else {
-                    restaurantLetterAvatar
+                    logoOrAvatar
                 }
             }
             .frame(width: 80, height: 80)

@@ -28,6 +28,21 @@ struct EventDetailView: View {
         favoritesService.isFavorite(event.id)
     }
 
+    private var shareText: String {
+        var text = "\(event.title)\n\(event.formattedDate)"
+        if !event.isAllDay {
+            text += " \(event.formattedTime)"
+        }
+        if let location = event.locationName {
+            text += "\n\(location)"
+        }
+        text += "\n\(event.city)"
+        if let url = event.externalURL {
+            text += "\n\(url)"
+        }
+        return text
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -53,13 +68,20 @@ struct EventDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 16) {
-                    // Title row with favorite
+                    // Title row with share + favorite
                     HStack(alignment: .top) {
                         Text(event.title)
                             .font(.title2)
                             .fontWeight(.bold)
 
                         Spacer()
+
+                        ShareLink(item: shareText) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.title3)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
 
                         Button {
                             withAnimation(.spring(response: 0.3)) {
@@ -261,8 +283,9 @@ struct EventDetailView: View {
                         }
                         .disabled(isAddingToCalendar)
 
-                        // External link
-                        if let urlString = event.externalURL, let url = URL(string: urlString) {
+                        // More info — prefer original venue website over aggregator blog
+                        if let urlString = event.websiteURL ?? event.externalURL,
+                           let url = URL(string: urlString) {
                             Link(destination: url) {
                                 Label("More Information", systemImage: "safari")
                                     .frame(maxWidth: .infinity)

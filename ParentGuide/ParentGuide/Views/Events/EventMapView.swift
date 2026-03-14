@@ -83,6 +83,30 @@ struct EventMapView: View {
                         Spacer()
                     }
                     Spacer()
+
+                    // My Location button (like Google Maps)
+                    HStack {
+                        Spacer()
+                        Button {
+                            locationManager.requestLocation { coordinate in
+                                if let coordinate {
+                                    withAnimation {
+                                        mapPosition = .region(MKCoordinateRegion(
+                                            center: coordinate,
+                                            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                                        ))
+                                    }
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color.brandBlue)
+                                .frame(width: 44, height: 44)
+                                .background(.ultraThickMaterial, in: Circle())
+                                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                        }
+                    }
                 }
                 .padding()
             }
@@ -176,11 +200,29 @@ class LocationHelper: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private var completion: ((CLLocationCoordinate2D?) -> Void)?
 
+    /// Whether location permission has been denied or restricted
+    var isDenied: Bool {
+        let status = manager.authorizationStatus
+        return status == .denied || status == .restricted
+    }
+
     func requestLocation(completion: @escaping (CLLocationCoordinate2D?) -> Void) {
         self.completion = completion
         manager.delegate = self
-        manager.requestWhenInUseAuthorization()
-        manager.requestLocation()
+
+        let status = manager.authorizationStatus
+        switch status {
+        case .denied, .restricted:
+            // Permission denied — return nil immediately
+            completion(nil)
+            self.completion = nil
+        case .notDetermined:
+            // Will trigger system prompt; wait for auth change
+            manager.requestWhenInUseAuthorization()
+        default:
+            // Already authorized — request location
+            manager.requestLocation()
+        }
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -190,6 +232,18 @@ class LocationHelper: NSObject, CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Task { @MainActor in completion?(nil); completion = nil }
+    }
+
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task { @MainActor in
+            let status = manager.authorizationStatus
+            if status == .authorizedWhenInUse || status == .authorizedAlways {
+                manager.requestLocation()
+            } else if status == .denied || status == .restricted {
+                completion?(nil)
+                completion = nil
+            }
+        }
     }
 }
 

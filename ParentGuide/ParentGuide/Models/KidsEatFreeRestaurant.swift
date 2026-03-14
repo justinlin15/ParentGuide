@@ -24,6 +24,15 @@ struct KidsEatFreeRestaurant: Identifiable, Hashable {
 }
 
 extension KidsEatFreeRestaurant {
+    /// Logo image URL derived from the restaurant's website domain via Clearbit.
+    /// Used as a reliable fallback when the primary imageURL fails to load.
+    var logoURL: String? {
+        guard let websiteURL = websiteURL,
+              let url = URL(string: websiteURL),
+              let host = url.host else { return nil }
+        return "https://logo.clearbit.com/\(host)"
+    }
+
     /// Return a copy with a different imageURL (used to merge bundled images into CloudKit records).
     func withImageURL(_ url: String) -> KidsEatFreeRestaurant {
         KidsEatFreeRestaurant(

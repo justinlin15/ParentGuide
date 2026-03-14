@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 /// A tappable location pill that shows the current metro and lets users quickly switch.
 /// Similar to Yelp/DoorDash location picker in the header.
@@ -11,6 +12,7 @@ struct MetroSwitcherView: View {
     @State private var metroService = MetroService.shared
     @State private var showPicker = false
     @State private var isDetecting = false
+    @State private var showLocationDenied = false
 
     var body: some View {
         Button {
@@ -34,6 +36,16 @@ struct MetroSwitcherView: View {
         .sheet(isPresented: $showPicker) {
             metroPickerSheet
                 .presentationDetents([.medium])
+                .alert("Location Access Denied", isPresented: $showLocationDenied) {
+                    Button("Open Settings") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Location access was previously denied. Please enable it in Settings to auto-detect your metro area.")
+                }
         }
     }
 
@@ -44,6 +56,13 @@ struct MetroSwitcherView: View {
             List {
                 Section {
                     Button {
+                        // Check if location permission was denied
+                        let status = CLLocationManager().authorizationStatus
+                        if status == .denied || status == .restricted {
+                            showLocationDenied = true
+                            return
+                        }
+
                         isDetecting = true
                         Task {
                             let detected = await metroService.autoDetect()
