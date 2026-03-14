@@ -556,6 +556,18 @@ function slugify(text: string): string {
     .slice(0, 60);
 }
 
+/**
+ * Resolve a time string to HH:MM:SS format.
+ * Accepts either HH:MM:SS directly or am/pm text (e.g. "10:00am").
+ */
+function resolveTime(timeStr: string): string | null {
+  if (!timeStr) return null;
+  // Already in HH:MM:SS format (from parseTimeText)
+  if (/^\d{2}:\d{2}:\d{2}$/.test(timeStr)) return timeStr;
+  // Otherwise parse am/pm format
+  return parseTimeText(timeStr);
+}
+
 function parseEventDate(
   dateAttr: string,
   timeText: string,
@@ -564,7 +576,7 @@ function parseEventDate(
   // data-date is in YYYY-MM-DD format (from FullCalendar)
   if (dateAttr && /^\d{4}-\d{2}-\d{2}$/.test(dateAttr)) {
     if (timeText) {
-      const time = parseTimeText(timeText);
+      const time = resolveTime(timeText);
       if (time) return `${dateAttr}T${time}`;
     }
     return `${dateAttr}T00:00:00`;
@@ -580,7 +592,7 @@ function parseEventDate(
       if (!isNaN(d.getTime())) {
         const iso = d.toISOString().split("T")[0];
         if (timeText) {
-          const time = parseTimeText(timeText);
+          const time = resolveTime(timeText);
           if (time) return `${iso}T${time}`;
         }
         return `${iso}T00:00:00`;
@@ -592,7 +604,7 @@ function parseEventDate(
       if (!isNaN(d.getTime())) {
         const iso = d.toISOString().split("T")[0];
         if (timeText) {
-          const time = parseTimeText(timeText);
+          const time = resolveTime(timeText);
           if (time) return `${iso}T${time}`;
         }
         return `${iso}T00:00:00`;
@@ -614,7 +626,7 @@ function parseEventDate(
         if (!isNaN(d.getTime())) {
           const iso = d.toISOString().split("T")[0];
           if (timeText) {
-            const time = parseTimeText(timeText);
+            const time = resolveTime(timeText);
             if (time) return `${iso}T${time}`;
           }
           return `${iso}T00:00:00`;
@@ -641,15 +653,23 @@ function parseTimeText(timeStr: string): string | null {
 }
 
 /**
- * Parse a time range string like "10:00am - 5:00pm" or "9:30a - 11a"
- * into separate start and end time strings (HH:MM:SS format).
+ * Parse a time range string into separate start and end time strings (HH:MM:SS format).
+ * Handles various formats:
+ *   "10:00am - 5:00pm"  (dash separator)
+ *   "9:30a – 11a"       (en-dash separator)
+ *   "10:00 AM / 5:00 PM"  (slash separator, used by Boom Calendar)
+ *   "10:00am\n5:00pm"   (newline separator)
+ *   "10:00am"           (single time, no end)
  */
 function parseTimeRange(timeStr: string): { startTime: string; endTime: string } {
   if (!timeStr) return { startTime: "", endTime: "" };
 
-  // Match patterns like "10:00am - 5:00pm", "9:30a-11a", "10:00 AM - 5:00 PM"
-  const rangeMatch = timeStr.match(
-    /(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))\s*[-–]\s*(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))/i
+  // Normalize whitespace and newlines to single spaces for matching
+  const normalized = timeStr.replace(/\s+/g, " ").trim();
+
+  // Match patterns with various separators: -, –, /, or whitespace-only between two times
+  const rangeMatch = normalized.match(
+    /(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))\s*[-–/]\s*(\d{1,2}:?\d{0,2}\s*(?:am|pm|a|p))/i
   );
   if (rangeMatch) {
     const start = parseTimeText(rangeMatch[1]);
@@ -657,8 +677,18 @@ function parseTimeRange(timeStr: string): { startTime: string; endTime: string }
     return { startTime: start || "", endTime: end || "" };
   }
 
+  // Two am/pm times separated only by whitespace (e.g., "10:00 am 5:00 pm")
+  const spacedMatch = normalized.match(
+    /(\d{1,2}:\d{2}\s*(?:am|pm))\s+(\d{1,2}:\d{2}\s*(?:am|pm))/i
+  );
+  if (spacedMatch) {
+    const start = parseTimeText(spacedMatch[1]);
+    const end = parseTimeText(spacedMatch[2]);
+    return { startTime: start || "", endTime: end || "" };
+  }
+
   // Single time like "10:00am"
-  const singleTime = parseTimeText(timeStr);
+  const singleTime = parseTimeText(normalized);
   return { startTime: singleTime || "", endTime: "" };
 }
 
