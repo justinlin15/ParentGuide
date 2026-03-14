@@ -19,38 +19,7 @@ struct ParentsNightOutDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Hero image
-                CachedAsyncImagePhase(url: URL(string: provider.imageURL ?? "")) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 200)
-                            .clipped()
-                            .overlay(alignment: .bottomLeading) {
-                                Text(provider.name)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.white)
-                                    .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-                                    .padding(16)
-                            }
-                    default:
-                        ZStack {
-                            Rectangle().fill(avatarColor.opacity(0.15))
-                            VStack(spacing: 8) {
-                                Text(String(provider.name.prefix(1)))
-                                    .font(.system(size: 60))
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(avatarColor)
-                                Text(provider.name)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                            }
-                        }
-                        .frame(height: 200)
-                    }
-                }
+                heroImage
 
                 VStack(alignment: .leading, spacing: 20) {
                     // Promo
@@ -113,7 +82,36 @@ struct ParentsNightOutDetailView: View {
                         }
                     }
 
-                    // Cities
+                    Divider()
+
+                    // Schedule
+                    if let schedule = provider.schedule {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Label("Schedule", systemImage: "calendar.badge.clock")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.brandBlue)
+
+                            HStack(alignment: .top, spacing: 12) {
+                                Image(systemName: "clock.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.brandBlue)
+                                    .padding(.top, 3)
+
+                                Text(schedule)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(14)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+
+                        Divider()
+                    }
+
+                    // Locations
                     VStack(alignment: .leading, spacing: 10) {
                         Label("Locations", systemImage: "mappin.circle.fill")
                             .font(.subheadline)
@@ -122,7 +120,7 @@ struct ParentsNightOutDetailView: View {
 
                         Text("Tap a location to open in Apple Maps")
                             .font(.caption)
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.secondary)
 
                         FlowLayout(spacing: 6) {
                             ForEach(provider.cities, id: \.self) { city in
@@ -137,7 +135,7 @@ struct ParentsNightOutDetailView: View {
                                     }
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(Color.brandPink.opacity(0.1))
+                                    .background(Color(.systemGray6))
                                     .foregroundStyle(Color.brandPink)
                                     .clipShape(Capsule())
                                 }
@@ -147,7 +145,7 @@ struct ParentsNightOutDetailView: View {
 
                     Divider()
 
-                    // Description
+                    // About
                     VStack(alignment: .leading, spacing: 8) {
                         Label("About", systemImage: "info.circle.fill")
                             .font(.subheadline)
@@ -155,15 +153,16 @@ struct ParentsNightOutDetailView: View {
                             .foregroundStyle(Color.brandBlue)
 
                         Text(provider.providerDescription)
-                            .font(.body)
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            .lineSpacing(3)
                     }
 
                     // Details grid
                     if provider.ageRequirement != nil || provider.pricing != nil {
                         Divider()
 
-                        HStack(spacing: 16) {
+                        HStack(spacing: 12) {
                             if let age = provider.ageRequirement {
                                 HStack(spacing: 10) {
                                     Image(systemName: "person.fill")
@@ -219,11 +218,67 @@ struct ParentsNightOutDetailView: View {
                         }
                     }
                 }
-                .padding(20)
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 32)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
     }
+
+    // MARK: - Hero Image
+
+    @ViewBuilder
+    private var heroImage: some View {
+        CachedAsyncImagePhase(url: URL(string: provider.imageURL ?? "")) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 240)
+                    .clipped()
+                    .overlay(alignment: .bottomLeading) {
+                        Text(provider.name)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 16)
+                    }
+                    .overlay(alignment: .bottom) {
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 80)
+                    }
+            default:
+                ZStack {
+                    LinearGradient(
+                        colors: [avatarColor.opacity(0.3), avatarColor.opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    VStack(spacing: 10) {
+                        Image(systemName: "figure.and.child.holdinghands")
+                            .font(.system(size: 44))
+                            .foregroundStyle(avatarColor.opacity(0.6))
+                        Text(provider.name)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .frame(height: 200)
+            }
+        }
+    }
+
+    // MARK: - Helpers
 
     private func openInMaps(query: String) {
         let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""

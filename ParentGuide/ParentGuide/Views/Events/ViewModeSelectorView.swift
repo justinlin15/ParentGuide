@@ -8,6 +8,7 @@ import SwiftUI
 struct ViewModeSelectorView: View {
     @Bindable var viewModel: EventCalendarViewModel
     var onSearchTap: () -> Void = {}
+    var onFilterTap: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
@@ -63,10 +64,29 @@ struct ViewModeSelectorView: View {
                     }
                 }
 
+                // Filter button with badge
+                Button(action: onFilterTap) {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+
+                        if viewModel.filter.activeFilterCount > 0 {
+                            Text("\(viewModel.filter.activeFilterCount)")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(.white)
+                                .frame(width: 16, height: 16)
+                                .background(Color.orange)
+                                .clipShape(Circle())
+                                .offset(x: 4, y: -4)
+                        }
+                    }
+                }
+
                 Button(action: onSearchTap) {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 8)
                 }
             }
             .padding(.horizontal, 8)

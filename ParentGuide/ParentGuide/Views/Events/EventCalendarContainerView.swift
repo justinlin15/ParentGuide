@@ -7,52 +7,46 @@ import SwiftUI
 
 struct EventCalendarContainerView: View {
     @State private var viewModel = EventCalendarViewModel()
-    @State private var adminService = AdminService.shared
     @State private var metroService = MetroService.shared
     @State private var showSearch = false
+    @State private var showFilter = false
     @State private var showDayEvents = false
-    @State private var showCreateEvent = false
+    @AppStorage("defaultEventView") private var defaultEventView: String = "Week"
 
     var body: some View {
         NavigationStack {
             eventContent
+                .navigationTitle("Events")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("What's on the schedule today?")
-                            .font(.headline)
-                    }
-
-                    if adminService.isAdmin {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                showCreateEvent = true
-                            } label: {
-                                Image(systemName: "plus")
-                            }
-                        }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        MetroSwitcherView()
                     }
                 }
                 .task {
-                    await adminService.checkAdminStatus()
+                    // Apply saved default view mode
+                    if let mode = CalendarViewMode(rawValue: defaultEventView) {
+                        viewModel.selectedViewMode = mode
+                    }
                     await viewModel.loadEvents()
                 }
                 .onChange(of: metroService.selectedMetro.id) {
                     Task { await viewModel.loadEvents() }
                 }
                 .sheet(isPresented: $showSearch) {
-                    EventSearchView(allEvents: viewModel.events)
+                    EventSearchView(allEvents: viewModel.filteredEvents)
                 }
-                .sheet(isPresented: $showCreateEvent) {
-                    EventFormView(editingEvent: nil) { _ in
-                        Task { await viewModel.loadEvents() }
-                    }
+                .sheet(isPresented: $showFilter) {
+                    EventFilterView(
+                        filter: $viewModel.filter,
+                        hasLocation: viewModel.hasLocation
+                    )
                 }
                 .sheet(isPresented: $showDayEvents) {
                     if let selectedDate = viewModel.selectedDate {
                         NavigationStack {
                             List {
-                                ForEach(viewModel.eventsForDate(selectedDate)) { event in
+                                ForEach(viewModel.filteredEventsForDate(selectedDate)) { event in
                                     NavigationLink(destination: EventDetailView(event: event)) {
                                         EventCardView(event: event)
                                     }
@@ -81,6 +75,13 @@ struct EventCalendarContainerView: View {
         VStack(spacing: 0) {
             ViewModeSelectorView(viewModel: viewModel) {
                 showSearch = true
+            } onFilterTap: {
+                showFilter = true
+            }
+
+            // Active filters bar
+            ActiveFiltersBarView(filter: $viewModel.filter) {
+                showFilter = true
             }
 
             if viewModel.isLoading {
@@ -93,13 +94,13 @@ struct EventCalendarContainerView: View {
                     }
 
                 case .list:
-                    EventListView(events: viewModel.eventsForCurrentMonth)
+                    EventListView(events: viewModel.filteredEventsForCurrentMonth)
 
                 case .week:
-                    EventAgendaView(events: viewModel.eventsForCurrentMonth)
+                    EventAgendaView(events: viewModel.filteredEventsForCurrentMonth)
 
                 case .map:
-                    EventMapView(events: viewModel.events)
+                    EventMapView(events: viewModel.filteredEvents)
                 }
             }
         }

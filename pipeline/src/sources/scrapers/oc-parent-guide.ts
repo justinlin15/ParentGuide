@@ -14,7 +14,7 @@ const OC_PASSWORD = process.env.OC_PARENT_GUIDE_PASSWORD || "";
 export async function scrapeOCParentGuide(
   metro: MetroArea
 ): Promise<PipelineEvent[]> {
-  if (metro.id !== "los-angeles") return [];
+  if (metro.id !== "orange-county") return [];
 
   if (!OC_EMAIL || !OC_PASSWORD) {
     log.warn(SOURCE, "OC Parent Guide credentials not configured — skipping");
@@ -529,7 +529,7 @@ async function extractEventsFromCalendar(
         isFeatured: false,
         isRecurring: false,
         tags: ["family", "orange county"],
-        metro: "los-angeles",
+        metro: "orange-county",
       };
     });
 }

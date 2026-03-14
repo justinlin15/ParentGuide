@@ -83,6 +83,48 @@ async function main() {
   log.divider();
   log.info("pipeline", `Total raw events: ${allEvents.length}`);
 
+  // Reassign LA events that belong to Orange County based on coordinates or venue names
+  const OC_CENTER = { lat: 33.7175, lon: -117.8311 };
+  const LA_CENTER = { lat: 34.0522, lon: -118.2437 };
+  const OC_CITIES = [
+    "anaheim", "irvine", "santa ana", "huntington beach", "costa mesa",
+    "orange", "fullerton", "mission viejo", "lake forest", "laguna",
+    "laguna beach", "laguna niguel", "laguna hills", "newport beach",
+    "tustin", "yorba linda", "brea", "placentia", "cypress",
+    "garden grove", "westminster", "fountain valley", "seal beach",
+    "san clemente", "dana point", "san juan capistrano", "aliso viejo",
+    "rancho santa margarita", "ladera ranch", "trabuco canyon",
+    "buena park", "la habra", "stanton", "los alamitos",
+    "discovery cube oc", "oc fair", "orange county",
+  ];
+  let ocReassigned = 0;
+  for (const event of allEvents) {
+    if (event.metro !== "los-angeles") continue;
+
+    const text = `${event.city} ${event.locationName || ""} ${event.address || ""}`.toLowerCase();
+    const matchesOC = OC_CITIES.some((c) => text.includes(c));
+
+    if (matchesOC) {
+      event.metro = "orange-county";
+      ocReassigned++;
+      continue;
+    }
+
+    // Coordinate-based: if event has lat/lon, check if closer to OC center
+    if (event.latitude && event.longitude) {
+      const dLA = Math.pow(event.latitude - LA_CENTER.lat, 2) + Math.pow(event.longitude - LA_CENTER.lon, 2);
+      const dOC = Math.pow(event.latitude - OC_CENTER.lat, 2) + Math.pow(event.longitude - OC_CENTER.lon, 2);
+      // Only reassign if clearly closer to OC and within SoCal longitude range
+      if (dOC < dLA && event.longitude > -119 && event.longitude < -117) {
+        event.metro = "orange-county";
+        ocReassigned++;
+      }
+    }
+  }
+  if (ocReassigned > 0) {
+    log.info("pipeline", `Reassigned ${ocReassigned} events from los-angeles → orange-county`);
+  }
+
   // Deduplicate
   const deduped = deduplicateEvents(allEvents);
 

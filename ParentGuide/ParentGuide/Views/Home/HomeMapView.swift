@@ -9,16 +9,7 @@ import MapKit
 struct HomeMapView: View {
     private var metroService = MetroService.shared
     @State private var events: [Event] = []
-
-    private var region: MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(
-                latitude: metroService.selectedMetro.latitude,
-                longitude: metroService.selectedMetro.longitude
-            ),
-            span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
-        )
-    }
+    @State private var mapPosition: MapCameraPosition = .automatic
 
     var body: some View {
         VStack(spacing: 12) {
@@ -26,7 +17,7 @@ struct HomeMapView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            Map(initialPosition: .region(region)) {
+            Map(position: $mapPosition) {
                 ForEach(events.filter { $0.hasLocation }) { event in
                     if let lat = event.latitude, let lon = event.longitude {
                         Annotation(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
@@ -47,12 +38,25 @@ struct HomeMapView: View {
             .padding(.horizontal, 20)
         }
         .task {
-            do {
-                let metroId = metroService.selectedMetro.id
-                events = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
-            } catch {
-                // Fallback: leave empty
-            }
+            await loadAndCenter()
+        }
+        .onChange(of: metroService.selectedMetro.id) {
+            Task { await loadAndCenter() }
+        }
+    }
+
+    private func loadAndCenter() async {
+        let metro = metroService.selectedMetro
+        // Center map on selected metro
+        mapPosition = .region(MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: metro.latitude, longitude: metro.longitude),
+            span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        ))
+        // Load events
+        do {
+            events = try await EventService.shared.fetchUpcomingEvents(forMetro: metro.id)
+        } catch {
+            // Fallback: leave empty
         }
     }
 }

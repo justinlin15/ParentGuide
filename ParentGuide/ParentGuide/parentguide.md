@@ -8,6 +8,7 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 ### Scraping Schedule
 - Scrape kids activity sites similar to Orange County Parent Guide every 12 hours
 - Update app with new activities once every 12 hours
+- If events do not have images then search the internet using the event title and descriptions to find and image.  Events must have an image
 
 ### Content Filtering Rules
 - Exclude events that mention the source site name
@@ -21,3 +22,4 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 ## Source Site Credentials
 - URL: https://www.orangecountyparentguide.com/
 - Login and password are stored in GitHub Secrets (not in source code).
+

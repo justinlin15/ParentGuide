@@ -12,33 +12,22 @@ struct MoreMenuView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink(destination: ProfileView()) {
+                        Label("Profile & Settings", systemImage: "person.circle")
+                    }
                     NavigationLink(destination: AboutView()) {
                         Label("About", systemImage: "info.circle")
                     }
                     NavigationLink(destination: ResourcesView()) {
                         Label("Resources", systemImage: "doc.fill")
                     }
-                    NavigationLink(destination: LoginView()) {
-                        Label("Create Account", systemImage: "person.badge.plus")
-                    }
                 }
 
-                Section("Account") {
-                    if authService.isSignedIn {
-                        NavigationLink(destination: ProfileView()) {
-                            Label("Profile", systemImage: "person.circle")
-                        }
-                        NavigationLink(destination: AccountSettingsView()) {
-                            Label("Account Settings", systemImage: "gearshape")
-                        }
-                        Button(role: .destructive) {
-                            authService.signOut()
-                        } label: {
-                            Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
-                        }
-                    } else {
+                if !authService.isSignedIn {
+                    Section {
                         NavigationLink(destination: LoginView()) {
-                            Label("Log In", systemImage: "person.circle")
+                            Label("Sign In", systemImage: "person.badge.plus")
+                                .foregroundStyle(Color.brandBlue)
                         }
                     }
                 }

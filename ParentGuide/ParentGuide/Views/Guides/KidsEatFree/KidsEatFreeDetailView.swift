@@ -113,7 +113,7 @@ struct KidsEatFreeDetailView: View {
 
                         Text("Tap a location to open in Apple Maps")
                             .font(.caption)
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.secondary)
 
                         FlowLayout(spacing: 6) {
                             ForEach(restaurant.cities, id: \.self) { city in
@@ -128,7 +128,7 @@ struct KidsEatFreeDetailView: View {
                                     }
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(Color.brandPink.opacity(0.1))
+                                    .background(Color(.systemGray6))
                                     .foregroundStyle(Color.brandPink)
                                     .clipShape(Capsule())
                                 }

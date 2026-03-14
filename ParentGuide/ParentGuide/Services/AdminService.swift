@@ -32,12 +32,10 @@ class AdminService {
         print("[AdminService] Apple User ID: \(userID)")
 
         #if DEBUG
-        // In debug builds, auto-grant admin if no admin IDs are configured yet
+        // In debug builds, log the user ID for easy admin setup
         if Self.adminAppleUserIDs.isEmpty {
-            print("[AdminService] DEBUG: No admin IDs configured — granting admin access for development.")
-            print("[AdminService] DEBUG: Add \"\(userID)\" to AdminService.adminAppleUserIDs for production.")
-            isAdmin = true
-            return
+            print("[AdminService] DEBUG: No admin IDs configured.")
+            print("[AdminService] DEBUG: Add \"\(userID)\" to AdminService.adminAppleUserIDs to enable admin features.")
         }
         #endif
 

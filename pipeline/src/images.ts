@@ -4,22 +4,23 @@ import { log } from "./utils/logger.js";
 import { delay } from "./utils/geocoder.js";
 
 // Category → search keywords for stock photo APIs
+// Keys MUST match the iOS EventCategory rawValues (Title Case)
 const CATEGORY_SEARCH_TERMS: Record<string, string> = {
-  storytime: "children reading books library",
-  farmersMarket: "farmers market family outdoor",
-  freeMovie: "family movie night cinema",
-  toddlerActivity: "toddler playing activity",
-  craft: "kids arts crafts painting",
-  music: "family music concert kids",
-  fireStationTour: "fire station tour kids",
-  museum: "children museum exhibit",
-  outdoorAdventure: "family outdoor hiking nature",
-  food: "family cooking kids food",
-  sports: "kids sports activity",
-  education: "children learning classroom stem",
-  festival: "family festival fair carnival",
-  seasonal: "family holiday celebration",
-  other: "family kids activity fun",
+  Storytime: "children reading books library",
+  "Farmers Market": "farmers market family outdoor",
+  "Free Movie": "family movie night cinema",
+  "Toddler Activity": "toddler playing activity",
+  Craft: "kids arts crafts painting",
+  Music: "family music concert kids",
+  "Fire Station Tour": "fire station tour kids",
+  Museum: "children museum exhibit",
+  Outdoor: "family outdoor hiking nature",
+  "Food & Dining": "family cooking kids food",
+  Sports: "kids sports activity",
+  Education: "children learning classroom stem",
+  Festival: "family festival fair carnival",
+  Seasonal: "family holiday celebration",
+  Other: "family kids activity fun",
 };
 
 // Cache: category → list of image URLs we've already fetched
@@ -59,10 +60,44 @@ export async function fillMissingImages(
     `${needImages.length} events need fallback images`
   );
 
-  // Group by category to batch image lookups
-  const byCategory = new Map<string, PipelineEvent[]>();
+  // Step 1: Try event-specific image search using venue/event name
+  let filled = 0;
   for (const event of needImages) {
-    const cat = event.category || "other";
+    if (event.imageURL) continue;
+
+    // Build a specific search query from venue name or event title
+    const venueQuery = event.locationName
+      ? `${event.locationName} ${event.city}`
+      : null;
+    const titleQuery = buildEventSearchQuery(event.title);
+
+    // Try venue-specific search first (more likely to find relevant images)
+    if (venueQuery) {
+      const venueImages = await searchEventImage(venueQuery);
+      if (venueImages.length > 0) {
+        event.imageURL = venueImages[0];
+        filled++;
+        continue;
+      }
+    }
+
+    // Then try title-based search
+    if (titleQuery) {
+      const titleImages = await searchEventImage(titleQuery);
+      if (titleImages.length > 0) {
+        event.imageURL = titleImages[0];
+        filled++;
+        continue;
+      }
+    }
+  }
+  log.info("images", `Event-specific search filled ${filled} images`);
+
+  // Step 2: Fill remaining with category-based stock photos (rotated for variety)
+  const stillNeed = needImages.filter((e) => !e.imageURL);
+  const byCategory = new Map<string, PipelineEvent[]>();
+  for (const event of stillNeed) {
+    const cat = event.category || "Other";
     const list = byCategory.get(cat) || [];
     list.push(event);
     byCategory.set(cat, list);
@@ -78,10 +113,45 @@ export async function fillMissingImages(
     }
   }
 
-  const filled = needImages.filter((e) => e.imageURL).length;
-  log.success("images", `Filled ${filled}/${needImages.length} missing images`);
+  const totalFilled = needImages.filter((e) => e.imageURL).length;
+  log.success("images", `Filled ${totalFilled}/${needImages.length} missing images`);
 
   return events;
+}
+
+/**
+ * Build a concise search query from event title.
+ * Strip generic words to focus on the unique event name.
+ */
+function buildEventSearchQuery(title: string): string | null {
+  // Remove common filler words and "Presents:" patterns
+  const cleaned = title
+    .replace(/presents?:?\s*/gi, "")
+    .replace(/\b(the|a|an|at|in|on|for|and|of|with)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  // Only search if we have enough meaningful words
+  return cleaned.length >= 5 ? cleaned : null;
+}
+
+/**
+ * Search for a specific event/venue image. Uses a separate cache keyed by query.
+ */
+const eventImageCache = new Map<string, string[]>();
+
+async function searchEventImage(query: string): Promise<string[]> {
+  const cacheKey = query.toLowerCase().slice(0, 50);
+  const cached = eventImageCache.get(cacheKey);
+  if (cached) return cached;
+
+  // Try Unsplash with a small result set (just need 1-2)
+  let images = await searchUnsplash(query + " family kids", 3);
+  if (images.length === 0) {
+    images = await searchPexels(query + " family kids", 3);
+  }
+
+  eventImageCache.set(cacheKey, images);
+  return images;
 }
 
 async function getCategoryImages(category: string): Promise<string[]> {
@@ -90,7 +160,7 @@ async function getCategoryImages(category: string): Promise<string[]> {
   if (cached) return cached;
 
   const searchTerm =
-    CATEGORY_SEARCH_TERMS[category] || CATEGORY_SEARCH_TERMS.other;
+    CATEGORY_SEARCH_TERMS[category] || CATEGORY_SEARCH_TERMS["Other"];
   let images: string[] = [];
 
   // Try Unsplash first
@@ -108,13 +178,13 @@ async function getCategoryImages(category: string): Promise<string[]> {
   return images;
 }
 
-async function searchUnsplash(query: string): Promise<string[]> {
+async function searchUnsplash(query: string, perPage = 10): Promise<string[]> {
   if (!config.unsplash.accessKey) return [];
 
   try {
     const params = new URLSearchParams({
       query,
-      per_page: "10",
+      per_page: String(perPage),
       orientation: "landscape",
       content_filter: "high", // Safe for all audiences
     });
@@ -143,13 +213,13 @@ async function searchUnsplash(query: string): Promise<string[]> {
   }
 }
 
-async function searchPexels(query: string): Promise<string[]> {
+async function searchPexels(query: string, perPage = 10): Promise<string[]> {
   if (!config.pexels.apiKey) return [];
 
   try {
     const params = new URLSearchParams({
       query,
-      per_page: "10",
+      per_page: String(perPage),
       orientation: "landscape",
     });
 

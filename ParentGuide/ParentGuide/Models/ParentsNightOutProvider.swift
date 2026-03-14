@@ -13,6 +13,7 @@ struct ParentsNightOutProvider: Identifiable, Hashable {
     let providerDescription: String
     let ageRequirement: String?
     let pricing: String?
+    let schedule: String?
     let promoCode: String?
     let promoDetails: String?
     let imageURL: String?
@@ -25,6 +26,20 @@ struct ParentsNightOutProvider: Identifiable, Hashable {
     let modifiedAt: Date
 }
 
+extension ParentsNightOutProvider {
+    /// Return a copy with a different imageURL (used to merge bundled images into CloudKit records).
+    func withImageURL(_ url: String) -> ParentsNightOutProvider {
+        ParentsNightOutProvider(
+            id: id, name: name, cities: cities, providerDescription: providerDescription,
+            ageRequirement: ageRequirement, pricing: pricing, schedule: schedule,
+            promoCode: promoCode, promoDetails: promoDetails,
+            imageURL: url, externalURL: externalURL, isActive: isActive,
+            sortOrder: sortOrder, metro: metro, source: source,
+            createdAt: createdAt, modifiedAt: modifiedAt
+        )
+    }
+}
+
 nonisolated extension ParentsNightOutProvider {
     init?(record: CKRecord) {
         guard let name = record["name"] as? String else { return nil }
@@ -35,9 +50,10 @@ nonisolated extension ParentsNightOutProvider {
         self.providerDescription = record["providerDescription"] as? String ?? ""
         self.ageRequirement = record["ageRequirement"] as? String
         self.pricing = record["pricing"] as? String
+        self.schedule = record["schedule"] as? String
         self.promoCode = record["promoCode"] as? String
         self.promoDetails = record["promoDetails"] as? String
-        self.imageURL = nil
+        self.imageURL = record["imageURL"] as? String
         self.externalURL = record["externalURL"] as? String
         self.isActive = record["isActive"] as? Bool ?? true
         self.sortOrder = record["sortOrder"] as? Int ?? 0

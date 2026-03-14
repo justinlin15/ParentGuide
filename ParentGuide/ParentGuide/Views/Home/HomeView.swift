@@ -48,6 +48,9 @@ struct HomeView: View {
                         }
                     }
                 }
+                ToolbarItem(placement: .principal) {
+                    MetroSwitcherView()
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showNotifications = true } label: {
                         Image(systemName: "bell")
@@ -70,6 +73,9 @@ struct HomeView: View {
             }
             .task {
                 await loadFeedData()
+            }
+            .onChange(of: metroService.selectedMetro.id) {
+                Task { await loadFeedData() }
             }
         }
     }

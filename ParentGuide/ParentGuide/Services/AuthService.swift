@@ -173,6 +173,12 @@ class AuthService {
         )
     }
 
+    /// Refresh the local profile from Keychain (e.g., after name edit).
+    func refreshProfile() async {
+        guard let appleUserID = KeychainService.read(key: KeychainService.appleUserIdentifier) else { return }
+        currentUser = makeLocalProfile(appleUserID: appleUserID)
+    }
+
     // MARK: - Nonce Helpers (for Sign in with Apple security)
 
     /// Generates a random nonce string and stores it. Call before presenting the Sign in with Apple sheet.

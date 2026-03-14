@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 // MARK: - ChildInfo Model
 
@@ -34,7 +35,7 @@ struct ChildInfo: Codable, Identifiable, Equatable {
     }
 }
 
-// MARK: - ProfileView
+// MARK: - ProfileView (Combined Profile & Settings)
 
 struct ProfileView: View {
     @State private var authService = AuthService.shared
@@ -46,6 +47,14 @@ struct ProfileView: View {
     @AppStorage("profile_children_json") private var childrenJSON: String = "[]"
     @State private var children: [ChildInfo] = []
     @State private var isAddingChild = false
+
+    // MARK: - Profile Picture
+    @State private var profileImage: UIImage?
+    @State private var selectedPhotoItem: PhotosPickerItem?
+
+    // MARK: - Editable Display Name
+    @State private var isEditingName = false
+    @State private var editedName: String = ""
 
     // MARK: - Interests (persisted in @AppStorage)
 
@@ -65,33 +74,33 @@ struct ProfileView: View {
 
     // MARK: - Notification Preferences (persisted in @AppStorage)
 
+    @AppStorage("notify_pushEnabled") private var pushNotificationsEnabled = true
     @AppStorage("notify_newEvents") private var notifyNewEvents = true
     @AppStorage("notify_matchingInterests") private var notifyMatchingInterests = true
     @AppStorage("notify_weeklyDigest") private var notifyWeeklyDigest = false
+    @AppStorage("addToCalendarOnFavorite") private var addToCalendarOnFavorite = false
+
+    // MARK: - App Preferences (from AccountSettingsView)
+
+    @AppStorage("defaultEventView") private var defaultEventView: String = "Week"
+    @AppStorage("defaultSearchRadius") private var defaultSearchRadius: String = "Any"
+    @AppStorage("appearanceMode") private var appearanceMode: String = "System"
 
     var body: some View {
         Form {
-            // MARK: - Profile Header
             profileHeaderSection
-
-            // MARK: - My Family
             myFamilySection
-
-            // MARK: - My Interests
             myInterestsSection
-
-            // MARK: - My Location
-            myLocationSection
-
-            // MARK: - Notification Preferences
-            notificationPreferencesSection
-
-            // MARK: - Stats
-            statsSection
+            appSettingsSection
+            notificationsSection
+            supportSection
+            aboutSection
+            accountSection
         }
-        .navigationTitle("Profile")
+        .navigationTitle("Profile & Settings")
         .onAppear {
             loadChildren()
+            loadProfileImage()
         }
     }
 
@@ -100,14 +109,70 @@ struct ProfileView: View {
     private var profileHeaderSection: some View {
         Section {
             VStack(spacing: 12) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 72))
-                    .foregroundStyle(Color.brandBlue)
+                // Profile picture with photo picker
+                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                    if let profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 90, height: 90)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.brandBlue, lineWidth: 2))
+                            .overlay(alignment: .bottomTrailing) {
+                                cameraEditBadge
+                            }
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .font(.system(size: 72))
+                            .foregroundStyle(Color.brandBlue)
+                            .overlay(alignment: .bottomTrailing) {
+                                cameraEditBadge
+                            }
+                    }
+                }
+                .onChange(of: selectedPhotoItem) {
+                    Task { await loadSelectedPhoto() }
+                }
 
                 if let user = authService.currentUser {
-                    Text(user.displayName)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                    // Editable display name
+                    if isEditingName {
+                        HStack(spacing: 8) {
+                            TextField("Your name", text: $editedName)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .multilineTextAlignment(.center)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(maxWidth: 200)
+
+                            Button("Save") {
+                                let trimmed = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                if !trimmed.isEmpty {
+                                    KeychainService.save(key: KeychainService.appleDisplayName, value: trimmed)
+                                    Task { await authService.refreshProfile() }
+                                }
+                                isEditingName = false
+                            }
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.brandBlue)
+                        }
+                    } else {
+                        Button {
+                            editedName = user.displayName
+                            isEditingName = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(user.displayName)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.primary)
+                                Image(systemName: "pencil")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
 
                     if !user.email.isEmpty {
                         Text(user.email)
@@ -119,14 +184,24 @@ struct ProfileView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Parent")
+                    Text("Guest")
                         .font(.title2)
                         .fontWeight(.semibold)
+                    Text("Sign in to sync your profile")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
         }
+    }
+
+    private var cameraEditBadge: some View {
+        Image(systemName: "camera.circle.fill")
+            .font(.system(size: 24))
+            .foregroundStyle(Color.brandBlue)
+            .background(Circle().fill(.white).frame(width: 22, height: 22))
     }
 
     // MARK: - My Family Section
@@ -169,9 +244,7 @@ struct ProfileView: View {
             }
 
             Button {
-                if isAddingChild {
-                    // Already showing form, do nothing extra
-                } else {
+                if !isAddingChild {
                     withAnimation {
                         isAddingChild = true
                     }
@@ -272,9 +345,9 @@ struct ProfileView: View {
         .tint(Color.brandBlue)
     }
 
-    // MARK: - My Location Section
+    // MARK: - App Settings Section (merged from AccountSettingsView)
 
-    private var myLocationSection: some View {
+    private var appSettingsSection: some View {
         Section {
             NavigationLink {
                 LocationSettingsView()
@@ -286,26 +359,69 @@ struct ProfileView: View {
                         Image(systemName: "mappin.and.ellipse")
                             .foregroundStyle(Color.brandBlue)
                     }
-
                     Spacer()
-
                     Text(metroService.selectedMetro.name)
                         .foregroundStyle(.secondary)
                         .font(.subheadline)
+                        .lineLimit(1)
+                }
+            }
+
+            Picker(selection: $defaultEventView) {
+                Text("Week").tag("Week")
+                Text("Day").tag("Day")
+                Text("Month").tag("Month")
+                Text("Map").tag("Map")
+            } label: {
+                Label {
+                    Text("Default View")
+                } icon: {
+                    Image(systemName: "rectangle.split.3x1")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+
+            Picker(selection: $defaultSearchRadius) {
+                Text("5 mi").tag("5")
+                Text("10 mi").tag("10")
+                Text("25 mi").tag("25")
+                Text("50 mi").tag("50")
+                Text("Any").tag("Any")
+            } label: {
+                Label {
+                    Text("Default Radius")
+                } icon: {
+                    Image(systemName: "circle.dashed")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+
+            Picker(selection: $appearanceMode) {
+                Text("System").tag("System")
+                Text("Light").tag("Light")
+                Text("Dark").tag("Dark")
+            } label: {
+                Label {
+                    Text("Appearance")
+                } icon: {
+                    Image(systemName: "circle.lefthalf.filled")
+                        .foregroundStyle(Color.brandBlue)
                 }
             }
         } header: {
-            Label("My Location", systemImage: "location.fill")
+            Label("App Settings", systemImage: "gearshape.fill")
+        } footer: {
+            Text("These defaults are applied when you open the Events tab.")
         }
     }
 
-    // MARK: - Notification Preferences Section
+    // MARK: - Notifications Section (combined)
 
-    private var notificationPreferencesSection: some View {
+    private var notificationsSection: some View {
         Section {
-            Toggle(isOn: $notifyNewEvents) {
+            Toggle(isOn: $pushNotificationsEnabled) {
                 Label {
-                    Text("New Events in My Area")
+                    Text("Push Notifications")
                 } icon: {
                     Image(systemName: "bell.badge.fill")
                         .foregroundStyle(Color.brandBlue)
@@ -313,9 +429,19 @@ struct ProfileView: View {
             }
             .tint(Color.brandBlue)
 
+            Toggle(isOn: $notifyNewEvents) {
+                Label {
+                    Text("New Events in My Area")
+                } icon: {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+            .tint(Color.brandBlue)
+
             Toggle(isOn: $notifyMatchingInterests) {
                 Label {
-                    Text("Events Matching My Interests")
+                    Text("Events Matching Interests")
                 } icon: {
                     Image(systemName: "heart.circle.fill")
                         .foregroundStyle(Color.brandBlue)
@@ -332,6 +458,16 @@ struct ProfileView: View {
                 }
             }
             .tint(Color.brandBlue)
+
+            Toggle(isOn: $addToCalendarOnFavorite) {
+                Label {
+                    Text("Add to Calendar on Favorite")
+                } icon: {
+                    Image(systemName: "calendar.badge.plus")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+            .tint(Color.brandBlue)
         } header: {
             Label("Notifications", systemImage: "bell.fill")
         } footer: {
@@ -339,9 +475,46 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Stats Section
+    // MARK: - Support Section (from AccountSettingsView)
 
-    private var statsSection: some View {
+    private var supportSection: some View {
+        Section("Support") {
+            NavigationLink {
+                PrivacyPolicyView()
+            } label: {
+                Label {
+                    Text("Privacy Policy")
+                } icon: {
+                    Image(systemName: "hand.raised.fill")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+
+            Link(destination: URL(string: "mailto:support@parentguide.com")!) {
+                Label {
+                    Text("Contact Us")
+                        .foregroundStyle(.primary)
+                } icon: {
+                    Image(systemName: "envelope.fill")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+
+            Link(destination: URL(string: "https://apps.apple.com/app/parent-guide/id0000000000")!) {
+                Label {
+                    Text("Rate the App")
+                        .foregroundStyle(.primary)
+                } icon: {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+        }
+    }
+
+    // MARK: - About Section (stats + version)
+
+    private var aboutSection: some View {
         Section {
             HStack {
                 Label {
@@ -356,20 +529,6 @@ struct ProfileView: View {
                     .foregroundStyle(Color.brandBlue)
             }
 
-            if let user = authService.currentUser {
-                HStack {
-                    Label {
-                        Text("Member Since")
-                    } icon: {
-                        Image(systemName: "calendar.badge.clock")
-                            .foregroundStyle(Color.brandBlue)
-                    }
-                    Spacer()
-                    Text(user.createdAt.formatted(.dateTime.month(.abbreviated).day().year()))
-                        .foregroundStyle(.secondary)
-                }
-            }
-
             HStack {
                 Label {
                     Text("Children")
@@ -382,9 +541,53 @@ struct ProfileView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(Color.brandBlue)
             }
+
+            HStack {
+                Spacer()
+                VStack(spacing: 4) {
+                    Text("Parent Guide")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                    Text("Version \(appVersion)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text("Built by parents, for parents")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+                Spacer()
+            }
+            .listRowBackground(Color.clear)
         } header: {
-            Label("Stats", systemImage: "chart.bar.fill")
+            Label("About", systemImage: "info.circle.fill")
         }
+    }
+
+    // MARK: - Account Section
+
+    private var accountSection: some View {
+        Section {
+            if authService.isSignedIn {
+                Button(role: .destructive) {
+                    authService.signOut()
+                } label: {
+                    Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            } else {
+                NavigationLink(destination: LoginView()) {
+                    Label("Sign In", systemImage: "person.circle")
+                        .foregroundStyle(Color.brandBlue)
+                }
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
     }
 
     // MARK: - Children Persistence
@@ -411,6 +614,40 @@ struct ProfileView: View {
     private func removeChild(at offsets: IndexSet) {
         children.remove(atOffsets: offsets)
         saveChildren()
+    }
+
+    // MARK: - Profile Picture Persistence
+
+    private func loadSelectedPhoto() async {
+        guard let item = selectedPhotoItem else { return }
+        do {
+            if let data = try await item.loadTransferable(type: Data.self) {
+                if let uiImage = UIImage(data: data) {
+                    profileImage = uiImage
+                    saveProfileImage(data: data)
+                }
+            }
+        } catch {
+            print("[ProfileView] Failed to load photo: \(error)")
+        }
+    }
+
+    private func saveProfileImage(data: Data) {
+        let url = Self.profileImageURL
+        try? data.write(to: url)
+    }
+
+    private func loadProfileImage() {
+        let url = Self.profileImageURL
+        if let data = try? Data(contentsOf: url),
+           let image = UIImage(data: data) {
+            profileImage = image
+        }
+    }
+
+    private static var profileImageURL: URL {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return docs.appendingPathComponent("profile_photo.jpg")
     }
 }
 

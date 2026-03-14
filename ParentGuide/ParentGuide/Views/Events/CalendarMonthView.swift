@@ -38,7 +38,7 @@ struct CalendarMonthView: View {
                     ForEach(dates, id: \.self) { date in
                         CalendarDayCellView(
                             date: date,
-                            events: viewModel.eventsForDate(date),
+                            events: viewModel.filteredEventsForDate(date),
                             isToday: date.isToday,
                             onTap: {
                                 viewModel.selectedDate = date

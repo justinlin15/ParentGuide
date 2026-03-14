@@ -23,6 +23,18 @@ struct KidsEatFreeRestaurant: Identifiable, Hashable {
     let modifiedAt: Date
 }
 
+extension KidsEatFreeRestaurant {
+    /// Return a copy with a different imageURL (used to merge bundled images into CloudKit records).
+    func withImageURL(_ url: String) -> KidsEatFreeRestaurant {
+        KidsEatFreeRestaurant(
+            id: id, name: name, cities: cities, dealDetails: dealDetails,
+            imageURL: url, websiteURL: websiteURL, phoneNumber: phoneNumber,
+            address: address, isActive: isActive, sortOrder: sortOrder,
+            metro: metro, source: source, createdAt: createdAt, modifiedAt: modifiedAt
+        )
+    }
+}
+
 nonisolated extension KidsEatFreeRestaurant {
     init?(record: CKRecord) {
         guard let name = record["name"] as? String else { return nil }

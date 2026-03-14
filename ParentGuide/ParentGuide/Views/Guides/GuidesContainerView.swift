@@ -17,7 +17,6 @@ struct GuidesContainerView: View {
         NavigationStack {
             guidesContent
                 .navigationTitle("Guides")
-                .navigationBarTitleDisplayMode(.inline)
         }
     }
 

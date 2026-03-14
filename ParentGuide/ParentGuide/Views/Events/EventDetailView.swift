@@ -134,6 +134,17 @@ struct EventDetailView: View {
                         }
                     }
 
+                    // Actual price text (if available and not just "Free")
+                    if let price = event.price, !price.isEmpty, !event.isFree {
+                        HStack(spacing: 8) {
+                            Image(systemName: "tag.fill")
+                                .foregroundStyle(Color.brandBlue)
+                            Text("Price: \(price)")
+                                .font(.subheadline)
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+
                     Divider()
 
                     // About section

@@ -28,17 +28,18 @@ export interface PipelineEvent {
   contactEmail?: string; // event contact email
 }
 
-// Category mapping: keywords → app EventCategory raw values
+// Category mapping: keys are iOS EventCategory raw values (Title Case)
+// These MUST match the EventCategory enum in the iOS app exactly.
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  storytime: ["storytime", "story time", "reading", "book"],
-  farmersMarket: ["farmers market", "farm market", "market day"],
-  freeMovie: ["movie", "film", "cinema", "screening"],
-  toddlerActivity: ["toddler", "baby", "infant", "preschool", "tot"],
-  craft: ["craft", "art", "paint", "drawing", "pottery", "diy"],
-  music: ["music", "concert", "live band", "sing", "song", "jam"],
-  fireStationTour: ["fire station", "fire department", "firefighter"],
-  museum: ["museum", "exhibit", "gallery"],
-  outdoorAdventure: [
+  Storytime: ["storytime", "story time", "reading", "book"],
+  "Farmers Market": ["farmers market", "farm market", "market day"],
+  "Free Movie": ["movie", "film", "cinema", "screening"],
+  "Toddler Activity": ["toddler", "baby", "infant", "preschool", "tot"],
+  Craft: ["craft", "art", "paint", "drawing", "pottery", "diy"],
+  Music: ["music", "concert", "live band", "sing", "song", "jam"],
+  "Fire Station Tour": ["fire station", "fire department", "firefighter"],
+  Museum: ["museum", "exhibit", "gallery"],
+  Outdoor: [
     "outdoor",
     "hike",
     "hiking",
@@ -48,8 +49,16 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     "camping",
     "garden",
   ],
-  food: ["food", "dining", "eat", "restaurant", "tasting", "cooking", "chef"],
-  sports: [
+  "Food & Dining": [
+    "food",
+    "dining",
+    "eat",
+    "restaurant",
+    "tasting",
+    "cooking",
+    "chef",
+  ],
+  Sports: [
     "sport",
     "soccer",
     "baseball",
@@ -59,7 +68,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     "gymnastics",
     "cheer",
   ],
-  education: [
+  Education: [
     "education",
     "class",
     "workshop",
@@ -70,7 +79,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     "school",
     "tutoring",
   ],
-  festival: [
+  Festival: [
     "festival",
     "fair",
     "carnival",
@@ -78,7 +87,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     "celebration",
     "fiesta",
   ],
-  seasonal: [
+  Seasonal: [
     "holiday",
     "christmas",
     "halloween",
@@ -88,7 +97,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     "spring break",
     "valentine",
   ],
-  other: [],
+  Other: [],
 };
 
 export function categorizeEvent(
@@ -99,13 +108,13 @@ export function categorizeEvent(
   const searchText = `${title} ${description} ${sourceCategories.join(" ")}`.toLowerCase();
 
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    if (category === "other") continue;
+    if (category === "Other") continue;
     if (keywords.some((kw) => searchText.includes(kw))) {
       return category;
     }
   }
 
-  return "other";
+  return "Other";
 }
 
 // Clean up HTML and truncate description
