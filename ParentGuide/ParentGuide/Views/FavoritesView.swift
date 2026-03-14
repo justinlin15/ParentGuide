@@ -21,7 +21,7 @@ struct FavoritesView: View {
                     eventsList
                 }
             }
-            .navigationTitle("My Favorites")
+            .navigationTitle("Favorites")
             .task {
                 await loadFavorites()
             }
@@ -33,21 +33,11 @@ struct FavoritesView: View {
 
     @ViewBuilder
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "heart")
-                .font(.system(size: 56))
-                .foregroundStyle(Color.brandBlue.opacity(0.4))
-
-            Text("No Favorites Yet")
-                .font(.system(.title3, design: .rounded, weight: .bold))
-
-            Text("Tap the heart icon on any event to save it here for quick access.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        EmptyStateView(
+            icon: "heart",
+            title: "No Favorites Yet",
+            message: "Tap the heart icon on any event to save it here for quick access."
+        )
     }
 
     @ViewBuilder

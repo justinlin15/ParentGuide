@@ -43,6 +43,16 @@ const HEADERS = {
 export async function scrapeMommyPoppins(
   metro: MetroArea
 ): Promise<PipelineEvent[]> {
+  // Orange County shares the same MommyPoppins region (115) as Los Angeles.
+  // Scraping it again produces identical events that get deduped in favor of
+  // the LA copies (which are processed first), leaving zero OC events.
+  // Instead, we skip OC here and rely on the city/coordinate-based
+  // reassignment in index.ts to move LA events into OC.
+  if (metro.id === "orange-county") {
+    log.info("mommy-poppins", `Skipping ${metro.name} (shares LA region — OC events reassigned in post-processing)`);
+    return [];
+  }
+
   const region = REGION_MAP[metro.id];
   if (!region) {
     log.warn("mommy-poppins", `No region mapping for ${metro.id}`);

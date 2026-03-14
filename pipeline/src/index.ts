@@ -83,25 +83,39 @@ async function main() {
   log.divider();
   log.info("pipeline", `Total raw events: ${allEvents.length}`);
 
-  // Reassign LA events that belong to Orange County based on coordinates or venue names
+  // Reassign LA events that belong to Orange County based on city names,
+  // venue/address keywords, or geographic coordinates.
+  // MommyPoppins treats LA + OC as a single region, so ALL SoCal events
+  // arrive tagged "los-angeles". This step splits them correctly.
   const OC_CENTER = { lat: 33.7175, lon: -117.8311 };
   const LA_CENTER = { lat: 34.0522, lon: -118.2437 };
   const OC_CITIES = [
+    // Major cities
     "anaheim", "irvine", "santa ana", "huntington beach", "costa mesa",
     "orange", "fullerton", "mission viejo", "lake forest", "laguna",
-    "laguna beach", "laguna niguel", "laguna hills", "newport beach",
-    "tustin", "yorba linda", "brea", "placentia", "cypress",
-    "garden grove", "westminster", "fountain valley", "seal beach",
-    "san clemente", "dana point", "san juan capistrano", "aliso viejo",
-    "rancho santa margarita", "ladera ranch", "trabuco canyon",
-    "buena park", "la habra", "stanton", "los alamitos",
-    "discovery cube oc", "oc fair", "orange county",
+    "laguna beach", "laguna niguel", "laguna hills", "laguna woods",
+    "newport beach", "newport coast", "tustin", "yorba linda", "brea",
+    "placentia", "cypress", "garden grove", "westminster", "midway city",
+    "fountain valley", "seal beach", "san clemente", "dana point",
+    "san juan capistrano", "aliso viejo", "rancho santa margarita",
+    "ladera ranch", "trabuco canyon", "coto de caza", "foothill ranch",
+    "buena park", "la habra", "stanton", "los alamitos", "rossmoor",
+    "silverado", "modjeska canyon", "villa park",
+    // South county
+    "capistrano beach", "monarch beach", "talega",
+    // Landmarks and venues
+    "discovery cube oc", "oc fair", "orange county", "south coast plaza",
+    "spectrum center", "irvine spectrum", "the lab anti-mall",
+    "bowers museum", "pretend city", "adventure playground",
+    "great park", "tanaka farms", "knott's", "knotts",
+    "medieval times buena park",
   ];
   let ocReassigned = 0;
   for (const event of allEvents) {
     if (event.metro !== "los-angeles") continue;
 
-    const text = `${event.city} ${event.locationName || ""} ${event.address || ""}`.toLowerCase();
+    // Check city, venue name, address, AND description for OC indicators
+    const text = `${event.city} ${event.locationName || ""} ${event.address || ""} ${event.description || ""}`.toLowerCase();
     const matchesOC = OC_CITIES.some((c) => text.includes(c));
 
     if (matchesOC) {
@@ -114,8 +128,8 @@ async function main() {
     if (event.latitude && event.longitude) {
       const dLA = Math.pow(event.latitude - LA_CENTER.lat, 2) + Math.pow(event.longitude - LA_CENTER.lon, 2);
       const dOC = Math.pow(event.latitude - OC_CENTER.lat, 2) + Math.pow(event.longitude - OC_CENTER.lon, 2);
-      // Only reassign if clearly closer to OC and within SoCal longitude range
-      if (dOC < dLA && event.longitude > -119 && event.longitude < -117) {
+      // Reassign if closer to OC and within the OC longitude band
+      if (dOC < dLA && event.longitude > -118.1 && event.longitude < -117.3) {
         event.metro = "orange-county";
         ocReassigned++;
       }

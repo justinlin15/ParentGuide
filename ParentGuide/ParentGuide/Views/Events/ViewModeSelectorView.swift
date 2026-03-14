@@ -18,14 +18,16 @@ struct ViewModeSelectorView: View {
                     viewModel.goToPreviousMonth()
                 } label: {
                     Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.white)
-                        .fontWeight(.semibold)
+                        .frame(width: 36, height: 36)
+                        .contentShape(Rectangle())
                 }
 
                 Spacer()
 
                 Text(viewModel.currentMonth.monthYearString)
-                    .font(.headline)
+                    .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.white)
 
                 Spacer()
@@ -34,15 +36,18 @@ struct ViewModeSelectorView: View {
                     viewModel.goToNextMonth()
                 } label: {
                     Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.white)
-                        .fontWeight(.semibold)
+                        .frame(width: 36, height: 36)
+                        .contentShape(Rectangle())
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
 
             // View mode selector row
-            HStack(spacing: 0) {
+            HStack(spacing: 4) {
                 ForEach(CalendarViewMode.allCases, id: \.self) { mode in
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -50,11 +55,11 @@ struct ViewModeSelectorView: View {
                         }
                     } label: {
                         Text(mode.rawValue)
-                            .font(.caption)
+                            .font(.subheadline)
                             .fontWeight(viewModel.selectedViewMode == mode ? .bold : .medium)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
+                            .padding(.vertical, 7)
                             .background(
                                 viewModel.selectedViewMode == mode
                                     ? Color.white.opacity(0.2)
@@ -68,8 +73,10 @@ struct ViewModeSelectorView: View {
                 Button(action: onFilterTap) {
                     ZStack(alignment: .topTrailing) {
                         Image(systemName: "line.3.horizontal.decrease.circle")
+                            .font(.subheadline)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 8)
+                            .frame(width: 36, height: 36)
+                            .contentShape(Rectangle())
 
                         if viewModel.filter.activeFilterCount > 0 {
                             Text("\(viewModel.filter.activeFilterCount)")
@@ -78,15 +85,17 @@ struct ViewModeSelectorView: View {
                                 .frame(width: 16, height: 16)
                                 .background(Color.orange)
                                 .clipShape(Circle())
-                                .offset(x: 4, y: -4)
+                                .offset(x: 6, y: -2)
                         }
                     }
                 }
 
                 Button(action: onSearchTap) {
                     Image(systemName: "magnifyingglass")
+                        .font(.subheadline)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
+                        .frame(width: 36, height: 36)
+                        .contentShape(Rectangle())
                 }
             }
             .padding(.horizontal, 8)

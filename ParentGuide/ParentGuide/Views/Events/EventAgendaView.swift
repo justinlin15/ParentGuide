@@ -68,7 +68,7 @@ struct EventAgendaView: View {
 
             // Selected date header
             Text(selectedDate.formatted(date: .complete, time: .omitted))
-                .font(.headline)
+                .font(.system(.headline, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
