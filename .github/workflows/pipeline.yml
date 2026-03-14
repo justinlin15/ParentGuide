@@ -111,7 +111,7 @@ jobs:
             cp pipeline/output/all-events.json docs/api/events.json
           }
           git add docs/api/events.json
-          git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git push)
+          git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git pull --rebase origin main && git push)
 
       - name: Upload output artifacts
         if: always()

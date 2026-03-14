@@ -131,35 +131,42 @@ async function fetchManuallyEditedRecords(
 // ─── Record conversion ──────────────────────────────────────────────────────
 
 function toCloudKitRecord(event: PipelineEvent) {
+  // Core fields that exist in the CloudKit schema
+  const fields: Record<string, { value: unknown }> = {
+    sourceId: { value: event.sourceId },
+    source: { value: event.source },
+    title: { value: event.title },
+    description: { value: event.description },
+    startDate: { value: new Date(event.startDate).getTime() },
+    endDate: { value: event.endDate ? new Date(event.endDate).getTime() : null },
+    isAllDay: { value: event.isAllDay ? 1 : 0 },
+    category: { value: event.category },
+    city: { value: event.city },
+    address: { value: event.address || "" },
+    latitude: { value: event.latitude || 0 },
+    longitude: { value: event.longitude || 0 },
+    locationName: { value: event.locationName || "" },
+    imageURL: { value: event.imageURL || "" },
+    externalURL: { value: event.externalURL || "" },
+    isFeatured: { value: event.isFeatured ? 1 : 0 },
+    isRecurring: { value: event.isRecurring ? 1 : 0 },
+    tags: { value: event.tags },
+    metro: { value: event.metro },
+  };
+
+  // Enriched fields — only include if non-empty so CloudKit auto-creates
+  // the schema columns on first use. Omitting empty values avoids errors
+  // when the schema hasn't been provisioned yet.
+  if (event.price) fields.price = { value: event.price };
+  if (event.ageRange) fields.ageRange = { value: event.ageRange };
+  if (event.websiteURL) fields.websiteURL = { value: event.websiteURL };
+  if (event.phone) fields.phone = { value: event.phone };
+  if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
+
   return {
     recordType: "Event",
     recordName: event.sourceId.replace(/[^a-zA-Z0-9_-]/g, "_"),
-    fields: {
-      sourceId: { value: event.sourceId },
-      source: { value: event.source },
-      title: { value: event.title },
-      description: { value: event.description },
-      startDate: { value: new Date(event.startDate).getTime() },
-      endDate: { value: event.endDate ? new Date(event.endDate).getTime() : null },
-      isAllDay: { value: event.isAllDay ? 1 : 0 },
-      category: { value: event.category },
-      city: { value: event.city },
-      address: { value: event.address || "" },
-      latitude: { value: event.latitude || 0 },
-      longitude: { value: event.longitude || 0 },
-      locationName: { value: event.locationName || "" },
-      imageURL: { value: event.imageURL || "" },
-      externalURL: { value: event.externalURL || "" },
-      isFeatured: { value: event.isFeatured ? 1 : 0 },
-      isRecurring: { value: event.isRecurring ? 1 : 0 },
-      tags: { value: event.tags },
-      metro: { value: event.metro },
-      price: { value: event.price || "" },
-      ageRange: { value: event.ageRange || "" },
-      websiteURL: { value: event.websiteURL || "" },
-      phone: { value: event.phone || "" },
-      contactEmail: { value: event.contactEmail || "" },
-    },
+    fields,
   };
 }
 
