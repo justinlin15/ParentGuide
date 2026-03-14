@@ -154,14 +154,18 @@ function toCloudKitRecord(event: PipelineEvent) {
     metro: { value: event.metro },
   };
 
-  // Enriched fields — only include if non-empty so CloudKit auto-creates
-  // the schema columns on first use. Omitting empty values avoids errors
-  // when the schema hasn't been provisioned yet.
-  if (event.price) fields.price = { value: event.price };
-  if (event.ageRange) fields.ageRange = { value: event.ageRange };
-  if (event.websiteURL) fields.websiteURL = { value: event.websiteURL };
-  if (event.phone) fields.phone = { value: event.phone };
-  if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
+  // NOTE: Enriched fields (price, ageRange, websiteURL, phone, contactEmail)
+  // are intentionally excluded until their columns are manually added to the
+  // CloudKit schema via the CloudKit Dashboard. Sending fields that don't
+  // exist in the schema causes BAD_REQUEST errors for the entire record.
+  //
+  // To enable: add these columns in CloudKit Dashboard → Schema → Event,
+  // then uncomment the lines below:
+  // if (event.price) fields.price = { value: event.price };
+  // if (event.ageRange) fields.ageRange = { value: event.ageRange };
+  // if (event.websiteURL) fields.websiteURL = { value: event.websiteURL };
+  // if (event.phone) fields.phone = { value: event.phone };
+  // if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
 
   return {
     recordType: "Event",

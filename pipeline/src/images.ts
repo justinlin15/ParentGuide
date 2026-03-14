@@ -26,6 +26,10 @@ const CATEGORY_SEARCH_TERMS: Record<string, string> = {
 // Cache: category → list of image URLs we've already fetched
 const imageCache = new Map<string, string[]>();
 
+// Track consecutive auth failures to avoid spamming broken APIs
+let unsplashDisabled = false;
+let pexelsDisabled = false;
+
 interface UnsplashResult {
   results: Array<{
     urls: {
@@ -59,6 +63,16 @@ export async function fillMissingImages(
     "images",
     `${needImages.length} events need fallback images`
   );
+
+  // Log which image APIs are configured
+  const apis = [];
+  if (config.unsplash.accessKey) apis.push("Unsplash");
+  if (config.pexels.apiKey) apis.push("Pexels");
+  if (apis.length === 0) {
+    log.warn("images", "No image API keys configured — skipping image fill");
+    return events;
+  }
+  log.info("images", `Image APIs available: ${apis.join(", ")}`);
 
   // Step 1: Try event-specific image search using venue/event name
   let filled = 0;
@@ -179,7 +193,7 @@ async function getCategoryImages(category: string): Promise<string[]> {
 }
 
 async function searchUnsplash(query: string, perPage = 10): Promise<string[]> {
-  if (!config.unsplash.accessKey) return [];
+  if (!config.unsplash.accessKey || unsplashDisabled) return [];
 
   try {
     const params = new URLSearchParams({
@@ -199,7 +213,12 @@ async function searchUnsplash(query: string, perPage = 10): Promise<string[]> {
     );
 
     if (!res.ok) {
-      log.warn("images", `Unsplash HTTP ${res.status}`);
+      if (res.status === 401 || res.status === 403) {
+        log.warn("images", `Unsplash HTTP ${res.status} — disabling (check UNSPLASH_ACCESS_KEY)`);
+        unsplashDisabled = true;
+      } else {
+        log.warn("images", `Unsplash HTTP ${res.status}`);
+      }
       return [];
     }
 
@@ -214,7 +233,7 @@ async function searchUnsplash(query: string, perPage = 10): Promise<string[]> {
 }
 
 async function searchPexels(query: string, perPage = 10): Promise<string[]> {
-  if (!config.pexels.apiKey) return [];
+  if (!config.pexels.apiKey || pexelsDisabled) return [];
 
   try {
     const params = new URLSearchParams({
@@ -230,7 +249,12 @@ async function searchPexels(query: string, perPage = 10): Promise<string[]> {
     });
 
     if (!res.ok) {
-      log.warn("images", `Pexels HTTP ${res.status}`);
+      if (res.status === 401 || res.status === 403) {
+        log.warn("images", `Pexels HTTP ${res.status} — disabling (check PEXELS_API_KEY)`);
+        pexelsDisabled = true;
+      } else {
+        log.warn("images", `Pexels HTTP ${res.status}`);
+      }
       return [];
     }
 
