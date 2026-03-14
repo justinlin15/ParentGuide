@@ -22,6 +22,7 @@ struct FavoritesView: View {
                 }
             }
             .navigationTitle("Favorites")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 await loadFavorites()
             }

@@ -52,7 +52,7 @@ struct PopularEventHeroCard: View {
                 if let imageURL = event.imageURL,
                    !imageURL.isEmpty,
                    let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { phase in
+                    CachedAsyncImagePhase(url: url) { phase in
                         switch phase {
                         case .success(let image):
                             image

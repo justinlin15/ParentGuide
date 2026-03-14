@@ -17,6 +17,7 @@ struct EventCalendarContainerView: View {
         NavigationStack {
             eventContent
                 .navigationTitle("Events")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         MetroSwitcherView()

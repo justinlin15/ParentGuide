@@ -78,13 +78,12 @@ actor EventService {
             return cached
         }
 
-        // Try CloudKit first
+        // Try CloudKit first — use fetchAllRecords (zone changes API) because
+        // the pipeline auto-creates the schema via REST without queryable indexes.
+        // CKQuery would fail with "field not queryable" errors.
         do {
-            let records = try await cloudKit.fetchRecords(
-                recordType: CloudKitConfig.RecordType.event,
-                predicate: NSPredicate(value: true),
-                sortDescriptors: [],
-                resultsLimit: 500
+            let records = try await cloudKit.fetchAllRecords(
+                recordType: CloudKitConfig.RecordType.event
             )
             let events = records.compactMap { Event(record: $0) }
             if !events.isEmpty {
@@ -95,7 +94,7 @@ actor EventService {
                 return events
             }
         } catch {
-            NSLog("[EventService] CloudKit query failed: %@, falling back to JSON feed", error.localizedDescription)
+            NSLog("[EventService] CloudKit fetch failed: %@, falling back to JSON feed", error.localizedDescription)
         }
 
         // Fallback: fetch from JSON feed
@@ -118,11 +117,27 @@ actor EventService {
         return events
     }
 
-    /// Fetch events from bundled JSON (primary) or remote JSON feed (fallback).
+    /// Fetch events from remote JSON feed (primary) or bundled JSON (offline fallback).
     private func fetchEventsFromJSON() async throws -> [Event] {
         let decoder = JSONDecoder()
 
-        // 1. Try bundled events.json first (always available, updated at build time)
+        // 1. Try remote JSON feed first (most up-to-date, updated every 12h by pipeline)
+        do {
+            let (data, response) = try await URLSession.shared.data(from: Self.eventsJSONURL)
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200 {
+                let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
+                let events = pipelineEvents.compactMap { $0.toEvent() }
+                NSLog("[EventService] Remote JSON feed: %d events (from %d raw)", events.count, pipelineEvents.count)
+                if !events.isEmpty { return events }
+            } else {
+                NSLog("[EventService] Remote JSON feed returned non-200 status")
+            }
+        } catch {
+            NSLog("[EventService] Remote JSON feed failed: %@, trying bundled JSON", error.localizedDescription)
+        }
+
+        // 2. Fallback: bundled events.json (available offline, updated at build time)
         if let bundleURL = Bundle.main.url(forResource: "events", withExtension: "json") {
             do {
                 let data = try Data(contentsOf: bundleURL)
@@ -135,22 +150,7 @@ actor EventService {
             }
         }
 
-        // 2. Fallback: try remote JSON feed
-        do {
-            let (data, response) = try await URLSession.shared.data(from: Self.eventsJSONURL)
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                NSLog("[EventService] Remote JSON feed returned non-200 status")
-                return []
-            }
-            let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
-            let events = pipelineEvents.compactMap { $0.toEvent() }
-            NSLog("[EventService] Remote JSON feed: %d events (from %d raw)", events.count, pipelineEvents.count)
-            return events
-        } catch {
-            NSLog("[EventService] Remote JSON feed failed: %@", error.localizedDescription)
-            return []
-        }
+        return []
     }
 
     // MARK: - Filtered queries
