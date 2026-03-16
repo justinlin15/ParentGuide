@@ -1,5 +1,5 @@
 import { type PipelineEvent } from "./normalize.js";
-import { geocodeAddress, delay } from "./utils/geocoder.js";
+import { geocodeAddress, delay, RATE_LIMITED } from "./utils/geocoder.js";
 import {
   searchForVenueLocation,
   extractAddressFromText,
@@ -51,6 +51,8 @@ async function geocodeEvent(
       ? `${event.address}, ${event.city}`
       : event.address;
     const result = await geocodeAddress(fullAddress);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info("geocode", `  ✓ [address] "${event.title}" → ${fullAddress}`);
       return result;
@@ -62,6 +64,8 @@ async function geocodeEvent(
   if (event.locationName && event.locationName.length > 2) {
     const query = `${event.locationName}, ${metroCity}`;
     const result = await geocodeAddress(query);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info("geocode", `  ✓ [venue+city] "${event.title}" → ${query}`);
       return result;
@@ -76,6 +80,8 @@ async function geocodeEvent(
       ? `${extractedAddr}, ${event.city}`
       : extractedAddr;
     const result = await geocodeAddress(query);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info(
         "geocode",
@@ -92,6 +98,8 @@ async function geocodeEvent(
   if (titleVenue) {
     const query = `${titleVenue}, ${metroCity}`;
     const result = await geocodeAddress(query);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info("geocode", `  ✓ [title venue] "${event.title}" → ${titleVenue}`);
       return result;
@@ -107,6 +115,8 @@ async function geocodeEvent(
     const venueFromDesc = atVenueMatch[1].trim();
     const query = `${venueFromDesc}, ${metroCity}`;
     const result = await geocodeAddress(query);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info(
         "geocode",
@@ -125,6 +135,8 @@ async function geocodeEvent(
       ? `${event.city}, ${stateAbbrev}`
       : event.city;
     const result = await geocodeAddress(query);
+    if (result === RATE_LIMITED) return null; // bail out on rate limit
+
     if (result && isReasonableLocation(result, event.metro)) {
       log.info("geocode", `  ✓ [city] "${event.title}" → ${event.city}`);
       return result;
