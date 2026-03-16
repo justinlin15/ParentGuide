@@ -7,9 +7,12 @@ interface GeoResult {
 
 // Simple geocoder using OpenStreetMap Nominatim (free, no API key needed)
 // Rate limit: 1 request/second
+export const RATE_LIMITED = "RATE_LIMITED" as const;
+export type GeocodedResult = GeoResult | typeof RATE_LIMITED | null;
+
 export async function geocodeAddress(
   address: string
-): Promise<GeoResult | null> {
+): Promise<GeocodedResult> {
   try {
     const encoded = encodeURIComponent(address);
     const url = `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1&countrycodes=us`;
@@ -20,6 +23,10 @@ export async function geocodeAddress(
       },
     });
 
+    if (res.status === 429) {
+      log.warn("geocoder", `HTTP 429 (rate limited) for: ${address}`);
+      return RATE_LIMITED;
+    }
     if (!res.ok) {
       log.warn("geocoder", `HTTP ${res.status} for: ${address}`);
       return null;
