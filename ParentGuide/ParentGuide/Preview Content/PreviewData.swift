@@ -142,30 +142,6 @@ enum PreviewData {
         Event(id: "music-library-mar6", title: "Music at the Library", eventDescription: "Interactive music class for toddlers and preschoolers featuring songs, instruments, and movement. Free and open to all ages.", startDate: makeDate(2026, 3, 6, 10, 0), endDate: makeDate(2026, 3, 6, 10, 45), isAllDay: false, category: .music, city: "Lake Forest", address: "24562 Raymond Way, Lake Forest, CA 92630", latitude: 33.6469, longitude: -117.6890, locationName: "Lake Forest Library", imageURL: "https://www.ocpl.org/sites/ocpl/files/styles/landscape_560/public/2023-04/ihp-2023.png", externalURL: "https://www.ocpl.org/", isFeatured: false, isRecurring: true, tags: ["free", "music", "toddler", "library"], metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
     ]
 
-    // MARK: - Sample Kids Eat Free Restaurants
-
-    static let sampleRestaurants: [KidsEatFreeRestaurant] = [
-        KidsEatFreeRestaurant(id: "r1", name: "Avila's El Ranchito", cities: ["Orange", "Laguna Niguel", "Lake Forest", "Foothill Ranch", "San Clemente", "Santa Ana"], dealDetails: "Orange, Lake Forest, Laguna Niguel: Kids eat free on Mondays from 4-10pm\nFoothill Ranch: Kids eat free on Sundays\nSan Clemente & Santa Ana: Kids eat free on Wednesdays 4-10pm", imageURL: "https://www.avilasorange.com/wp-content/uploads/2024/11/Orange-ext_HR-2-scaled-e1731021469280.jpg", websiteURL: "https://www.avilaselranchito.com", phoneNumber: "(714) 538-7180", address: "1132 N Tustin St, Orange, CA 92867", isActive: true, sortOrder: 0, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(id: "r2", name: "BLK Earth Spirits", cities: ["Huntington Beach"], dealDetails: "Free Kids Breakfast on Saturdays and Sundays from 10am-1pm with the purchase of a qualifying adult entree.", imageURL: "https://assets.simpleviewinc.com/simpleview/image/upload/crm/surfcityusa/BLK-Dining-3dd47ec85056a36_3dd47fe5-5056-a36a-0838cd8d023f4fec.jpg", websiteURL: "https://www.blkearthspirits.com", phoneNumber: "(714) 969-6400", address: "7628 Edinger Ave, Huntington Beach, CA 92647", isActive: true, sortOrder: 1, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(id: "r3", name: "Denny's", cities: ["Tustin", "Santa Ana", "Anaheim"], dealDetails: "Santa Ana + Tustin: Kids eat free from 4-10pm every day with purchase of an adult meal.\nAnaheim 1610 Harbor Blvd: Kids eat free from 4-10pm every day.", imageURL: "https://www.dennys.com/sites/default/files/styles/full_width_sm/public/2024-11/1300x1300_DIG2115%20DCOM%20Dennys%20Sign_R2R.jpg", websiteURL: "https://www.dennys.com", phoneNumber: "(714) 730-5246", address: "13432 Newport Ave, Tustin, CA 92780", isActive: true, sortOrder: 2, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(id: "r4", name: "IKEA", cities: ["Costa Mesa"], dealDetails: "Kids Eat Free on Wednesdays.\nKids Crafts on Wednesday evenings.", imageURL: "https://www.ikea.com/images/ikea-costa-mesa-store-front-b12443917f26629aa5edf1b9fe5877b9.jpg?f=s", websiteURL: "https://www.ikea.com/us/en/stores/costa-mesa/", phoneNumber: "(888) 888-4532", address: "1475 S Coast Dr, Costa Mesa, CA 92626", isActive: true, sortOrder: 3, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        KidsEatFreeRestaurant(id: "r5", name: "Ruby's Diner", cities: ["Anaheim", "Brea", "Corona Del Mar", "Costa Mesa", "Laguna Beach", "San Clemente", "Santa Ana", "Tustin"], dealDetails: "Kids eat free on Tuesday nights from 4pm until close with purchase of adult entree.", imageURL: "https://rubys.b-cdn.net/dbcwp/wp-content/uploads/2022/11/balboa_desk_v2.jpg", websiteURL: "https://www.rubys.com", phoneNumber: "(949) 673-7829", address: "1 Balboa Pier, Newport Beach, CA 92661", isActive: true, sortOrder: 4, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-    ]
-
-    // MARK: - Sample Parents Night Out Providers
-
-    static let sampleProviders: [ParentsNightOutProvider] = [
-        ParentsNightOutProvider(id: "p1", name: "Karate OC", cities: ["Fullerton", "Placentia"], providerDescription: "Games, Obstacle Courses, Laser Tag, Pizza, Drinks, and Movies! For ages 5+", ageRequirement: "Ages 5+", pricing: nil, schedule: "Monthly, Friday or Saturday evenings, 6:00–9:00 PM", promoCode: nil, promoDetails: nil, imageURL: "https://karateoc.com/wp-content/uploads/2021/01/DSC_1386-scaled.jpg", externalURL: "https://www.karateoc.com", isActive: true, sortOrder: 0, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        ParentsNightOutProvider(id: "p2", name: "Valhallan Esports Lake Forest", cities: ["Lake Forest"], providerDescription: "These happen 2-3 times each month and include pizza, drinks, and a night of fun coached game play.", ageRequirement: nil, pricing: nil, schedule: "2–3 times per month, Friday or Saturday evenings", promoCode: "OCPG", promoDetails: "50% off parents night out!", imageURL: "https://arenas.valhallan.com/lake-forest-ca-us/wp-content/uploads/sites/16/2025/10/valhallan-arena-1024x1024-1.jpg", externalURL: "https://www.valhallanesports.com", isActive: true, sortOrder: 1, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-
-        ParentsNightOutProvider(id: "p3", name: "Sweet Peas Gymnastics", cities: ["Rancho Mission Viejo"], providerDescription: "Offered every Saturday night. Kids enjoy an evening of gymnastics, obstacle courses, trampolines, bounce houses, games, crafts, and more!", ageRequirement: "Ages 3-13, potty trained", pricing: "$27-$30", schedule: "Every Saturday, 5:30–9:00 PM", promoCode: nil, promoDetails: nil, imageURL: "https://sweetpeasgymnasticsrmv.com/wp-content/uploads/2021/11/about-rmv.jpg", externalURL: "https://www.sweetpeasgymnastics.com", isActive: true, sortOrder: 2, metro: "los-angeles", source: "preview", createdAt: Date(), modifiedAt: Date()),
-    ]
-
     // MARK: - Sample About Sections
 
     static let sampleAboutSections: [AboutSection] = [

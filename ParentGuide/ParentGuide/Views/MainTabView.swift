@@ -28,17 +28,11 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
-            GuidesContainerView()
-                .tabItem {
-                    Label("Guides", systemImage: "book.fill")
-                }
-                .tag(3)
-
             MoreMenuView()
                 .tabItem {
                     Label("More", systemImage: "ellipsis.circle")
                 }
-                .tag(4)
+                .tag(3)
         }
         .tint(Color.brandBlue)
     }

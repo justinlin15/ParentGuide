@@ -12,8 +12,9 @@ nonisolated enum CloudKitConfig {
 
     enum RecordType {
         static let event = "Event"
-        static let kidsEatFreeRestaurant = "KidsEatFreeRestaurant"
-        static let parentsNightOutProvider = "ParentsNightOutProvider"
+        // Phase 2: Guides
+        // static let kidsEatFreeRestaurant = "KidsEatFreeRestaurant"
+        // static let parentsNightOutProvider = "ParentsNightOutProvider"
         static let resource = "Resource"
         static let aboutSection = "AboutSection"
         static let userProfile = "UserProfile"
