@@ -33,39 +33,13 @@ struct KidsEatFreeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                // Hero
-                CachedAsyncImagePhase(url: URL(string: restaurant.imageURL ?? "")) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 220)
-                            .clipped()
-                            .overlay(alignment: .bottomLeading) {
-                                Text(restaurant.name)
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.white)
-                                    .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-                                    .padding(16)
-                            }
-                    default:
-                        ZStack {
-                            Rectangle().fill(avatarColor.opacity(0.15))
-                            VStack(spacing: 8) {
-                                Text(String(restaurant.name.prefix(1)))
-                                    .font(.system(size: 60))
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(avatarColor)
-                                Text(restaurant.name)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                            }
-                        }
-                        .frame(height: 220)
-                    }
-                }
+                // Hero — chains: imageURL → logoURL → letter avatar
+                RestaurantHeroView(
+                    imageURL: restaurant.imageURL,
+                    logoURL: restaurant.logoURL,
+                    name: restaurant.name,
+                    avatarColor: avatarColor
+                )
 
                 VStack(alignment: .leading, spacing: 24) {
                     // Quick Actions
@@ -109,7 +83,7 @@ struct KidsEatFreeDetailView: View {
                         Label("Locations", systemImage: "mappin.circle.fill")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(Color.brandPink)
+                            .foregroundStyle(Color.eventPink)
 
                         Text("Tap a location to open in Apple Maps")
                             .font(.caption)
@@ -129,7 +103,7 @@ struct KidsEatFreeDetailView: View {
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color(.systemGray6))
-                                    .foregroundStyle(Color.brandPink)
+                                    .foregroundStyle(Color.eventPink)
                                     .clipShape(Capsule())
                                 }
                             }

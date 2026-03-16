@@ -140,6 +140,8 @@ struct EventFilter {
         }
 
         // 3. Date range filter
+        // For multi-day events, check overlap: event starts before range ends AND event ends after range starts.
+        // This ensures ongoing multi-day events appear in date filters even if their startDate was earlier.
         let calendar = Calendar.current
         let now = Date()
 
@@ -147,12 +149,12 @@ struct EventFilter {
         case .allUpcoming:
             break // already filtered to upcoming in service layer
         case .today:
-            let startOfDay = calendar.startOfDay(for: now)
-            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
-            result = result.filter { $0.startDate >= startOfDay && $0.startDate < endOfDay }
+            let rangeStart = calendar.startOfDay(for: now)
+            let rangeEnd = calendar.date(byAdding: .day, value: 1, to: rangeStart)!
+            result = result.filter { eventOverlaps($0, rangeStart: rangeStart, rangeEnd: rangeEnd) }
         case .thisWeek:
             if let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now) {
-                result = result.filter { $0.startDate >= weekInterval.start && $0.startDate < weekInterval.end }
+                result = result.filter { eventOverlaps($0, rangeStart: weekInterval.start, rangeEnd: weekInterval.end) }
             }
         case .thisWeekend:
             // Find the next Saturday and Sunday
@@ -172,19 +174,24 @@ struct EventFilter {
                 let actualEnd = weekday == 1
                     ? calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))!
                     : monday
-                result = result.filter { $0.startDate >= actualStart && $0.startDate < actualEnd }
+                result = result.filter { eventOverlaps($0, rangeStart: actualStart, rangeEnd: actualEnd) }
             }
         case .thisMonth:
             if let monthInterval = calendar.dateInterval(of: .month, for: now) {
-                result = result.filter { $0.startDate >= monthInterval.start && $0.startDate < monthInterval.end }
+                result = result.filter { eventOverlaps($0, rangeStart: monthInterval.start, rangeEnd: monthInterval.end) }
             }
         case .custom:
             if let start = customStartDate {
-                result = result.filter { $0.startDate >= calendar.startOfDay(for: start) }
-            }
-            if let end = customEndDate {
-                let endOfDay = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: end))!
-                result = result.filter { $0.startDate < endOfDay }
+                let rangeStart = calendar.startOfDay(for: start)
+                if let end = customEndDate {
+                    let rangeEnd = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: end))!
+                    result = result.filter { eventOverlaps($0, rangeStart: rangeStart, rangeEnd: rangeEnd) }
+                } else {
+                    result = result.filter { ($0.endDate ?? $0.startDate) >= rangeStart }
+                }
+            } else if let end = customEndDate {
+                let rangeEnd = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: end))!
+                result = result.filter { $0.startDate < rangeEnd }
             }
         }
 
@@ -192,7 +199,8 @@ struct EventFilter {
         if distanceOption != .unlimited, let location = userLocation {
             let maxMeters = distanceOption.rawValue * 1609.34 // miles to meters
             result = result.filter { event in
-                guard let lat = event.latitude, let lon = event.longitude else { return false }
+                guard event.hasValidCoordinates,
+                      let lat = event.latitude, let lon = event.longitude else { return false }
                 let eventLocation = CLLocation(latitude: lat, longitude: lon)
                 return location.distance(from: eventLocation) <= maxMeters
             }
@@ -259,6 +267,14 @@ struct EventFilter {
     }
 
     // MARK: - Helpers
+
+    /// Check if an event overlaps with a date range.
+    /// An event overlaps if it starts before the range ends AND ends at or after the range starts.
+    /// For single-day events (no endDate), falls back to checking if startDate is within range.
+    private func eventOverlaps(_ event: Event, rangeStart: Date, rangeEnd: Date) -> Bool {
+        let eventEnd = event.endDate ?? event.startDate
+        return event.startDate < rangeEnd && eventEnd >= rangeStart
+    }
 
     private func distanceInMiles(from location: CLLocation, to event: Event) -> Double {
         guard let lat = event.latitude, let lon = event.longitude else { return .greatestFiniteMagnitude }

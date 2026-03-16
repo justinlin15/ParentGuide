@@ -17,8 +17,14 @@ struct EventCalendarContainerView: View {
         NavigationStack {
             eventContent
                 .navigationTitle("Events")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Events")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         MetroSwitcherView()
                     }
@@ -29,6 +35,9 @@ struct EventCalendarContainerView: View {
                         viewModel.selectedViewMode = mode
                     }
                     await viewModel.loadEvents()
+                }
+                .onAppear {
+                    Task { await viewModel.reloadIfMetroChanged() }
                 }
                 .onChange(of: metroService.selectedMetro.id) {
                     Task { await viewModel.loadEvents() }
@@ -97,10 +106,10 @@ struct EventCalendarContainerView: View {
                     EventListView(events: viewModel.filteredEventsForCurrentMonth)
 
                 case .week:
-                    EventAgendaView(events: viewModel.filteredEventsForCurrentMonth)
+                    EventAgendaView(events: viewModel.filteredEventsForCurrentMonth, selectedDate: $viewModel.browsedDate)
 
                 case .map:
-                    EventMapView(events: viewModel.filteredEvents)
+                    EventMapView(events: viewModel.filteredEvents, selectedDate: viewModel.browsedDate)
                 }
             }
         }

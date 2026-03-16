@@ -88,7 +88,7 @@ struct KidsEatFreeCardView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "mappin")
                         .font(.caption2)
-                        .foregroundStyle(Color.brandPink)
+                        .foregroundStyle(Color.eventPink)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 4) {

@@ -18,7 +18,7 @@ struct HomeMapView: View {
                 .fontWeight(.semibold)
 
             Map(position: $mapPosition) {
-                ForEach(events.filter { $0.hasLocation }) { event in
+                ForEach(events.filter { $0.hasValidCoordinates }) { event in
                     if let lat = event.latitude, let lon = event.longitude {
                         Annotation(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
                             Image(systemName: event.category.iconName)

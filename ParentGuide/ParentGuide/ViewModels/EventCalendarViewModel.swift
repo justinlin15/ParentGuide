@@ -20,6 +20,8 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
     var eventsByDate: [Date: [Event]] = [:]
     var selectedViewMode: CalendarViewMode = .week
     var selectedDate: Date?
+    /// The date the user is currently browsing in the week/agenda view. Persists across navigation.
+    var browsedDate: Date = Calendar.current.startOfDay(for: Date())
     var isLoading = false
     var errorMessage: String?
 
@@ -27,6 +29,8 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
     var filter = EventFilter()
     var userLocation: CLLocation?
     private var locationManager: CLLocationManager?
+    /// Tracks the metro ID that events were last loaded for, so we can detect stale data on tab re-appearance.
+    private(set) var loadedMetroId: String?
 
     override init() {
         super.init()
@@ -111,6 +115,7 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
             let metroId = MetroService.shared.selectedMetro.id
             let fetched = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
             events = fetched
+            loadedMetroId = metroId
             groupEventsByDate()
             NSLog("[EventCalendarVM] Loaded %d events for metro: %@", fetched.count, metroId)
         } catch {
@@ -119,6 +124,15 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
         }
 
         isLoading = false
+    }
+
+    /// Reload events if the selected metro has changed since the last load.
+    func reloadIfMetroChanged() async {
+        let currentMetroId = MetroService.shared.selectedMetro.id
+        if currentMetroId != loadedMetroId {
+            NSLog("[EventCalendarVM] Metro changed from %@ to %@ — reloading", loadedMetroId ?? "nil", currentMetroId)
+            await loadEvents()
+        }
     }
 
     func goToNextMonth() {

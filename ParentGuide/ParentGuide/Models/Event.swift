@@ -37,8 +37,86 @@ struct Event: Identifiable, Hashable, Codable {
     var phone: String? = nil
     var contactEmail: String? = nil
 
+    /// True when the event has any location info (name, address, or valid coordinates).
     var hasLocation: Bool {
-        latitude != nil && longitude != nil
+        locationName != nil || address != nil || hasValidCoordinates
+    }
+
+    /// True only when lat/lon are present and not the 0,0 default placeholder.
+    var hasValidCoordinates: Bool {
+        guard let lat = latitude, let lon = longitude else { return false }
+        return !(lat == 0 && lon == 0)
+    }
+
+    // MARK: - Venue Name Inference
+
+    /// Best available location name: explicit locationName, or inferred from title/description.
+    var effectiveLocationName: String? {
+        if let name = locationName, !name.isEmpty { return name }
+        return inferredLocationName
+    }
+
+    /// Try to extract a venue/place name from the event title and description
+    /// when the locationName field is missing. Handles patterns like:
+    /// - "Free Movie at Lido Theater Newport Beach"
+    /// - "Storytime - Irvine Public Library"
+    /// - "Music at the Park"
+    private var inferredLocationName: String? {
+        // Strategy 1: "at <Venue>" in title
+        if let venue = extractVenue(from: title) {
+            return venue
+        }
+        // Strategy 2: "at <Venue>" in description (first sentence only)
+        let firstSentence = String(eventDescription.prefix(200))
+        if let venue = extractVenue(from: firstSentence) {
+            return venue
+        }
+        return nil
+    }
+
+    /// Extract a venue name following "at" in text.
+    /// Captures: "at Lido Theater Newport Beach" → "Lido Theater Newport Beach"
+    private func extractVenue(from text: String) -> String? {
+        // Match "at <Venue Name>" — venue starts with a capital letter
+        // and may contain words, apostrophes, hyphens, ampersands
+        let patterns = [
+            // "at The Park" / "at Lido Theater Newport Beach"
+            #"(?:\bat|@)\s+(?:the\s+)?([A-Z][A-Za-z''\-&. ]{2,50}?)(?:\s+(?:on|from|every|this|starting|for|with)\b|[,\.\!\?]|$)"#,
+            // Fallback: broader "at <Venue>" without stop-word boundary
+            #"(?:\bat|@)\s+(?:the\s+)?([A-Z][A-Za-z''\-&. ]{2,50})"#,
+        ]
+
+        for pattern in patterns {
+            if let regex = try? NSRegularExpression(pattern: pattern),
+               let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+               let venueRange = Range(match.range(at: 1), in: text) {
+                let venue = String(text[venueRange]).trimmingCharacters(in: .whitespaces)
+                // Skip if the "venue" is just a common word
+                let skipWords: Set<String> = ["Home", "No", "An", "Any", "This", "That", "Our", "Your", "All", "Each"]
+                if skipWords.contains(venue) { continue }
+                if venue.count >= 3 { return venue }
+            }
+        }
+
+        // Strategy: "– Venue Name" or "- Venue Name" after dash in title
+        let dashPattern = #"[–—\-]\s*([A-Z][A-Za-z''\-&. ]{2,50})"#
+        if let regex = try? NSRegularExpression(pattern: dashPattern),
+           let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+           let venueRange = Range(match.range(at: 1), in: text) {
+            let venue = String(text[venueRange]).trimmingCharacters(in: .whitespaces)
+            if venue.count >= 3 { return venue }
+        }
+
+        return nil
+    }
+
+    /// Best query string for directions/geocoding when coordinates are missing.
+    /// Combines venue name (or inferred) with city for better results.
+    var directionsQuery: String {
+        [effectiveLocationName, address, city]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
     }
 
     var formattedDate: String {

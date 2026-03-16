@@ -114,6 +114,67 @@ final class CalendarService {
         }
     }
 
+    // MARK: - Duplicate Detection
+
+    /// Check if an event with the same title and start date already exists in the user's calendar.
+    func isAlreadyInCalendar(_ event: Event) -> Bool {
+        guard hasAccess else { return false }
+        let startOfDay = Calendar.current.startOfDay(for: event.startDate)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+        let predicate = store.predicateForEvents(withStart: startOfDay, end: endOfDay, calendars: nil)
+        let existingEvents = store.events(matching: predicate)
+        return existingEvents.contains { existing in
+            existing.title == event.title &&
+            abs(existing.startDate.timeIntervalSince(event.startDate)) < 60 // within 1 minute
+        }
+    }
+
+    // MARK: - Batch Add
+
+    /// Add multiple events to calendar, skipping duplicates.
+    /// Returns (added, skipped, errors) counts.
+    @MainActor
+    func addBatchToCalendar(_ events: [Event]) async -> BatchCalendarResult {
+        // Ensure we have access
+        if !hasAccess {
+            let granted = await requestAccess()
+            if !granted {
+                return BatchCalendarResult(added: 0, skipped: 0, denied: true, errorMessage: nil)
+            }
+        }
+
+        var added = 0
+        var skipped = 0
+
+        for event in events {
+            // Skip if already in calendar
+            if isAlreadyInCalendar(event) {
+                skipped += 1
+                continue
+            }
+
+            let result = await addToCalendar(event)
+            switch result {
+            case .success:
+                added += 1
+            case .denied:
+                return BatchCalendarResult(added: added, skipped: skipped, denied: true, errorMessage: nil)
+            case .error(let msg):
+                NSLog("[CalendarService] Batch add error for '%@': %@", event.title, msg)
+                // Continue with remaining events
+            }
+        }
+
+        return BatchCalendarResult(added: added, skipped: skipped, denied: false, errorMessage: nil)
+    }
+
+    struct BatchCalendarResult {
+        let added: Int
+        let skipped: Int
+        let denied: Bool
+        let errorMessage: String?
+    }
+
     enum CalendarResult {
         case success
         case denied

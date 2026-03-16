@@ -23,9 +23,19 @@ struct EventDetailView: View {
     @State private var showCalendarDenied = false
     @State private var calendarErrorMessage: String?
     @State private var isAddingToCalendar = false
+    @State private var geocodedCoordinate: CLLocationCoordinate2D?
+    @State private var isGeocoding = false
 
     private var isFavorite: Bool {
         favoritesService.isFavorite(event.id)
+    }
+
+    /// The best coordinate available — from event data or on-demand geocoding.
+    private var bestCoordinate: CLLocationCoordinate2D? {
+        if event.hasValidCoordinates, let lat = event.latitude, let lon = event.longitude {
+            return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        }
+        return geocodedCoordinate
     }
 
     private var shareText: String {
@@ -33,7 +43,7 @@ struct EventDetailView: View {
         if !event.isAllDay {
             text += " \(event.formattedTime)"
         }
-        if let location = event.locationName {
+        if let location = event.effectiveLocationName {
             text += "\n\(location)"
         }
         text += "\n\(event.city)"
@@ -69,30 +79,33 @@ struct EventDetailView: View {
 
                 VStack(alignment: .leading, spacing: 16) {
                     // Title row with share + favorite
-                    HStack(alignment: .top) {
+                    HStack(alignment: .top, spacing: 12) {
                         Text(event.title)
                             .font(.title2)
                             .fontWeight(.bold)
 
-                        Spacer()
+                        Spacer(minLength: 4)
 
-                        ShareLink(item: shareText) {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(.plain)
-
-                        Button {
-                            withAnimation(.spring(response: 0.3)) {
-                                favoritesService.toggleFavorite(for: event)
+                        HStack(spacing: 16) {
+                            ShareLink(item: shareText) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(.secondary)
                             }
-                        } label: {
-                            Image(systemName: isFavorite ? "heart.fill" : "heart")
-                                .font(.title2)
-                                .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
+                            .buttonStyle(.plain)
+
+                            Button {
+                                withAnimation(.spring(response: 0.3)) {
+                                    favoritesService.toggleFavorite(for: event)
+                                }
+                            } label: {
+                                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                        .padding(.top, 4)
                     }
 
                     // Date and Location row
@@ -180,54 +193,65 @@ struct EventDetailView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // Location section
-                    if event.hasLocation {
-                        Divider()
+                    // Location section — always show
+                    Divider()
 
-                        Text("Location")
-                            .font(.title3)
-                            .fontWeight(.semibold)
+                    Text("Location")
+                        .font(.title3)
+                        .fontWeight(.semibold)
 
-                        if let name = event.locationName {
-                            Text(name)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
+                    if let name = event.effectiveLocationName {
+                        Text(name)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
 
-                        if let address = event.address {
-                            Text(address)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                    if let address = event.address {
+                        Text(address)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
-                        if let lat = event.latitude, let lon = event.longitude {
-                            let position = MapCameraPosition.region(
-                                MKCoordinateRegion(
-                                    center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
-                                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                                )
+                    if !event.city.isEmpty && event.effectiveLocationName == nil {
+                        Text(event.city)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Inline map — show when we have coordinates (from data or geocoding)
+                    if let coord = bestCoordinate {
+                        Map(initialPosition: .region(MKCoordinateRegion(
+                            center: coord,
+                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                        ))) {
+                            Marker(
+                                event.effectiveLocationName ?? event.title,
+                                coordinate: coord
                             )
-
-                            Map(initialPosition: position) {
-                                Marker(event.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-                                    .tint(event.category.color)
-                            }
-                            .frame(height: 200)
-                            .cornerRadius(12)
-
-                            Button {
-                                let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)))
-                                mapItem.name = event.locationName ?? event.title
-                                mapItem.openInMaps()
-                            } label: {
-                                Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
-                                    .background(Color.brandBlue)
-                                    .foregroundStyle(.white)
-                                    .cornerRadius(10)
-                            }
+                            .tint(event.category.color)
                         }
+                        .frame(height: 200)
+                        .cornerRadius(12)
+                    } else if isGeocoding {
+                        // Show loading indicator while geocoding
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                                .padding(.vertical, 20)
+                            Spacer()
+                        }
+                    }
+
+                    // Get Directions — always available
+                    Button {
+                        openDirections()
+                    } label: {
+                        Label("Get Directions", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.brandBlue)
+                            .foregroundStyle(.white)
+                            .cornerRadius(10)
                     }
 
                     // Contact details
@@ -301,6 +325,9 @@ struct EventDetailView: View {
                 .padding(20)
             }
         }
+        .task {
+            await geocodeIfNeeded()
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if adminService.isAdmin {
@@ -355,6 +382,71 @@ struct EventDetailView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(calendarErrorMessage ?? "An error occurred.")
+        }
+    }
+
+    private func openDirections() {
+        if let coord = bestCoordinate {
+            // Use known coordinates (from event data or geocoding)
+            let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coord))
+            mapItem.name = event.effectiveLocationName ?? event.title
+            mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+        } else {
+            // Fallback: search by venue name + city
+            let query = event.directionsQuery
+            let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            if let url = URL(string: "maps://?daddr=\(encoded)") {
+                UIApplication.shared.open(url)
+            }
+        }
+    }
+
+    /// On-demand geocoding: if event lacks valid coordinates, try to resolve them
+    /// from venue name, title, address, or city using MKLocalSearch.
+    private func geocodeIfNeeded() async {
+        // Already have valid coordinates — nothing to do
+        guard !event.hasValidCoordinates else { return }
+
+        isGeocoding = true
+        defer { isGeocoding = false }
+
+        // Build search queries from most to least specific
+        let queries: [String] = [
+            // 1: venue name + city
+            [event.effectiveLocationName, event.city].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "),
+            // 2: address + city
+            [event.address, event.city].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "),
+            // 3: just the city
+            event.city,
+        ].filter { !$0.isEmpty }
+
+        // Remove duplicates while preserving order
+        var seen = Set<String>()
+        let uniqueQueries = queries.filter { seen.insert($0.lowercased()).inserted }
+
+        for query in uniqueQueries {
+            if let coordinate = await searchLocation(query: query) {
+                await MainActor.run {
+                    geocodedCoordinate = coordinate
+                }
+                return
+            }
+        }
+    }
+
+    /// Search for a location using MKLocalSearch (Apple Maps data, better for business/venue names).
+    private func searchLocation(query: String) async -> CLLocationCoordinate2D? {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = query
+        // Bias results toward the event's metro area
+        request.resultTypes = [.pointOfInterest, .address]
+
+        do {
+            let search = MKLocalSearch(request: request)
+            let response = try await search.start()
+            return response.mapItems.first?.placemark.coordinate
+        } catch {
+            return nil
         }
     }
 

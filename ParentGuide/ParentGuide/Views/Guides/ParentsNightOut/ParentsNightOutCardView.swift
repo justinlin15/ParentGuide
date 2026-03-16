@@ -79,7 +79,7 @@ struct ParentsNightOutCardView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "mappin")
                         .font(.caption2)
-                        .foregroundStyle(Color.brandPink)
+                        .foregroundStyle(Color.eventPink)
                     Text(provider.cities.joined(separator: ", "))
                         .font(.caption)
                         .foregroundStyle(.secondary)

@@ -24,13 +24,13 @@ struct KidsEatFreeRestaurant: Identifiable, Hashable {
 }
 
 extension KidsEatFreeRestaurant {
-    /// Logo image URL derived from the restaurant's website domain via Clearbit.
-    /// Used as a reliable fallback when the primary imageURL fails to load.
+    /// Logo/favicon image derived from Google's favicon service.
+    /// Returns a 128px icon — reliable and free, used when the primary imageURL fails.
     var logoURL: String? {
         guard let websiteURL = websiteURL,
               let url = URL(string: websiteURL),
               let host = url.host else { return nil }
-        return "https://logo.clearbit.com/\(host)"
+        return "https://www.google.com/s2/favicons?domain=\(host)&sz=128"
     }
 
     /// Return a copy with a different imageURL (used to merge bundled images into CloudKit records).

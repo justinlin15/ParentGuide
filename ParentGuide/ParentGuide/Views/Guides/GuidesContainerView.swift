@@ -17,7 +17,15 @@ struct GuidesContainerView: View {
         NavigationStack {
             guidesContent
                 .navigationTitle("Guides")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Guides")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                    }
+                }
         }
     }
 

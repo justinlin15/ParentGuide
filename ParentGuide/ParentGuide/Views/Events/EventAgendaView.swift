@@ -7,7 +7,7 @@ import SwiftUI
 
 struct EventAgendaView: View {
     let events: [Event]
-    @State private var selectedDate: Date = Calendar.current.startOfDay(for: Date())
+    @Binding var selectedDate: Date
 
     private var datesWithEvents: [Date] {
         let grouped = Dictionary(grouping: events) { event in
@@ -137,6 +137,6 @@ struct EventAgendaView: View {
 
 #Preview {
     NavigationStack {
-        EventAgendaView(events: PreviewData.generateMonthEvents(for: Date()))
+        EventAgendaView(events: PreviewData.generateMonthEvents(for: Date()), selectedDate: .constant(Calendar.current.startOfDay(for: Date())))
     }
 }

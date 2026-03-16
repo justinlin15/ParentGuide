@@ -116,7 +116,7 @@ struct ParentsNightOutDetailView: View {
                         Label("Locations", systemImage: "mappin.circle.fill")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundStyle(Color.brandPink)
+                            .foregroundStyle(Color.eventPink)
 
                         Text("Tap a location to open in Apple Maps")
                             .font(.caption)
@@ -136,7 +136,7 @@ struct ParentsNightOutDetailView: View {
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color(.systemGray6))
-                                    .foregroundStyle(Color.brandPink)
+                                    .foregroundStyle(Color.eventPink)
                                     .clipShape(Capsule())
                                 }
                             }

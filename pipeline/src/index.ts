@@ -15,6 +15,7 @@ import { fillMissingImages } from "./images.js";
 import { cleanDescriptions } from "./clean-descriptions.js";
 import { rewriteDescriptions } from "./rewrite.js";
 import { uploadToCloudKit } from "./cloudkit.js";
+import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
 
 async function main() {
@@ -163,8 +164,13 @@ async function main() {
   }
   log.info("pipeline", `Upcoming events: ${upcoming.length}`);
 
+  // Geocode events missing coordinates
+  log.divider();
+  log.info("pipeline", "Geocoding events with missing coordinates...");
+  const geocoded = await geocodeEvents(upcoming);
+
   // Fill missing images
-  const withImages = await fillMissingImages(upcoming);
+  const withImages = await fillMissingImages(geocoded);
 
   // Upload to CloudKit (or write to output/)
   log.divider();

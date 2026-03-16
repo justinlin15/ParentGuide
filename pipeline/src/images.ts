@@ -1,5 +1,6 @@
 import { config } from "./config.js";
 import { type PipelineEvent } from "./normalize.js";
+import { searchForEventImage } from "./utils/web-enricher.js";
 import { log } from "./utils/logger.js";
 import { delay } from "./utils/geocoder.js";
 
@@ -73,6 +74,26 @@ export async function fillMissingImages(
     return events;
   }
   log.info("images", `Image APIs available: ${apis.join(", ")}`);
+
+  // Step 0: Extract og:image from event's external URL (best quality, event-specific)
+  let ogFilled = 0;
+  const ogBatchSize = 50; // Limit to avoid excessive fetching
+  const ogCandidates = needImages
+    .filter((e) => !e.imageURL && (e.externalURL || e.websiteURL))
+    .slice(0, ogBatchSize);
+
+  if (ogCandidates.length > 0) {
+    log.info("images", `Trying og:image extraction for ${ogCandidates.length} events...`);
+    for (const event of ogCandidates) {
+      const ogImage = await searchForEventImage(event.externalURL, event.websiteURL);
+      if (ogImage) {
+        event.imageURL = ogImage;
+        ogFilled++;
+      }
+      await delay(500); // Rate limit web fetches
+    }
+    log.info("images", `og:image extraction filled ${ogFilled} images`);
+  }
 
   // Step 1: Try event-specific image search using venue/event name
   let filled = 0;
