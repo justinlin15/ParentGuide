@@ -600,11 +600,11 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17942725",
+    "sourceId": "seatgeek:17942736",
     "source": "seatgeek",
     "title": "Gorillaz - House of Kong Exhibition - Los Angeles",
-    "description": "Gorillaz - House of Kong Exhibition - Los Angeles is taking place in Los Angeles. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-17T17:00:00",
+    "description": "Enjoy Gorillaz - House of Kong Exhibition - Los Angeles in Los Angeles. A wonderful family event for the whole family.",
+    "startDate": "2026-03-17T19:30:00",
     "isAllDay": false,
     "category": "Museum",
     "city": "Los Angeles",
@@ -613,7 +613,7 @@
     "longitude": -118.385,
     "locationName": "Rolling Greens DTLA",
     "imageURL": "https://seatgeekimages.com/performers-landscape/gorillaz-house-of-kong-exhibition-08f146/1967915/huge.jpg",
-    "externalURL": "https://seatgeek.com/gorillaz-house-of-kong-exhibition-tickets/entertainment/2026-03-17-10-am/17942725",
+    "externalURL": "https://seatgeek.com/gorillaz-house-of-kong-exhibition-tickets/entertainment/2026-03-17-12-30-pm/17942736",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -762,6 +762,29 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "seatgeek:18095040",
+    "source": "seatgeek",
+    "title": "Paul Taylor Dance Company - Orange",
+    "description": "Enjoy Paul Taylor Dance Company - Orange in Orange. A wonderful family event for the whole family.",
+    "startDate": "2026-03-19T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Orange",
+    "address": "1 University Drive",
+    "latitude": 33.7936,
+    "longitude": -117.853,
+    "locationName": "Musco Center for the Arts",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/paul-taylor-dance-company-f74271/5342/huge.jpg",
+    "externalURL": "https://seatgeek.com/paul-taylor-dance-company-tickets/dance/2026-03-18-7-30-pm/18095040",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "dance"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "seatgeek:17843239",
     "source": "seatgeek",
     "title": "Rob Kapilow's What Makes It Great? - Cerritos",
@@ -806,29 +829,6 @@
       "broadway"
     ],
     "metro": "los-angeles"
-  },
-  {
-    "sourceId": "seatgeek:18095040",
-    "source": "seatgeek",
-    "title": "Paul Taylor Dance Company - Orange",
-    "description": "Enjoy Paul Taylor Dance Company - Orange in Orange. A wonderful family event for the whole family.",
-    "startDate": "2026-03-19T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Orange",
-    "address": "1 University Drive",
-    "latitude": 33.7936,
-    "longitude": -117.853,
-    "locationName": "Musco Center for the Arts",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/paul-taylor-dance-company-f74271/5342/huge.jpg",
-    "externalURL": "https://seatgeek.com/paul-taylor-dance-company-tickets/dance/2026-03-18-7-30-pm/18095040",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "dance"
-    ],
-    "metro": "orange-county"
   },
   {
     "sourceId": "seatgeek:17504562",
@@ -923,29 +923,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17504563",
-    "source": "seatgeek",
-    "title": "Beetlejuice - The Musical - Los Angeles",
-    "description": "Beetlejuice - The Musical - Los Angeles is taking place in Los Angeles. Bring the kids for a memorable family experience.",
-    "startDate": "2026-03-20T02:30:00",
-    "isAllDay": false,
-    "category": "Music",
-    "city": "Los Angeles",
-    "address": "6233 Hollywood Blvd.",
-    "latitude": 34.1017,
-    "longitude": -118.325,
-    "locationName": "Hollywood Pantages Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/beetlejuice-the-musical-15c3d2/683128/huge.jpg",
-    "externalURL": "https://seatgeek.com/beetlejuice-the-musical-tickets/broadway/2026-03-19-7-30-pm/17504563",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:18111672",
     "source": "seatgeek",
     "title": "Nurse John (21+)",
@@ -967,6 +944,29 @@
       "comedy"
     ],
     "metro": "orange-county"
+  },
+  {
+    "sourceId": "seatgeek:17504563",
+    "source": "seatgeek",
+    "title": "Beetlejuice - The Musical - Los Angeles",
+    "description": "Beetlejuice - The Musical - Los Angeles is taking place in Los Angeles. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-20T02:30:00",
+    "isAllDay": false,
+    "category": "Music",
+    "city": "Los Angeles",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/beetlejuice-the-musical-15c3d2/683128/huge.jpg",
+    "externalURL": "https://seatgeek.com/beetlejuice-the-musical-tickets/broadway/2026-03-19-7-30-pm/17504563",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
+    ],
+    "metro": "los-angeles"
   },
   {
     "sourceId": "seatgeek:17543164",
@@ -1038,29 +1038,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17504567",
-    "source": "seatgeek",
-    "title": "Beetlejuice - The Musical - Los Angeles",
-    "description": "Plan a family trip to Beetlejuice - The Musical - Los Angeles in Los Angeles. This family event offers something special for everyone.",
-    "startDate": "2026-03-21T03:00:00",
-    "isAllDay": false,
-    "category": "Music",
-    "city": "Los Angeles",
-    "address": "6233 Hollywood Blvd.",
-    "latitude": 34.1017,
-    "longitude": -118.325,
-    "locationName": "Hollywood Pantages Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/beetlejuice-the-musical-15c3d2/683128/huge.jpg",
-    "externalURL": "https://seatgeek.com/beetlejuice-the-musical-tickets/broadway/2026-03-20-8-pm/17504567",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17682741",
     "source": "seatgeek",
     "title": "Here Lies Love - Los Angeles",
@@ -1075,6 +1052,29 @@
     "locationName": "Mark Taper Forum",
     "imageURL": "https://seatgeekimages.com/performers-landscape/here-lies-love-90aeaa/126589/huge.jpg",
     "externalURL": "https://seatgeek.com/here-lies-love-tickets/broadway/2026-03-20-8-pm/17682741",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17504567",
+    "source": "seatgeek",
+    "title": "Beetlejuice - The Musical - Los Angeles",
+    "description": "Plan a family trip to Beetlejuice - The Musical - Los Angeles in Los Angeles. This family event offers something special for everyone.",
+    "startDate": "2026-03-21T03:00:00",
+    "isAllDay": false,
+    "category": "Music",
+    "city": "Los Angeles",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/beetlejuice-the-musical-15c3d2/683128/huge.jpg",
+    "externalURL": "https://seatgeek.com/beetlejuice-the-musical-tickets/broadway/2026-03-20-8-pm/17504567",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -1313,29 +1313,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17495804",
-    "source": "seatgeek",
-    "title": "Vertigo - Film In Concert - Los Angeles",
-    "description": "Head to Los Angeles for Vertigo - Film In Concert - Los Angeles. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-22T03:00:00",
-    "isAllDay": false,
-    "category": "Free Movie",
-    "city": "Los Angeles",
-    "address": "111 South Grand Avenue",
-    "latitude": 34.0553,
-    "longitude": -118.25,
-    "locationName": "Walt Disney Concert Hall",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/vertigo-film-in-concert-b54b91/5301/huge.jpg",
-    "externalURL": "https://seatgeek.com/vertigo-film-in-concert-tickets/film/2026-03-21-8-pm/17495804",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "film"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17682747",
     "source": "seatgeek",
     "title": "Here Lies Love - Los Angeles",
@@ -1355,6 +1332,29 @@
     "tags": [
       "theater",
       "broadway"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17495804",
+    "source": "seatgeek",
+    "title": "Vertigo - Film In Concert - Los Angeles",
+    "description": "Head to Los Angeles for Vertigo - Film In Concert - Los Angeles. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-22T03:00:00",
+    "isAllDay": false,
+    "category": "Free Movie",
+    "city": "Los Angeles",
+    "address": "111 South Grand Avenue",
+    "latitude": 34.0553,
+    "longitude": -118.25,
+    "locationName": "Walt Disney Concert Hall",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/vertigo-film-in-concert-b54b91/5301/huge.jpg",
+    "externalURL": "https://seatgeek.com/vertigo-film-in-concert-tickets/film/2026-03-21-8-pm/17495804",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "film"
     ],
     "metro": "los-angeles"
   },
@@ -1702,6 +1702,28 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "seatgeek:18106511",
+    "source": "seatgeek",
+    "title": "Kim's Convenience",
+    "description": "Plan a family trip to Kim's Convenience in Los Angeles. This family event offers something special for everyone.",
+    "startDate": "2026-03-27T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "135 North Grand Avenue",
+    "latitude": 34.0563,
+    "longitude": -118.249,
+    "locationName": "Ahmanson Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
+    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-26-7-30-pm/18106511",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
+    ],
+    "metro": "los-angeles"
+  },
+  {
     "sourceId": "seatgeek:17725260",
     "source": "seatgeek",
     "title": "Alvin Ailey American Dance Theater - Los Angeles",
@@ -1744,28 +1766,6 @@
     "tags": [
       "theater",
       "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "seatgeek:18106511",
-    "source": "seatgeek",
-    "title": "Kim's Convenience",
-    "description": "Plan a family trip to Kim's Convenience in Los Angeles. This family event offers something special for everyone.",
-    "startDate": "2026-03-27T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "135 North Grand Avenue",
-    "latitude": 34.0563,
-    "longitude": -118.249,
-    "locationName": "Ahmanson Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
-    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-26-7-30-pm/18106511",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater"
     ],
     "metro": "los-angeles"
   },
@@ -1956,29 +1956,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17445350",
-    "source": "seatgeek",
-    "title": "Monty Python's Spamalot - Los Angeles",
-    "description": "Plan a family trip to Monty Python's Spamalot - Los Angeles in Los Angeles. This family event offers something special for everyone.",
-    "startDate": "2026-03-28T03:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "6233 Hollywood Blvd.",
-    "latitude": 34.1017,
-    "longitude": -118.325,
-    "locationName": "Hollywood Pantages Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
-    "externalURL": "https://seatgeek.com/monty-pythons-spamalot-tickets/broadway/2026-03-27-8-pm/17445350",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17481625",
     "source": "seatgeek",
     "title": "Los Angeles Philharmonic - Brahms & Beethoven",
@@ -2021,6 +1998,29 @@
     "isRecurring": false,
     "tags": [
       "theater"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17445350",
+    "source": "seatgeek",
+    "title": "Monty Python's Spamalot - Los Angeles",
+    "description": "Plan a family trip to Monty Python's Spamalot - Los Angeles in Los Angeles. This family event offers something special for everyone.",
+    "startDate": "2026-03-28T03:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
+    "externalURL": "https://seatgeek.com/monty-pythons-spamalot-tickets/broadway/2026-03-27-8-pm/17445350",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
     ],
     "metro": "los-angeles"
   },
@@ -2166,28 +2166,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17729696",
-    "source": "seatgeek",
-    "title": "Drum Tao - Los Angeles",
-    "description": "Plan a family trip to Drum Tao - Los Angeles in Los Angeles. This family event offers something special for everyone.",
-    "startDate": "2026-03-29T03:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "5151 State University Drive",
-    "latitude": 34.0623,
-    "longitude": -118.172,
-    "locationName": "Luckman Fine Arts Complex",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/drum-tao-736dcf/10470/huge.jpg",
-    "externalURL": "https://seatgeek.com/drum-tao-tickets/theater/2026-03-28-8-pm/17729696",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17220562",
     "source": "seatgeek",
     "title": "Darcy & Jer",
@@ -2207,6 +2185,28 @@
     "tags": [
       "theater",
       "comedy"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17729696",
+    "source": "seatgeek",
+    "title": "Drum Tao - Los Angeles",
+    "description": "Plan a family trip to Drum Tao - Los Angeles in Los Angeles. This family event offers something special for everyone.",
+    "startDate": "2026-03-29T03:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "5151 State University Drive",
+    "latitude": 34.0623,
+    "longitude": -118.172,
+    "locationName": "Luckman Fine Arts Complex",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/drum-tao-736dcf/10470/huge.jpg",
+    "externalURL": "https://seatgeek.com/drum-tao-tickets/theater/2026-03-28-8-pm/17729696",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
     ],
     "metro": "los-angeles"
   },
@@ -2258,24 +2258,25 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17816851",
+    "sourceId": "seatgeek:17445355",
     "source": "seatgeek",
-    "title": "Kim's Convenience - Los Angeles",
-    "description": "Kim's Convenience - Los Angeles is taking place in Los Angeles. Bring the kids for a memorable family experience.",
+    "title": "Monty Python's Spamalot - Los Angeles",
+    "description": "Looking for family fun in Los Angeles? Check out Monty Python's Spamalot - Los Angeles, a family event the kids will enjoy.",
     "startDate": "2026-03-29T03:00:00",
     "isAllDay": false,
     "category": "Food & Dining",
     "city": "Los Angeles",
-    "address": "135 North Grand Avenue",
-    "latitude": 34.0563,
-    "longitude": -118.249,
-    "locationName": "Ahmanson Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
-    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-28-8-pm/17816851",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
+    "externalURL": "https://seatgeek.com/monty-python-s-spamalot-tickets/broadway/2026-03-28-8-pm/17445355",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
-      "theater"
+      "theater",
+      "broadway"
     ],
     "metro": "los-angeles"
   },
@@ -2302,25 +2303,24 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17445355",
+    "sourceId": "seatgeek:17816851",
     "source": "seatgeek",
-    "title": "Monty Python's Spamalot - Los Angeles",
-    "description": "Looking for family fun in Los Angeles? Check out Monty Python's Spamalot - Los Angeles, a family event the kids will enjoy.",
+    "title": "Kim's Convenience - Los Angeles",
+    "description": "Kim's Convenience - Los Angeles is taking place in Los Angeles. Bring the kids for a memorable family experience.",
     "startDate": "2026-03-29T03:00:00",
     "isAllDay": false,
     "category": "Food & Dining",
     "city": "Los Angeles",
-    "address": "6233 Hollywood Blvd.",
-    "latitude": 34.1017,
-    "longitude": -118.325,
-    "locationName": "Hollywood Pantages Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
-    "externalURL": "https://seatgeek.com/monty-python-s-spamalot-tickets/broadway/2026-03-28-8-pm/17445355",
+    "address": "135 North Grand Avenue",
+    "latitude": 34.0563,
+    "longitude": -118.249,
+    "locationName": "Ahmanson Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
+    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-28-8-pm/17816851",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
-      "theater",
-      "broadway"
+      "theater"
     ],
     "metro": "los-angeles"
   },
@@ -2556,28 +2556,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17816854",
-    "source": "seatgeek",
-    "title": "Kim's Convenience - Los Angeles",
-    "description": "Looking for family fun in Los Angeles? Check out Kim's Convenience - Los Angeles, a family event the kids will enjoy.",
-    "startDate": "2026-04-01T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "135 North Grand Avenue",
-    "latitude": 34.0563,
-    "longitude": -118.249,
-    "locationName": "Ahmanson Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
-    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-31-7-30-pm/17816854",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:18112318",
     "source": "seatgeek",
     "title": "Here Lies Love - Los Angeles",
@@ -2597,6 +2575,28 @@
     "tags": [
       "theater",
       "broadway"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17816854",
+    "source": "seatgeek",
+    "title": "Kim's Convenience - Los Angeles",
+    "description": "Looking for family fun in Los Angeles? Check out Kim's Convenience - Los Angeles, a family event the kids will enjoy.",
+    "startDate": "2026-04-01T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "135 North Grand Avenue",
+    "latitude": 34.0563,
+    "longitude": -118.249,
+    "locationName": "Ahmanson Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
+    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-03-31-7-30-pm/17816854",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
     ],
     "metro": "los-angeles"
   },
@@ -3241,29 +3241,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:18033679",
-    "source": "seatgeek",
-    "title": "PaleyFest - Hollywood",
-    "description": "PaleyFest - Hollywood is taking place in Hollywood. Bring the kids for a memorable family experience.",
-    "startDate": "2026-04-09T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Hollywood",
-    "address": "6801 Hollywood Boulevard",
-    "latitude": 34.1027,
-    "longitude": -118.34,
-    "locationName": "Dolby Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/paleyfest-663295/9216/huge.jpg",
-    "externalURL": "https://seatgeek.com/paleyfest-tickets/broadway/2026-04-08-7-30-pm/18033679",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17445380",
     "source": "seatgeek",
     "title": "Monty Python's Spamalot - Los Angeles",
@@ -3278,6 +3255,29 @@
     "locationName": "Hollywood Pantages Theatre",
     "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
     "externalURL": "https://seatgeek.com/monty-pythons-spamalot-tickets/broadway/2026-04-08-7-30-pm/17445380",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:18033679",
+    "source": "seatgeek",
+    "title": "PaleyFest - Hollywood",
+    "description": "PaleyFest - Hollywood is taking place in Hollywood. Bring the kids for a memorable family experience.",
+    "startDate": "2026-04-09T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Hollywood",
+    "address": "6801 Hollywood Boulevard",
+    "latitude": 34.1027,
+    "longitude": -118.34,
+    "locationName": "Dolby Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/paleyfest-663295/9216/huge.jpg",
+    "externalURL": "https://seatgeek.com/paleyfest-tickets/broadway/2026-04-08-7-30-pm/18033679",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
@@ -3355,29 +3355,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17445379",
-    "source": "seatgeek",
-    "title": "Monty Python's Spamalot - Los Angeles",
-    "description": "Looking for family fun in Los Angeles? Check out Monty Python's Spamalot - Los Angeles, a family event the kids will enjoy.",
-    "startDate": "2026-04-10T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "6233 Hollywood Blvd.",
-    "latitude": 34.1017,
-    "longitude": -118.325,
-    "locationName": "Hollywood Pantages Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
-    "externalURL": "https://seatgeek.com/monty-pythons-spamalot-tickets/broadway/2026-04-09-7-30-pm/17445379",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "broadway"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17893231",
     "source": "seatgeek",
     "title": "American Ballet Theatre - Sylvia",
@@ -3400,6 +3377,29 @@
       "dance"
     ],
     "metro": "orange-county"
+  },
+  {
+    "sourceId": "seatgeek:17445379",
+    "source": "seatgeek",
+    "title": "Monty Python's Spamalot - Los Angeles",
+    "description": "Looking for family fun in Los Angeles? Check out Monty Python's Spamalot - Los Angeles, a family event the kids will enjoy.",
+    "startDate": "2026-04-10T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/monty-pythons-spamalot-e3f94e/5967/huge.jpg",
+    "externalURL": "https://seatgeek.com/monty-pythons-spamalot-tickets/broadway/2026-04-09-7-30-pm/17445379",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
+    ],
+    "metro": "los-angeles"
   },
   {
     "sourceId": "seatgeek:17982702",
@@ -3843,6 +3843,51 @@
     "metro": "los-angeles"
   },
   {
+    "sourceId": "seatgeek:17816876",
+    "source": "seatgeek",
+    "title": "Kim's Convenience - Los Angeles",
+    "description": "Head to Los Angeles for Kim's Convenience - Los Angeles. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-04-12T03:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "135 North Grand Avenue",
+    "latitude": 34.0563,
+    "longitude": -118.249,
+    "locationName": "Ahmanson Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
+    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-04-11-8-pm/17816876",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17886103",
+    "source": "seatgeek",
+    "title": "We Them Ones Comedy Tour with Mike Epps",
+    "description": "Looking for family fun in Inglewood? Check out We Them Ones Comedy Tour with Mike Epps, a family event the kids will enjoy.",
+    "startDate": "2026-04-12T03:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Inglewood",
+    "address": "3930 West Century Blvd",
+    "latitude": 33.9443,
+    "longitude": -118.343,
+    "locationName": "Intuit Dome",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/we-them-ones-comedy-tour-4d25ec/5212/huge.jpg",
+    "externalURL": "https://seatgeek.com/we-them-ones-comedy-tour-tickets/comedy/2026-04-11-8-pm/17886103",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "comedy"
+    ],
+    "metro": "los-angeles"
+  },
+  {
     "sourceId": "seatgeek:17982701",
     "source": "seatgeek",
     "title": "The Danish String Quartet - Costa Mesa",
@@ -3890,51 +3935,6 @@
     "metro": "los-angeles"
   },
   {
-    "sourceId": "seatgeek:17816876",
-    "source": "seatgeek",
-    "title": "Kim's Convenience - Los Angeles",
-    "description": "Head to Los Angeles for Kim's Convenience - Los Angeles. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-04-12T03:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Los Angeles",
-    "address": "135 North Grand Avenue",
-    "latitude": 34.0563,
-    "longitude": -118.249,
-    "locationName": "Ahmanson Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
-    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-04-11-8-pm/17816876",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater"
-    ],
-    "metro": "los-angeles"
-  },
-  {
-    "sourceId": "seatgeek:17886103",
-    "source": "seatgeek",
-    "title": "We Them Ones Comedy Tour with Mike Epps",
-    "description": "Looking for family fun in Inglewood? Check out We Them Ones Comedy Tour with Mike Epps, a family event the kids will enjoy.",
-    "startDate": "2026-04-12T03:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Inglewood",
-    "address": "3930 West Century Blvd",
-    "latitude": 33.9443,
-    "longitude": -118.343,
-    "locationName": "Intuit Dome",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/we-them-ones-comedy-tour-4d25ec/5212/huge.jpg",
-    "externalURL": "https://seatgeek.com/we-them-ones-comedy-tour-tickets/comedy/2026-04-11-8-pm/17886103",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "comedy"
-    ],
-    "metro": "los-angeles"
-  },
-  {
     "sourceId": "seatgeek:17858908",
     "source": "seatgeek",
     "title": "Mean Girls - La Mirada",
@@ -3953,6 +3953,29 @@
     "isRecurring": false,
     "tags": [
       "theater"
+    ],
+    "metro": "orange-county"
+  },
+  {
+    "sourceId": "seatgeek:18129189",
+    "source": "seatgeek",
+    "title": "George Lopez (21+)",
+    "description": "Enjoy George Lopez (21+) in Brea. A wonderful family event for the whole family.",
+    "startDate": "2026-04-12T04:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Brea",
+    "address": "180 South Brea Boulevard",
+    "latitude": 33.9183,
+    "longitude": -117.899,
+    "locationName": "Brea Improv Comedy Club",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/george-lopez-cc87d2/5253/huge.jpg",
+    "externalURL": "https://seatgeek.com/george-lopez-tickets/comedy/2026-04-11-9-30-pm/18129189",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "comedy"
     ],
     "metro": "orange-county"
   },
@@ -4068,6 +4091,97 @@
     "tags": [
       "theater",
       "classical"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17857274",
+    "source": "seatgeek",
+    "title": "Tyrus Live",
+    "description": "Plan a family trip to Tyrus Live in Westminster. This family event offers something special for everyone.",
+    "startDate": "2026-04-14T20:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Westminster",
+    "address": "14140 All American Way",
+    "latitude": 33.7567,
+    "longitude": -117.985,
+    "locationName": "Rose Center Theater",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/tyrus-live-2f695e/810596/huge.jpg",
+    "externalURL": "https://seatgeek.com/tyrus-live-tickets/comedy/2026-04-14-1-30-pm/17857274",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "comedy"
+    ],
+    "metro": "orange-county"
+  },
+  {
+    "sourceId": "seatgeek:17816878",
+    "source": "seatgeek",
+    "title": "Kim's Convenience - Los Angeles",
+    "description": "Looking for family fun in Los Angeles? Check out Kim's Convenience - Los Angeles, a family event the kids will enjoy.",
+    "startDate": "2026-04-15T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Los Angeles",
+    "address": "135 North Grand Avenue",
+    "latitude": 34.0563,
+    "longitude": -118.249,
+    "locationName": "Ahmanson Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/kim-s-convenience-61cee8/609227/huge.jpg",
+    "externalURL": "https://seatgeek.com/kim-s-convenience-tickets/theater/2026-04-14-7-30-pm/17816878",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
+    ],
+    "metro": "los-angeles"
+  },
+  {
+    "sourceId": "seatgeek:17857279",
+    "source": "seatgeek",
+    "title": "Tyrus Live",
+    "description": "Looking for family fun in Westminster? Check out Tyrus Live, a family event the kids will enjoy.",
+    "startDate": "2026-04-15T02:30:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Westminster",
+    "address": "14140 All American Way",
+    "latitude": 33.7567,
+    "longitude": -117.985,
+    "locationName": "Rose Center Theater",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/tyrus-live-2f695e/810596/huge.jpg",
+    "externalURL": "https://seatgeek.com/tyrus-live-tickets/comedy/2026-04-14-7-30-pm/17857279",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "comedy"
+    ],
+    "metro": "orange-county"
+  },
+  {
+    "sourceId": "seatgeek:17504528",
+    "source": "seatgeek",
+    "title": "TINA - The Tina Turner Musical - Los Angeles",
+    "description": "Head to Los Angeles for TINA - The Tina Turner Musical - Los Angeles. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-04-15T02:30:00",
+    "isAllDay": false,
+    "category": "Music",
+    "city": "Los Angeles",
+    "address": "6233 Hollywood Blvd.",
+    "latitude": 34.1017,
+    "longitude": -118.325,
+    "locationName": "Hollywood Pantages Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/tina-the-tina-turner-musical-585fff/642194/huge.jpg",
+    "externalURL": "https://seatgeek.com/tina-the-tina-turner-musical-tickets/broadway/2026-04-14-7-30-pm/17504528",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
     ],
     "metro": "los-angeles"
   },
@@ -4941,32 +5055,6 @@
     "longitude": -118.3398096
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-20",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
-    "startDate": "2026-03-20T00:00:00",
-    "isAllDay": true,
-    "category": "Outdoor",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "orange-county",
-    "price": "$11.99 plus tax",
-    "ageRange": "All ages",
-    "address": "1460 South Harbor Blvd., 92802",
-    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
-    "latitude": 33.8111423,
-    "longitude": -117.9135139
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival:2026-03-20",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -4992,6 +5080,32 @@
     "websiteURL": "https://disneyland.disney.go.com/events-tours/disney-california-adventure/food-and-wine-festival/",
     "latitude": 33.8129681,
     "longitude": -117.9240361
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-20",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
+    "startDate": "2026-03-20T00:00:00",
+    "isAllDay": true,
+    "category": "Outdoor",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "orange-county",
+    "price": "$11.99 plus tax",
+    "ageRange": "All ages",
+    "address": "1460 South Harbor Blvd., 92802",
+    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
+    "latitude": 33.8111423,
+    "longitude": -117.9135139
   },
   {
     "sourceId": "mommypoppins:/lakids/easter-eggstravaganza:2026-03-20",
@@ -5052,8 +5166,8 @@
     "source": "mommypoppins",
     "title": "LA County Parks Spring Jubilee",
     "description": "Parks throughout LA County celebrate Spring Jubilee with free events. Planned activities feature egg hunts, performances, workshops, edible crafts, community activities, food tastings, and more.",
-    "startDate": "2026-03-20T00:00:00",
-    "isAllDay": true,
+    "startDate": "2026-03-20T10:00:00",
+    "isAllDay": false,
     "category": "Craft",
     "city": "Multiple Parks throughout Los Angeles County",
     "locationName": "Multiple Parks throughout Los Angeles County",
@@ -5070,6 +5184,32 @@
     "price": "Free",
     "ageRange": "All ages",
     "websiteURL": "https://parks.lacounty.gov/spring/"
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/events/bts-pop-up-at-the-grove:2026-03-20",
+    "source": "mommypoppins",
+    "title": "BTS Release Day Pop-Up",
+    "description": "Barnes and Noble at the Grove celebrates the release of BTS's new album ARIRANG with a free pop up. The fun includes a photo zone and ARIRANG themed giveaways, including notebooks & stickers, with no purchase necessary while supplies last.",
+    "startDate": "2026-03-20T00:00:00",
+    "isAllDay": true,
+    "category": "Storytime",
+    "city": "Barnes &amp; Noble at The Grove",
+    "locationName": "Barnes &amp; Noble at The Grove",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/bts-pop-up-at-the-grove",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events"
+    ],
+    "metro": "los-angeles",
+    "price": "Free",
+    "ageRange": "All",
+    "address": "189 The Grove Drive, 90036",
+    "websiteURL": "https://stores.barnesandnoble.com/event/9780062206397-0",
+    "latitude": 34.0730818,
+    "longitude": -118.3584146
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/game-on-at-the-california-science-center:2026-03-20",
@@ -5605,8 +5745,8 @@
     "ageRange": "Egg hunt for ages 1 - 12",
     "address": "10500 Mason Ave, 91311",
     "websiteURL": "https://www.laparks.org/sites/default/files/reccenter/mason-recreation-center/media/spring-event-25-4.pdf",
-    "latitude": 40.5734926,
-    "longitude": -74.09905
+    "latitude": 40.5860759,
+    "longitude": -74.087308
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/venice-love-fest-2025:2026-03-21",
@@ -6016,7 +6156,7 @@
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/blueys-best-day-ever:2026-03-22",
     "source": "mommypoppins",
     "title": "Bluey&#039;s Best Day Ever",
-    "description": "Bluey and Bingo are coming to Disneyland. For real life! Fantasyland Theatre in Disneyland Park transforms into Bluey’s school for Bluey's Best Day Ever, an immersive show experience. Throughout the day, Bluey and her sister Bingo take the stage alongside a troupe of comedic actors and musicians to bring the best of the music and games from Bluey episodes to life.",
+    "description": "Bluey and Bingo are coming to Disneyland. For real life!Fantasyland Theatre in Disneyland Park transforms into Bluey’s school for Bluey's Best Day Ever, an immersive show experience. Throughout the day, Bluey and her sister Bingo take the stage alongside a troupe of comedic actors and musicians to bring the best of the music and games from Bluey episodes to life.",
     "startDate": "2026-03-22T00:00:00",
     "isAllDay": true,
     "category": "Music",
@@ -6035,7 +6175,7 @@
     "price": "Included with park admission",
     "ageRange": "All ages",
     "address": "1313 Disneyland Drive, 92802",
-    "websiteURL": "https://disneyparksblog.com/disney-experiences/bluey-and-bingo-coming-to-disney-experiences/",
+    "websiteURL": "https://disneyland.disney.go.com/entertainment/disneyland/blueys-best-day-ever/",
     "latitude": 33.8059169,
     "longitude": -117.9196496
   },
@@ -6407,33 +6547,9 @@
     ],
     "metro": "los-angeles",
     "price": "Free",
-    "ageRange": "Teens and up",
+    "ageRange": "All ages",
     "address": "1520 Wilcox Ave, 90028",
     "websiteURL": "https://www.eventbrite.com/e/the-bachelorette-house-of-roses-experience-tickets-1984487240758"
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/pysanka-festival:2026-03-22",
-    "source": "mommypoppins",
-    "title": "Pysanka Festival",
-    "description": "The Pysanka Festival is the Ukrainian Art Center’s largest outreach project to the Southern California and Los Angeles community. A pysanka is a Ukrainian Easter egg, decorated using beeswax and dyes. Attendees can learn the ancient tradition of pysanka painting in workshops for adults and kids.",
-    "startDate": "2026-03-22T00:00:00",
-    "isAllDay": true,
-    "category": "Craft",
-    "city": "Ukrainian Cultural Center",
-    "locationName": "Ukrainian Cultural Center",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/pysanka%20festival.JPG?itok=kfOikRmZ",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/pysanka-festival",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events"
-    ],
-    "metro": "los-angeles",
-    "price": "Free",
-    "ageRange": "All ages",
-    "address": "4315 Melrose Ave, 90029",
-    "websiteURL": "https://ukrainianartcentersocal.org/outreach-%26-events"
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/cesar-chavez-family-day:2026-03-22",
@@ -6485,6 +6601,30 @@
     "websiteURL": "https://www.eventbrite.com/o/local-anchor-16939950365",
     "latitude": 33.8306409,
     "longitude": -118.3787558
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/events/pysanka-festival:2026-03-22",
+    "source": "mommypoppins",
+    "title": "Pysanka Festival",
+    "description": "The Pysanka Festival is the Ukrainian Art Center’s largest outreach project to the Southern California and Los Angeles community. A pysanka is a Ukrainian Easter egg, decorated using beeswax and dyes. Attendees can learn the ancient tradition of pysanka painting in workshops for adults and kids.",
+    "startDate": "2026-03-22T00:00:00",
+    "isAllDay": true,
+    "category": "Craft",
+    "city": "Ukrainian Cultural Center",
+    "locationName": "Ukrainian Cultural Center",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/pysanka%20festival.JPG?itok=kfOikRmZ",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/pysanka-festival",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events"
+    ],
+    "metro": "los-angeles",
+    "price": "Free",
+    "ageRange": "All ages",
+    "address": "4315 Melrose Ave, 90029",
+    "websiteURL": "https://ukrainianartcentersocal.org/outreach-%26-events"
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/smorgasburg-los-angeles:2026-03-22",
@@ -7957,6 +8097,32 @@
     "longitude": -118.3398096
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-26",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
+    "startDate": "2026-03-26T00:00:00",
+    "isAllDay": true,
+    "category": "Outdoor",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "orange-county",
+    "price": "$11.99 plus tax",
+    "ageRange": "All ages",
+    "address": "1460 South Harbor Blvd., 92802",
+    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
+    "latitude": 33.8111423,
+    "longitude": -117.9135139
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival:2026-03-26",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -7982,32 +8148,6 @@
     "websiteURL": "https://disneyland.disney.go.com/events-tours/disney-california-adventure/food-and-wine-festival/",
     "latitude": 33.8129681,
     "longitude": -117.9240361
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-26",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
-    "startDate": "2026-03-26T00:00:00",
-    "isAllDay": true,
-    "category": "Outdoor",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "orange-county",
-    "price": "$11.99 plus tax",
-    "ageRange": "All ages",
-    "address": "1460 South Harbor Blvd., 92802",
-    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
-    "latitude": 33.8111423,
-    "longitude": -117.9135139
   },
   {
     "sourceId": "mommypoppins:/lakids/easter-eggstravaganza:2026-03-26",
@@ -8416,6 +8556,32 @@
     "longitude": -118.3398096
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-27",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
+    "startDate": "2026-03-27T00:00:00",
+    "isAllDay": true,
+    "category": "Outdoor",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "orange-county",
+    "price": "$11.99 plus tax",
+    "ageRange": "All ages",
+    "address": "1460 South Harbor Blvd., 92802",
+    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
+    "latitude": 33.8111423,
+    "longitude": -117.9135139
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival:2026-03-27",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -8441,32 +8607,6 @@
     "websiteURL": "https://disneyland.disney.go.com/events-tours/disney-california-adventure/food-and-wine-festival/",
     "latitude": 33.8129681,
     "longitude": -117.9240361
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-27",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
-    "startDate": "2026-03-27T00:00:00",
-    "isAllDay": true,
-    "category": "Outdoor",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "orange-county",
-    "price": "$11.99 plus tax",
-    "ageRange": "All ages",
-    "address": "1460 South Harbor Blvd., 92802",
-    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
-    "latitude": 33.8111423,
-    "longitude": -117.9135139
   },
   {
     "sourceId": "mommypoppins:/lakids/easter-eggstravaganza:2026-03-27",
@@ -9066,6 +9206,32 @@
     "longitude": -118.3398096
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-28",
+    "source": "mommypoppins",
+    "title": "Eggstravaganza 2026 at Disneyland Resort",
+    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
+    "startDate": "2026-03-28T00:00:00",
+    "isAllDay": true,
+    "category": "Outdoor",
+    "city": "Disneyland Park",
+    "locationName": "Disneyland Park",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Various times"
+    ],
+    "metro": "orange-county",
+    "price": "$11.99 plus tax",
+    "ageRange": "All ages",
+    "address": "1460 South Harbor Blvd., 92802",
+    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
+    "latitude": 33.8111423,
+    "longitude": -117.9135139
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/disney-california-adventure-food-wine-festival:2026-03-28",
     "source": "mommypoppins",
     "title": "Disney California Adventure Food &amp; Wine Festival",
@@ -9091,32 +9257,6 @@
     "websiteURL": "https://disneyland.disney.go.com/events-tours/disney-california-adventure/food-and-wine-festival/",
     "latitude": 33.8129681,
     "longitude": -117.9240361
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort:2026-03-28",
-    "source": "mommypoppins",
-    "title": "Eggstravaganza 2026 at Disneyland Resort",
-    "description": "Egg hunt- but make it Disney. Disneyland Resort hosts an epic egg hunt that requires a map. Grab your guide at a vendor location throughout the park (or in Downtown Disney) and search for hidden eggs with Disney character's faces on them, Place the stickers that came with the map on the correct locations based on what you find- when you complete the map, take it to a vendor and claim your prize. This interactive Easter activity is great for frequent parkgoers who are looking for something unique and celebratory to do at Disney.",
-    "startDate": "2026-03-28T00:00:00",
-    "isAllDay": true,
-    "category": "Outdoor",
-    "city": "Disneyland Park",
-    "locationName": "Disneyland Park",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/eggstravaganza-2026-at-disneyland-resort",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Various times"
-    ],
-    "metro": "orange-county",
-    "price": "$11.99 plus tax",
-    "ageRange": "All ages",
-    "address": "1460 South Harbor Blvd., 92802",
-    "websiteURL": "https://disneyland.disney.go.com/events-tours/eggstravaganza/",
-    "latitude": 33.8111423,
-    "longitude": -117.9135139
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/butterfly-season-at-kidspace:2026-03-28",
@@ -9375,6 +9515,29 @@
     "longitude": -118.5264482
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/events/3rd-annual-touch-a-truck-at-discovery-cube-la:2026-03-28",
+    "source": "mommypoppins",
+    "title": "Touch-A-Truck at Discovery Cube LA",
+    "description": "Plan a family trip to Touch-A-Truck at Discovery Cube LA in Discovery Cube Los Angeles. This family event offers something special for everyone.",
+    "startDate": "2026-03-28T11:00:00",
+    "isAllDay": false,
+    "category": "Other",
+    "city": "Discovery Cube Los Angeles",
+    "locationName": "Discovery Cube Los Angeles",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/Discovery%20Cube%20Touch-a-Truck.jpg?itok=uBIYYLj9",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/3rd-annual-touch-a-truck-at-discovery-cube-la",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "11:00 am\n\n                                                -\n              3:00 pm"
+    ],
+    "metro": "los-angeles",
+    "latitude": 34.2719026,
+    "longitude": -118.3928328
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/vegan-street-fair:2026-03-28",
     "source": "mommypoppins",
     "title": "Vegan Street Fair",
@@ -9396,29 +9559,6 @@
     "metro": "los-angeles",
     "latitude": 34.0596491,
     "longitude": -118.4446343
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/3rd-annual-touch-a-truck-at-discovery-cube-la:2026-03-28",
-    "source": "mommypoppins",
-    "title": "Touch-A-Truck at Discovery Cube LA",
-    "description": "Plan a family trip to Touch-A-Truck at Discovery Cube LA in Discovery Cube Los Angeles. This family event offers something special for everyone.",
-    "startDate": "2026-03-28T00:00:00",
-    "isAllDay": true,
-    "category": "Other",
-    "city": "Discovery Cube Los Angeles",
-    "locationName": "Discovery Cube Los Angeles",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/Discovery%20Cube%20Touch-a-Truck.jpg?itok=uBIYYLj9",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/3rd-annual-touch-a-truck-at-discovery-cube-la",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "11:00 am\n\n                                                -\n              3:00 pm"
-    ],
-    "metro": "los-angeles",
-    "latitude": 34.2719026,
-    "longitude": -118.3928328
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/springtime-at-the-adobe:2026-03-28",
@@ -9488,32 +9628,6 @@
     "longitude": -118.3608348
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm:2026-03-28",
-    "source": "mommypoppins",
-    "title": "Sunmist Fruit Farm",
-    "description": "Sunmist Fruit Farm specializes in cultivating and harvesting premium tangerines and lemons, the farm is committed to providing fresh and high-quality produce to the local community.",
-    "startDate": "2026-03-28T00:00:00",
-    "isAllDay": true,
-    "category": "Festival",
-    "city": "Sunmist Fruit Farm",
-    "locationName": "Sunmist Fruit Farm",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Tours &amp; Attractions",
-      "Various times"
-    ],
-    "metro": "los-angeles",
-    "price": "Entry Fee: $5 per person; children 2 years and under are free",
-    "ageRange": "All Ages",
-    "address": "2258038765",
-    "websiteURL": "https://www.sunmistfruit.com/en/about-us",
-    "phone": "2258038765"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/game-on-at-the-california-science-center:2026-03-28",
     "source": "mommypoppins",
     "title": "Game On!  at the California Science Center",
@@ -9540,6 +9654,32 @@
     "websiteURL": "https://californiasciencecenter.org/exhibits/game-on-science-sports-play",
     "latitude": 34.0159757,
     "longitude": -118.286287
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm:2026-03-28",
+    "source": "mommypoppins",
+    "title": "Sunmist Fruit Farm",
+    "description": "Sunmist Fruit Farm specializes in cultivating and harvesting premium tangerines and lemons, the farm is committed to providing fresh and high-quality produce to the local community.",
+    "startDate": "2026-03-28T00:00:00",
+    "isAllDay": true,
+    "category": "Festival",
+    "city": "Sunmist Fruit Farm",
+    "locationName": "Sunmist Fruit Farm",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Tours &amp; Attractions",
+      "Various times"
+    ],
+    "metro": "los-angeles",
+    "price": "Entry Fee: $5 per person; children 2 years and under are free",
+    "ageRange": "All Ages",
+    "address": "2258038765",
+    "websiteURL": "https://www.sunmistfruit.com/en/about-us",
+    "phone": "2258038765"
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/jaws-the-exhibition:2026-03-28",
@@ -9570,6 +9710,29 @@
     "longitude": -118.3608348
   },
   {
+    "sourceId": "mommypoppins:/lakids/public-star-party-4:2026-03-28",
+    "source": "mommypoppins",
+    "title": "Griffith Observatory Public Star Party",
+    "description": "Head to Griffith Observatory for Griffith Observatory Public Star Party. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-28T00:00:00",
+    "isAllDay": true,
+    "category": "Craft",
+    "city": "Griffith Observatory",
+    "locationName": "Griffith Observatory",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/images/griffith_observatory.jpg?itok=n5wPjzfV",
+    "externalURL": "https://mommypoppins.com/lakids/public-star-party-4",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "Various times"
+    ],
+    "metro": "los-angeles",
+    "latitude": 34.1182188,
+    "longitude": -118.3002933
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/hooray-la:2026-03-28",
     "source": "mommypoppins",
     "title": "Hooray LA",
@@ -9597,29 +9760,6 @@
     "phone": "(213) 250-9995",
     "latitude": 34.0619856,
     "longitude": -118.2590477
-  },
-  {
-    "sourceId": "mommypoppins:/lakids/public-star-party-4:2026-03-28",
-    "source": "mommypoppins",
-    "title": "Griffith Observatory Public Star Party",
-    "description": "Head to Griffith Observatory for Griffith Observatory Public Star Party. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-03-28T00:00:00",
-    "isAllDay": true,
-    "category": "Craft",
-    "city": "Griffith Observatory",
-    "locationName": "Griffith Observatory",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/images/griffith_observatory.jpg?itok=n5wPjzfV",
-    "externalURL": "https://mommypoppins.com/lakids/public-star-party-4",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "Various times"
-    ],
-    "metro": "los-angeles",
-    "latitude": 34.1182188,
-    "longitude": -118.3002933
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/mickey-mouse-clubhouse-the-exhibit:2026-03-28",
@@ -9942,31 +10082,6 @@
     "longitude": -118.1639855
   },
   {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/events/gilchrist-farm-egg-hunt-and-spring-fling:2026-03-29",
-    "source": "mommypoppins",
-    "title": "Gilchrist Farm Egg Hunt and Spring Fling",
-    "description": "Spring has come to Gilchrist Farm. Guests can enjoy baby animals such as goats, chicks, and piglets; create spring farm crafts; and take a picture with the Easter Bunny or a friendly real bunny. Egg hunts are offered for kids of various age ranges. The most unique egg hunt here is the \"challenge\" course for bigger kids- where they have to work to get their loot.",
-    "startDate": "2026-03-29T00:00:00",
-    "isAllDay": true,
-    "category": "Toddler Activity",
-    "city": "Gilchrist Farm",
-    "locationName": "Gilchrist Farm",
-    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/ff/dsc_0476-x3.jpg?itok=giM1aZub",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/gilchrist-farm-egg-hunt-and-spring-fling",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Events",
-      "9:00 am\n\n                                                -\n              4:00 pm"
-    ],
-    "metro": "los-angeles",
-    "price": "Egg hunt: $5; Activities range from $5-$35, wristband $65",
-    "ageRange": "All ages",
-    "address": "30116 Bouquet Canyon Road,",
-    "websiteURL": "http://www.gilchristfarm.com/spring-fling/"
-  },
-  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/underwood-farms-springtime-easter-festival-2025:2026-03-29",
     "source": "mommypoppins",
     "title": "Underwood Farms Springtime Easter Festival 2026",
@@ -9992,6 +10107,31 @@
     "websiteURL": "https://underwoodfamilyfarms.com/springtime-easter-festival/",
     "latitude": 34.254565,
     "longitude": -118.8531477
+  },
+  {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/events/gilchrist-farm-egg-hunt-and-spring-fling:2026-03-29",
+    "source": "mommypoppins",
+    "title": "Gilchrist Farm Egg Hunt and Spring Fling",
+    "description": "Spring has come to Gilchrist Farm. Guests can enjoy baby animals such as goats, chicks, and piglets; create spring farm crafts; and take a picture with the Easter Bunny or a friendly real bunny. Egg hunts are offered for kids of various age ranges. The most unique egg hunt here is the \"challenge\" course for bigger kids- where they have to work to get their loot.",
+    "startDate": "2026-03-29T00:00:00",
+    "isAllDay": true,
+    "category": "Toddler Activity",
+    "city": "Gilchrist Farm",
+    "locationName": "Gilchrist Farm",
+    "imageURL": "https://mommypoppins.com/sites/default/files/styles/image620x420/public/ff/dsc_0476-x3.jpg?itok=giM1aZub",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/events/gilchrist-farm-egg-hunt-and-spring-fling",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Events",
+      "9:00 am\n\n                                                -\n              4:00 pm"
+    ],
+    "metro": "los-angeles",
+    "price": "Egg hunt: $5; Activities range from $5-$35, wristband $65",
+    "ageRange": "All ages",
+    "address": "30116 Bouquet Canyon Road,",
+    "websiteURL": "http://www.gilchristfarm.com/spring-fling/"
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/butterfly-pavilion-at-the-nhm:2026-03-29",
@@ -10210,6 +10350,32 @@
     "longitude": -118.240639
   },
   {
+    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm:2026-03-29",
+    "source": "mommypoppins",
+    "title": "Sunmist Fruit Farm",
+    "description": "Sunmist Fruit Farm specializes in cultivating and harvesting premium tangerines and lemons, the farm is committed to providing fresh and high-quality produce to the local community.",
+    "startDate": "2026-03-29T00:00:00",
+    "isAllDay": true,
+    "category": "Festival",
+    "city": "Sunmist Fruit Farm",
+    "locationName": "Sunmist Fruit Farm",
+    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
+    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "mommypoppins",
+      "Tours &amp; Attractions",
+      "Various times"
+    ],
+    "metro": "los-angeles",
+    "price": "Entry Fee: $5 per person; children 2 years and under are free",
+    "ageRange": "All Ages",
+    "address": "2258038765",
+    "websiteURL": "https://www.sunmistfruit.com/en/about-us",
+    "phone": "2258038765"
+  },
+  {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/game-on-at-the-california-science-center:2026-03-29",
     "source": "mommypoppins",
     "title": "Game On!  at the California Science Center",
@@ -10236,32 +10402,6 @@
     "websiteURL": "https://californiasciencecenter.org/exhibits/game-on-science-sports-play",
     "latitude": 34.0159757,
     "longitude": -118.286287
-  },
-  {
-    "sourceId": "mommypoppins:/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm:2026-03-29",
-    "source": "mommypoppins",
-    "title": "Sunmist Fruit Farm",
-    "description": "Sunmist Fruit Farm specializes in cultivating and harvesting premium tangerines and lemons, the farm is committed to providing fresh and high-quality produce to the local community.",
-    "startDate": "2026-03-29T00:00:00",
-    "isAllDay": true,
-    "category": "Festival",
-    "city": "Sunmist Fruit Farm",
-    "locationName": "Sunmist Fruit Farm",
-    "imageURL": "https://mommypoppins.com/themes/custom/areamp/images/activity_default.png",
-    "externalURL": "https://mommypoppins.com/los-angeles-kids/event/tours-attractions/sunmist-fruit-farm",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "mommypoppins",
-      "Tours &amp; Attractions",
-      "Various times"
-    ],
-    "metro": "los-angeles",
-    "price": "Entry Fee: $5 per person; children 2 years and under are free",
-    "ageRange": "All Ages",
-    "address": "2258038765",
-    "websiteURL": "https://www.sunmistfruit.com/en/about-us",
-    "phone": "2258038765"
   },
   {
     "sourceId": "mommypoppins:/los-angeles-kids/event/events/jaws-the-exhibition:2026-03-29",
@@ -10770,6 +10910,29 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "seatgeek:18129227",
+    "source": "seatgeek",
+    "title": "Mo Amer (21+)",
+    "description": "Head to Brea for Mo Amer (21+). This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-22T02:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "Brea",
+    "address": "180 South Brea Boulevard",
+    "latitude": 33.9183,
+    "longitude": -117.899,
+    "locationName": "Brea Improv Comedy Club",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/mo-amer-979952/142174/huge.jpg",
+    "externalURL": "https://seatgeek.com/mo-amer-tickets/comedy/2026-03-21-7-pm/18129227",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "comedy"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "seatgeek:17908935",
     "source": "seatgeek",
     "title": "South Coast Symphony - Aliso Viejo",
@@ -10782,7 +10945,7 @@
     "latitude": 33.5579,
     "longitude": -117.732,
     "locationName": "Soka Performing Arts Center",
-    "imageURL": "https://images.unsplash.com/photo-1701773055020-9d2b09b7ca5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxTb2thJTIwUGVyZm9ybWluZyUyMEFydHMlMjBDZW50ZXIlMjBBbGlzbyUyMFZpZWpvJTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNjMzODAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1701773055020-9d2b09b7ca5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxTb2thJTIwUGVyZm9ybWluZyUyMEFydHMlMjBDZW50ZXIlMjBBbGlzbyUyMFZpZWpvJTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc1OTk3fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://seatgeek.com/south-coast-symphony-tickets/classical/2026-03-21-7-pm/17908935",
     "isFeatured": false,
     "isRecurring": false,
@@ -10998,52 +11161,6 @@
       "theater",
       "classical",
       "orchestral"
-    ],
-    "metro": "orange-county"
-  },
-  {
-    "sourceId": "seatgeek:17857274",
-    "source": "seatgeek",
-    "title": "Tyrus Live",
-    "description": "Plan a family trip to Tyrus Live in Westminster. This family event offers something special for everyone.",
-    "startDate": "2026-04-14T20:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Westminster",
-    "address": "14140 All American Way",
-    "latitude": 33.7567,
-    "longitude": -117.985,
-    "locationName": "Rose Center Theater",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/tyrus-live-2f695e/810596/huge.jpg",
-    "externalURL": "https://seatgeek.com/tyrus-live-tickets/comedy/2026-04-14-1-30-pm/17857274",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "comedy"
-    ],
-    "metro": "orange-county"
-  },
-  {
-    "sourceId": "seatgeek:17857279",
-    "source": "seatgeek",
-    "title": "Tyrus Live",
-    "description": "Looking for family fun in Westminster? Check out Tyrus Live, a family event the kids will enjoy.",
-    "startDate": "2026-04-15T02:30:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Westminster",
-    "address": "14140 All American Way",
-    "latitude": 33.7567,
-    "longitude": -117.985,
-    "locationName": "Rose Center Theater",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/tyrus-live-2f695e/810596/huge.jpg",
-    "externalURL": "https://seatgeek.com/tyrus-live-tickets/comedy/2026-04-14-7-30-pm/17857279",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "comedy"
     ],
     "metro": "orange-county"
   },
@@ -11277,6 +11394,28 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "seatgeek:17858918",
+    "source": "seatgeek",
+    "title": "Mean Girls - La Mirada",
+    "description": "Plan a family trip to Mean Girls - La Mirada in La Mirada. This family event offers something special for everyone.",
+    "startDate": "2026-04-19T03:00:00",
+    "isAllDay": false,
+    "category": "Food & Dining",
+    "city": "La Mirada",
+    "address": "14900 La Mirada Blvd",
+    "latitude": 33.8968,
+    "longitude": -118.01,
+    "locationName": "La Mirada Theatre",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/mean-girls-d9392c/195817/huge.jpg",
+    "externalURL": "https://seatgeek.com/mean-girls-tickets/theater/2026-04-18-8-pm/17858918",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "seatgeek:17594378",
     "source": "seatgeek",
     "title": "Pacific Symphony - Costa Mesa",
@@ -11301,24 +11440,25 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "seatgeek:17858918",
+    "sourceId": "seatgeek:18068614",
     "source": "seatgeek",
-    "title": "Mean Girls - La Mirada",
-    "description": "Plan a family trip to Mean Girls - La Mirada in La Mirada. This family event offers something special for everyone.",
-    "startDate": "2026-04-19T03:00:00",
+    "title": "Steven Ho",
+    "description": "Looking for family fun in Brea? Check out Steven Ho, a family event the kids will enjoy.",
+    "startDate": "2026-04-20T01:00:00",
     "isAllDay": false,
     "category": "Food & Dining",
-    "city": "La Mirada",
-    "address": "14900 La Mirada Blvd",
-    "latitude": 33.8968,
-    "longitude": -118.01,
-    "locationName": "La Mirada Theatre",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/mean-girls-d9392c/195817/huge.jpg",
-    "externalURL": "https://seatgeek.com/mean-girls-tickets/theater/2026-04-18-8-pm/17858918",
+    "city": "Brea",
+    "address": "180 South Brea Boulevard",
+    "latitude": 33.9183,
+    "longitude": -117.899,
+    "locationName": "Brea Improv Comedy Club",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/steven-ho-3876cf/800053/huge.jpg",
+    "externalURL": "https://seatgeek.com/steven-ho-tickets/comedy/2026-04-19-6-pm/18068614",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
-      "theater"
+      "theater",
+      "comedy"
     ],
     "metro": "orange-county"
   },
@@ -11342,29 +11482,6 @@
     "tags": [
       "theater",
       "broadway"
-    ],
-    "metro": "orange-county"
-  },
-  {
-    "sourceId": "seatgeek:18068614",
-    "source": "seatgeek",
-    "title": "Steven Ho",
-    "description": "Looking for family fun in Brea? Check out Steven Ho, a family event the kids will enjoy.",
-    "startDate": "2026-04-20T01:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Brea",
-    "address": "180 South Brea Boulevard",
-    "latitude": 33.9183,
-    "longitude": -117.899,
-    "locationName": "Brea Improv Comedy Club",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/steven-ho-3876cf/800053/huge.jpg",
-    "externalURL": "https://seatgeek.com/steven-ho-tickets/comedy/2026-04-19-6-pm/18068614",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater",
-      "comedy"
     ],
     "metro": "orange-county"
   },
@@ -11530,25 +11647,25 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "seatgeek:17953677",
+    "sourceId": "seatgeek:18033628",
     "source": "seatgeek",
-    "title": "In the Heights - Long Beach",
-    "description": "Enjoy In the Heights - Long Beach in Long Beach. A wonderful family event for the whole family.",
+    "title": "Disney On Ice: Road Trip Adventures - Long Beach",
+    "description": "Disney On Ice: Road Trip Adventures - Long Beach is taking place in Long Beach. Bring the kids for a memorable family experience.",
     "startDate": "2026-04-25T02:00:00",
     "isAllDay": false,
     "category": "Outdoor",
     "city": "Long Beach",
-    "address": "6200 Atherton St",
-    "latitude": 33.7882,
-    "longitude": -118.112,
-    "locationName": "Carpenter Center Long Beach",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/in-the-heights-7b3f58/5291/huge.jpg",
-    "externalURL": "https://seatgeek.com/in-the-heights-tickets/broadway/2026-04-24-7-pm/17953677",
+    "address": "300 E. Ocean Blvd",
+    "latitude": 33.7648,
+    "longitude": -118.189,
+    "locationName": "Long Beach Arena at Long Beach Convention Center",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/disney-on-ice-road-trip-adventures-26441c/749185/huge.jpg",
+    "externalURL": "https://seatgeek.com/disney-on-ice-road-trip-adventures-tickets/family/2026-04-24-7-pm/18033628",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
       "theater",
-      "broadway"
+      "family"
     ],
     "metro": "orange-county"
   },
@@ -11576,25 +11693,25 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "seatgeek:18033628",
+    "sourceId": "seatgeek:17953677",
     "source": "seatgeek",
-    "title": "Disney On Ice: Road Trip Adventures - Long Beach",
-    "description": "Disney On Ice: Road Trip Adventures - Long Beach is taking place in Long Beach. Bring the kids for a memorable family experience.",
+    "title": "In the Heights - Long Beach",
+    "description": "Enjoy In the Heights - Long Beach in Long Beach. A wonderful family event for the whole family.",
     "startDate": "2026-04-25T02:00:00",
     "isAllDay": false,
     "category": "Outdoor",
     "city": "Long Beach",
-    "address": "300 E. Ocean Blvd",
-    "latitude": 33.7648,
-    "longitude": -118.189,
-    "locationName": "Long Beach Arena at Long Beach Convention Center",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/disney-on-ice-road-trip-adventures-26441c/749185/huge.jpg",
-    "externalURL": "https://seatgeek.com/disney-on-ice-road-trip-adventures-tickets/family/2026-04-24-7-pm/18033628",
+    "address": "6200 Atherton St",
+    "latitude": 33.7882,
+    "longitude": -118.112,
+    "locationName": "Carpenter Center Long Beach",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/in-the-heights-7b3f58/5291/huge.jpg",
+    "externalURL": "https://seatgeek.com/in-the-heights-tickets/broadway/2026-04-24-7-pm/17953677",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
       "theater",
-      "family"
+      "broadway"
     ],
     "metro": "orange-county"
   },
@@ -11691,6 +11808,29 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "seatgeek:17953679",
+    "source": "seatgeek",
+    "title": "In the Heights - Long Beach",
+    "description": "Plan a family trip to In the Heights - Long Beach in Long Beach. This family event offers something special for everyone.",
+    "startDate": "2026-04-26T02:00:00",
+    "isAllDay": false,
+    "category": "Outdoor",
+    "city": "Long Beach",
+    "address": "6200 Atherton St",
+    "latitude": 33.7882,
+    "longitude": -118.112,
+    "locationName": "Carpenter Center Long Beach",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/in-the-heights-7b3f58/5291/huge.jpg",
+    "externalURL": "https://seatgeek.com/in-the-heights-tickets/broadway/2026-04-25-7-pm/17953679",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "theater",
+      "broadway"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "seatgeek:18033631",
     "source": "seatgeek",
     "title": "Disney On Ice: Road Trip Adventures - Long Beach",
@@ -11714,25 +11854,25 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "seatgeek:17953679",
+    "sourceId": "seatgeek:18102640",
     "source": "seatgeek",
-    "title": "In the Heights - Long Beach",
-    "description": "Plan a family trip to In the Heights - Long Beach in Long Beach. This family event offers something special for everyone.",
-    "startDate": "2026-04-26T02:00:00",
+    "title": "The 2nd SClass Fanfest with Swage",
+    "description": "Looking for family fun in Anaheim? Check out The 2nd SClass Fanfest with Swage, a family event the kids will enjoy.",
+    "startDate": "2026-04-26T03:00:00",
     "isAllDay": false,
-    "category": "Outdoor",
-    "city": "Long Beach",
-    "address": "6200 Atherton St",
-    "latitude": 33.7882,
-    "longitude": -118.112,
-    "locationName": "Carpenter Center Long Beach",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/in-the-heights-7b3f58/5291/huge.jpg",
-    "externalURL": "https://seatgeek.com/in-the-heights-tickets/broadway/2026-04-25-7-pm/17953679",
+    "category": "Music",
+    "city": "Anaheim",
+    "address": "400 W Disney Way #337",
+    "latitude": 33.8065,
+    "longitude": -117.912,
+    "locationName": "The Parish at the House of Blues - Anaheim",
+    "imageURL": "https://seatgeekimages.com/performers-landscape/swage-9f0f53/1972907/huge.jpg",
+    "externalURL": "https://seatgeek.com/swage-tickets/anaheim-california-the-parish-at-the-house-of-blues-anaheim-2026-04-25-8-pm/music-festival/18102640",
     "isFeatured": false,
     "isRecurring": false,
     "tags": [
-      "theater",
-      "broadway"
+      "concert",
+      "music_festival"
     ],
     "metro": "orange-county"
   },
@@ -11778,29 +11918,6 @@
     "isRecurring": false,
     "tags": [
       "theater"
-    ],
-    "metro": "orange-county"
-  },
-  {
-    "sourceId": "seatgeek:18102640",
-    "source": "seatgeek",
-    "title": "The 2nd SClass Fanfest with Swage",
-    "description": "Looking for family fun in Anaheim? Check out The 2nd SClass Fanfest with Swage, a family event the kids will enjoy.",
-    "startDate": "2026-04-26T03:00:00",
-    "isAllDay": false,
-    "category": "Music",
-    "city": "Anaheim",
-    "address": "400 W Disney Way #337",
-    "latitude": 33.8065,
-    "longitude": -117.912,
-    "locationName": "The Parish at the House of Blues - Anaheim",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/swage-9f0f53/1972907/huge.jpg",
-    "externalURL": "https://seatgeek.com/swage-tickets/anaheim-california-the-parish-at-the-house-of-blues-anaheim-2026-04-25-8-pm/music-festival/18102640",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "concert",
-      "music_festival"
     ],
     "metro": "orange-county"
   },
@@ -14217,28 +14334,6 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "seatgeek:17481575",
-    "source": "seatgeek",
-    "title": "Harry Potter and The Cursed Child - Costa Mesa",
-    "description": "Head to Costa Mesa for Harry Potter and The Cursed Child - Costa Mesa. This family event is perfect for families looking for a fun outing.",
-    "startDate": "2026-07-26T03:00:00",
-    "isAllDay": false,
-    "category": "Food & Dining",
-    "city": "Costa Mesa",
-    "address": "600 Town Center Drive",
-    "latitude": 33.6928,
-    "longitude": -117.882,
-    "locationName": "Segerstrom Center for the Arts - Segerstrom Hall",
-    "imageURL": "https://seatgeekimages.com/performers-landscape/harry-potter-and-the-cursed-child-120488/380245/huge.jpg",
-    "externalURL": "https://seatgeek.com/harry-potter-and-the-cursed-child-tickets/theater/2026-07-25-8-pm/17481575",
-    "isFeatured": false,
-    "isRecurring": false,
-    "tags": [
-      "theater"
-    ],
-    "metro": "orange-county"
-  },
-  {
     "sourceId": "oc-parent-guide-patrick-the-goat-s-birthday-party-at-tanaka-farms-6-2026-03-17",
     "source": "oc-parent-guide",
     "title": "Patrick the Goat's Birthday Party at Tanaka Farms ($6)",
@@ -15716,7 +15811,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwQm9vayUyMEdyb3VwJTNBJTIwV2UlMjBMaXN0ZW4lMjBXZSUyMERvbiUyN3QlMjBKdWRnZSUyMExvcyUyMEFsYW1pdG9zLVJvc3Ntb29yJTIwTGlicmFyeSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3MzcyODk3MHww&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwQm9vayUyMEdyb3VwJTNBJTIwV2UlMjBMaXN0ZW4lMjBXZSUyMERvbiUyN3QlMjBKdWRnZSUyMExvcyUyMEFsYW1pdG9zLVJvc3Ntb29yJTIwTGlicmFyeSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3Mzc3NjA1OXww&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -16243,7 +16338,7 @@
     "latitude": 33.7365702,
     "longitude": -117.7504511,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1646054346442-a21241469498?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxMaXZlJTIwQnVubnklMjBGYXJtJTIwRXhwZXJpZW5jZSUyQyUyMFN0b3J5dGltZSUyQyUyMENyYWZ0JTIwUm9kZW8lMjAzOSUyMFN0YW50b24lMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3MTk5MDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1646054346442-a21241469498?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxMaXZlJTIwQnVubnklMjBGYXJtJTIwRXhwZXJpZW5jZSUyQyUyMFN0b3J5dGltZSUyQyUyMENyYWZ0JTIwUm9kZW8lMjAzOSUyMFN0YW50b24lMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYxMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -16339,7 +16434,7 @@
     "latitude": 33.7458511,
     "longitude": -117.826166,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCaWxpbmd1YWwlMjBTdG9yeXRpbWUlMjAlMjhFbmdsaXNoJTJGU3BhbmlzaCUyOSUyMFR1c3RpbiUyMExpYnJhcnklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3MjkwNDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCaWxpbmd1YWwlMjBTdG9yeXRpbWUlMjAlMjhFbmdsaXNoJTJGU3BhbmlzaCUyOSUyMFR1c3RpbiUyMExpYnJhcnklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYxMzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -16555,7 +16650,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.pexels.com/photos/8364055/pexels-photo-8364055.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "imageURL": "https://images.pexels.com/photos/8653450/pexels-photo-8653450.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -17059,7 +17154,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1736712640617-07d4c4b7e455?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxTcHJpbmclMjBBaGVhZCUyMEZyb2dneSUyMENyYWZ0JTIwTGFkZXJhJTIwUmFuY2glMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzIyNzAxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1579161853810-8b37973e247c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxTcHJpbmclMjBBaGVhZCUyMEZyb2dneSUyMENyYWZ0JTIwTGFkZXJhJTIwUmFuY2glMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MjI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -17897,7 +17992,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1717205966559-6a07b8e977f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxQcmVzY2hvb2wlMjBTdG9yeXRpbWUlMjBMYWd1bmElMjBIaWxscyUyMFRlY2hub2xvZ3klMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzI5MjA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1717205966559-6a07b8e977f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxQcmVzY2hvb2wlMjBTdG9yeXRpbWUlMjBMYWd1bmElMjBIaWxscyUyMFRlY2hub2xvZ3klMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MjkzfDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -18279,7 +18374,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzI5MjMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MzE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -18973,7 +19068,7 @@
     "latitude": 33.6170092,
     "longitude": -117.9294401,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1596352674799-10f28fe7dc8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxXaWxkJTIwVGFsZXMlMjBTdG9yeXRpbWUlMkMlMjBIaWtlJTJDJTIwQ3JhZnQlMjBOZXdwb3J0JTIwQmVhY2glMjAlMjhSU1ZQJTIxJTI5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MzY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -19069,7 +19164,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1762921168438-3647231f8972?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCYXJueWFyZCUyMFN0b3J5dGltZSUyMFRhbmFrYSUyMEZhcm1zJTIwJTI4JTI0NiUyRnBlcnNvbiUyQyUyMDIlMjB1bmRlciUyMGZyZWUlMjklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYzNzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -19283,7 +19378,7 @@
     "city": "Bookland at Brea Library",
     "address": "",
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1662309374783-e39b2d415dc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxBZHZlbnR1cmVzJTIwQm9va2xhbmQlMjBCcmVhJTIwTGlicmFyeSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3Mzc3NjM4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -19401,7 +19496,7 @@
     "latitude": 33.750631,
     "longitude": -117.8722311,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1652050165253-ca49014d05d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxWaXNpdCUyME9uZSUyMDE3JTJCJTIwTmF0dXJlJTIwQ2VudGVycyUyMEFyb3VuZCUyME9yYW5nZSUyMENvdW50eSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3Mzc3NjM5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -21162,6 +21257,30 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "oc-parent-guide-easter-market-and-egg-hunt-in-garden-grove-2026-03-21",
+    "source": "oc-parent-guide",
+    "title": "Easter Market and Egg Hunt in Garden Grove",
+    "description": "Head to Garden Grove for Easter Market and Egg Hunt in Garden Grove. This family event is perfect for families looking for a fun outing.",
+    "startDate": "2026-03-21T13:00:00",
+    "endDate": "2026-03-21T17:00:00",
+    "isAllDay": false,
+    "category": "Outdoor",
+    "city": "Garden Grove",
+    "address": "",
+    "latitude": 33.7746292,
+    "longitude": -117.9463717,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "oc-parent-guide-family-movie-at-la-palma-library-2026-03-21",
     "source": "oc-parent-guide",
     "title": "Family Movie at La Palma Library",
@@ -21556,7 +21675,7 @@
     "latitude": 33.750631,
     "longitude": -117.8722311,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1652050165253-ca49014d05d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxWaXNpdCUyME9uZSUyMDE3JTJCJTIwTmF0dXJlJTIwQ2VudGVycyUyMEFyb3VuZCUyME9yYW5nZSUyMENvdW50eSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3Mzc3NjM5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -22731,7 +22850,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzI5MjMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MzE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -23738,7 +23857,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1762921168438-3647231f8972?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCYXJueWFyZCUyMFN0b3J5dGltZSUyMFRhbmFrYSUyMEZhcm1zJTIwJTI4JTI0NiUyRnBlcnNvbiUyQyUyMDIlMjB1bmRlciUyMGZyZWUlMjklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYzNzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -25153,7 +25272,7 @@
     "latitude": 33.7458511,
     "longitude": -117.826166,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCaWxpbmd1YWwlMjBTdG9yeXRpbWUlMjAlMjhFbmdsaXNoJTJGU3BhbmlzaCUyOSUyMFR1c3RpbiUyMExpYnJhcnklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3MjkwNDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1583259473689-34163ee01047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCaWxpbmd1YWwlMjBTdG9yeXRpbWUlMjAlMjhFbmdsaXNoJTJGU3BhbmlzaCUyOSUyMFR1c3RpbiUyMExpYnJhcnklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYxMzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -25321,7 +25440,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.pexels.com/photos/8364055/pexels-photo-8364055.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+    "imageURL": "https://images.pexels.com/photos/8653450/pexels-photo-8653450.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -26448,7 +26567,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1717205966559-6a07b8e977f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxQcmVzY2hvb2wlMjBTdG9yeXRpbWUlMjBMYWd1bmElMjBIaWxscyUyMFRlY2hub2xvZ3klMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzI5MjA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1717205966559-6a07b8e977f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxQcmVzY2hvb2wlMjBTdG9yeXRpbWUlMjBMYWd1bmElMjBIaWxscyUyMFRlY2hub2xvZ3klMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MjkzfDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -26808,7 +26927,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzI5MjMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "imageURL": "https://images.unsplash.com/photo-1763477950484-12fd6f42c67e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxUZWVuJTIwTG91bmdlJTIwUmFuY2hvJTIwU2FudGElMjBNYXJnYXJpdGElMjBMaWJyYXJ5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MzE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -27335,7 +27454,7 @@
     "latitude": 33.6170092,
     "longitude": -117.9294401,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1596352674799-10f28fe7dc8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxXaWxkJTIwVGFsZXMlMjBTdG9yeXRpbWUlMkMlMjBIaWtlJTJDJTIwQ3JhZnQlMjBOZXdwb3J0JTIwQmVhY2glMjAlMjhSU1ZQJTIxJTI5JTIwZmFtaWx5JTIwa2lkc3xlbnwxfDB8fHwxNzczNzc2MzY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -27455,7 +27574,7 @@
     "latitude": 33.6555173,
     "longitude": -117.7990949,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1762921168438-3647231f8972?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxCYXJueWFyZCUyMFN0b3J5dGltZSUyMFRhbmFrYSUyMEZhcm1zJTIwJTI4JTI0NiUyRnBlcnNvbiUyQyUyMDIlMjB1bmRlciUyMGZyZWUlMjklMjBmYW1pbHklMjBraWRzfGVufDF8MHx8fDE3NzM3NzYzNzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -27741,7 +27860,7 @@
     "latitude": 33.750631,
     "longitude": -117.8722311,
     "locationName": "",
-    "imageURL": "",
+    "imageURL": "https://images.unsplash.com/photo-1652050165253-ca49014d05d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTUxNTZ8MHwxfHNlYXJjaHwxfHxWaXNpdCUyME9uZSUyMDE3JTJCJTIwTmF0dXJlJTIwQ2VudGVycyUyMEFyb3VuZCUyME9yYW5nZSUyMENvdW50eSUyMGZhbWlseSUyMGtpZHN8ZW58MXwwfHx8MTc3Mzc3NjM5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
     "isFeatured": false,
     "isRecurring": false,
@@ -28064,6 +28183,30 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "oc-parent-guide-hoppin-hills-easter-event-in-laguna-hills-2026-03-28",
+    "source": "oc-parent-guide",
+    "title": "Hoppin Hills Easter Event in Laguna Hills",
+    "description": "Enjoy Hoppin Hills Easter Event in Laguna Hills in Laguna Hills. A wonderful family event for the whole family.",
+    "startDate": "2026-03-28T09:00:00",
+    "endDate": "2026-03-28T11:00:00",
+    "isAllDay": false,
+    "category": "Seasonal",
+    "city": "Laguna Hills",
+    "address": "",
+    "latitude": 33.5948758,
+    "longitude": -117.6882067,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "oc-parent-guide-little-ranger-program-at-san-clemente-state-beach-2026-03-28",
     "source": "oc-parent-guide",
     "title": "Little Ranger Program at San Clemente State Beach",
@@ -28184,6 +28327,30 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "oc-parent-guide-easter-egg-hunt-bunny-photos-in-la-habra-registration-requir-2026-03-28",
+    "source": "oc-parent-guide",
+    "title": "Easter Egg Hunt + Bunny Photos in La Habra (Registration Required)",
+    "description": "Easter Egg Hunt + Bunny Photos in La Habra (Registration Required) is taking place in La Habra. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-28T09:30:00",
+    "endDate": "2026-03-28T11:15:00",
+    "isAllDay": false,
+    "category": "Seasonal",
+    "city": "La Habra",
+    "address": "",
+    "latitude": 33.9316066,
+    "longitude": -117.9454867,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "oc-parent-guide-rise-and-shine-storytime-at-garden-grove-tibor-rubin-library-2026-03-28",
     "source": "oc-parent-guide",
     "title": "Rise and Shine Storytime at Garden Grove Tibor Rubin Library",
@@ -28280,18 +28447,18 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "oc-parent-guide-bunny-bonanza-in-laguna-niguel-2026-03-28",
+    "sourceId": "oc-parent-guide-egg-hunt-and-bounce-houses-at-spring-eggstravaganza-in-fulle-2026-03-28",
     "source": "oc-parent-guide",
-    "title": "Bunny Bonanza in Laguna Niguel",
-    "description": "Looking for family fun in Laguna Niguel? Check out Bunny Bonanza in Laguna Niguel, a family event the kids will enjoy.",
+    "title": "Egg Hunt and Bounce Houses at Spring Eggstravaganza in Fullerton",
+    "description": "Plan a family trip to Egg Hunt and Bounce Houses at Spring Eggstravaganza in Fullerton in Fullerton. This family event offers something special for everyone.",
     "startDate": "2026-03-28T10:00:00",
-    "endDate": "2026-03-28T13:00:00",
+    "endDate": "2026-03-28T14:00:00",
     "isAllDay": false,
     "category": "Other",
-    "city": "Laguna Niguel",
+    "city": "Fullerton",
     "address": "",
-    "latitude": 33.5225261,
-    "longitude": -117.7075526,
+    "latitude": 33.8708215,
+    "longitude": -117.929416,
     "locationName": "",
     "imageURL": "",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
@@ -28328,18 +28495,18 @@
     "metro": "orange-county"
   },
   {
-    "sourceId": "oc-parent-guide-free-pancakes-egg-hunt-and-bounce-houses-at-easter-picnic-wi-2026-03-28",
+    "sourceId": "oc-parent-guide-touch-a-truck-at-bunny-bonanza-in-laguna-niguel-2026-03-28",
     "source": "oc-parent-guide",
-    "title": "Free Pancakes, Egg Hunt, and Bounce Houses at Easter Picnic with Capo Beach Church in Dana Point",
-    "description": "Free Pancakes, Egg Hunt, and Bounce Houses at Easter Picnic with Capo Beach Church in Dana Point is taking place in Dana Point. Bring the kids for a memorable family experience.",
+    "title": "Touch a Truck at Bunny Bonanza in Laguna Niguel",
+    "description": "Head to Laguna Niguel for Touch a Truck at Bunny Bonanza in Laguna Niguel. This family event is perfect for families looking for a fun outing.",
     "startDate": "2026-03-28T10:00:00",
-    "endDate": "2026-03-28T12:30:00",
+    "endDate": "2026-03-28T13:00:00",
     "isAllDay": false,
-    "category": "Outdoor",
-    "city": "Dana Point",
+    "category": "Other",
+    "city": "Laguna Niguel",
     "address": "",
-    "latitude": 33.4669721,
-    "longitude": -117.6981075,
+    "latitude": 33.5225261,
+    "longitude": -117.7075526,
     "locationName": "",
     "imageURL": "",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
@@ -28360,6 +28527,30 @@
     "endDate": "2026-03-28T12:00:00",
     "isAllDay": false,
     "category": "Craft",
+    "city": "Newport Beach",
+    "address": "",
+    "latitude": 33.6170092,
+    "longitude": -117.9294401,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
+    "sourceId": "oc-parent-guide-mayor-s-egg-race-in-newport-beach-2026-03-28",
+    "source": "oc-parent-guide",
+    "title": "Mayor's Egg Race in Newport Beach",
+    "description": "Looking for family fun in Newport Beach? Check out Mayor's Egg Race in Newport Beach, a family event the kids will enjoy.",
+    "startDate": "2026-03-28T10:00:00",
+    "endDate": "2026-03-28T12:00:00",
+    "isAllDay": false,
+    "category": "Outdoor",
     "city": "Newport Beach",
     "address": "",
     "latitude": 33.6170092,
@@ -29192,6 +29383,30 @@
     "metro": "orange-county"
   },
   {
+    "sourceId": "oc-parent-guide-free-bbq-at-wild-fork-easter-event-in-mission-viejo-2026-03-28",
+    "source": "oc-parent-guide",
+    "title": "Free BBQ at Wild Fork Easter Event in Mission Viejo",
+    "description": "Free BBQ at Wild Fork Easter Event in Mission Viejo is taking place in Mission Viejo. Bring the kids for a memorable family experience.",
+    "startDate": "2026-03-28T12:00:00",
+    "endDate": "2026-03-28T15:00:00",
+    "isAllDay": false,
+    "category": "Seasonal",
+    "city": "Mission Viejo",
+    "address": "",
+    "latitude": 33.5965685,
+    "longitude": -117.659405,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
     "sourceId": "oc-parent-guide-melted-crayon-art-in-the-park-in-santa-ana-2026-03-28",
     "source": "oc-parent-guide",
     "title": "Melted Crayon Art in the Park in Santa Ana",
@@ -29420,6 +29635,30 @@
     "address": "",
     "latitude": 33.6783336,
     "longitude": -118.000016,
+    "locationName": "",
+    "imageURL": "",
+    "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
+    "isFeatured": false,
+    "isRecurring": false,
+    "tags": [
+      "family",
+      "orange county"
+    ],
+    "metro": "orange-county"
+  },
+  {
+    "sourceId": "oc-parent-guide-floating-egg-hunt-in-aliso-viejo-2026-03-28",
+    "source": "oc-parent-guide",
+    "title": "Floating Egg Hunt in Aliso Viejo",
+    "description": "Plan a family trip to Floating Egg Hunt in Aliso Viejo in Aliso Viejo. This family event offers something special for everyone.",
+    "startDate": "2026-03-28T14:30:00",
+    "endDate": "2026-03-28T16:30:00",
+    "isAllDay": false,
+    "category": "Other",
+    "city": "Aliso Viejo",
+    "address": "",
+    "latitude": 33.5761376,
+    "longitude": -117.7258122,
     "locationName": "",
     "imageURL": "",
     "externalURL": "https://www.orangecountyparentguide.com/event-calendar",
