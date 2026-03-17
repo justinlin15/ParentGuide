@@ -6,6 +6,7 @@ import {
 } from "../../normalize.js";
 import { log } from "../../utils/logger.js";
 import { delay } from "../../utils/geocoder.js";
+import { getRandomHeaders, randomDelay } from "../../utils/user-agents.js";
 
 // Macaroni KID consolidated all local editions (e.g. atlanta.macaronikid.com)
 // into national.macaronikid.com. The /events page shows a weekly view of
@@ -18,8 +19,6 @@ import { delay } from "../../utils/geocoder.js";
 // the server-side week offset parameter).
 
 const BASE_URL = "https://national.macaronikid.com";
-const USER_AGENT =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 export async function scrapeMacaroniKid(
   metro: MetroArea
@@ -37,7 +36,7 @@ export async function scrapeMacaroniKid(
     // Also try next week and the week after for broader coverage
     // The site uses week offset: /events?week=1 for next week, etc.
     for (let weekOffset = 1; weekOffset <= 3; weekOffset++) {
-      await delay(2000);
+      await randomDelay(1500, 3000);
       const weekEvents = await scrapeWeekPage(
         `${BASE_URL}/events?week=${weekOffset}`,
         metro
@@ -73,10 +72,7 @@ async function scrapeWeekPage(
 
   try {
     const res = await fetch(url, {
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept: "text/html,application/xhtml+xml",
-      },
+      headers: getRandomHeaders(),
       redirect: "follow",
     });
 
@@ -171,7 +167,7 @@ async function scrapeWeekPage(
       const toEnrich = events.slice(0, 10); // Limit detail fetches
       for (const event of toEnrich) {
         try {
-          await delay(1500);
+          await randomDelay(1200, 2500);
           await enrichEventFromDetailPage(event);
         } catch {
           // Detail enrichment is best-effort
@@ -191,10 +187,7 @@ async function enrichEventFromDetailPage(
   if (!event.externalURL) return;
 
   const res = await fetch(event.externalURL, {
-    headers: {
-      "User-Agent": USER_AGENT,
-      Accept: "text/html,application/xhtml+xml",
-    },
+    headers: getRandomHeaders(),
     redirect: "follow",
   });
 

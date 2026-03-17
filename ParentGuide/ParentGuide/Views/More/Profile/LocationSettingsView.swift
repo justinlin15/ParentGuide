@@ -30,7 +30,7 @@ struct LocationSettingsView: View {
             }
 
             Section("Metro Areas") {
-                ForEach(AppConstants.metroAreas, id: \.id) { metro in
+                ForEach(AppConstants.launchMetros, id: \.id) { metro in
                     Button {
                         metroService.selectMetro(metro)
                     } label: {

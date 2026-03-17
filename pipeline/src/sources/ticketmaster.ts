@@ -31,6 +31,12 @@ interface TicketmasterEvent {
     genre?: { name: string };
     subGenre?: { name: string };
   }>;
+  priceRanges?: Array<{
+    type: string;
+    currency: string;
+    min: number;
+    max: number;
+  }>;
   images?: Array<{
     url: string;
     width: number;
@@ -59,6 +65,14 @@ interface TicketmasterResponse {
   };
 }
 
+// Additional queries to catch kids events not classified under "Family"
+// These use keyword searches to find children's events in other segments
+const CHILDREN_KEYWORD_QUERIES = [
+  "Children's Theatre",
+  "Children's Music",
+  "Children's Festival",
+];
+
 export async function fetchTicketmasterEvents(
   metro: MetroArea
 ): Promise<PipelineEvent[]> {
@@ -67,17 +81,57 @@ export async function fetchTicketmasterEvents(
     return [];
   }
 
+  log.info("ticketmaster", `Fetching family events for ${metro.name}...`);
+
+  const seenIds = new Set<string>();
+  const events: PipelineEvent[] = [];
+
+  // Primary query: Family classification
+  const familyEvents = await fetchTicketmasterPage(metro, {
+    classificationName: "Family",
+  });
+  for (const e of familyEvents) {
+    if (!seenIds.has(e.sourceId)) {
+      seenIds.add(e.sourceId);
+      events.push(e);
+    }
+  }
+
+  // Supplemental queries: keyword searches for children's events
+  // in non-Family segments (e.g., Arts & Theatre, Music)
+  for (const keyword of CHILDREN_KEYWORD_QUERIES) {
+    const keywordEvents = await fetchTicketmasterPage(metro, {
+      keyword,
+    }, 3); // Limit to 3 pages per keyword query
+    for (const e of keywordEvents) {
+      if (!seenIds.has(e.sourceId)) {
+        seenIds.add(e.sourceId);
+        events.push(e);
+      }
+    }
+  }
+
+  log.success(
+    "ticketmaster",
+    `Found ${events.length} events for ${metro.name}`
+  );
+  return events;
+}
+
+async function fetchTicketmasterPage(
+  metro: MetroArea,
+  extraParams: Record<string, string>,
+  maxPages = 10,
+): Promise<PipelineEvent[]> {
   const events: PipelineEvent[] = [];
   let page = 0;
-  const maxPages = 10; // 10 pages × 50 results = up to 500 events per metro
-
-  log.info("ticketmaster", `Fetching family events for ${metro.name}...`);
+  let rateLimitRetries = 0;
+  const maxRateLimitRetries = 5;
 
   while (page < maxPages) {
     try {
       const params = new URLSearchParams({
         apikey: config.ticketmaster.apiKey,
-        classificationName: "Family",
         latlong: `${metro.latitude},${metro.longitude}`,
         radius: String(metro.radiusMiles),
         unit: "miles",
@@ -86,16 +140,23 @@ export async function fetchTicketmasterEvents(
         sort: "date,asc",
         // Only future events
         startDateTime: new Date().toISOString().split(".")[0] + "Z",
+        ...extraParams,
       });
 
       const url = `${config.ticketmaster.baseUrl}/events.json?${params}`;
       const res = await fetch(url);
 
       if (res.status === 429) {
-        log.warn("ticketmaster", "Rate limited, waiting 2s...");
+        rateLimitRetries++;
+        if (rateLimitRetries > maxRateLimitRetries) {
+          log.error("ticketmaster", "Max rate limit retries exceeded, stopping");
+          break;
+        }
+        log.warn("ticketmaster", `Rate limited, waiting 2s... (retry ${rateLimitRetries}/${maxRateLimitRetries})`);
         await delay(2000);
         continue;
       }
+      rateLimitRetries = 0; // Reset on successful request
 
       if (!res.ok) {
         log.error("ticketmaster", `HTTP ${res.status}: ${await res.text()}`);
@@ -124,10 +185,6 @@ export async function fetchTicketmasterEvents(
     }
   }
 
-  log.success(
-    "ticketmaster",
-    `Found ${events.length} events for ${metro.name}`
-  );
   return events;
 }
 
@@ -164,6 +221,19 @@ function normalizeTicketmasterEvent(
     ? `${raw.dates.end.localDate}T${raw.dates.end.localTime || "23:59:59"}`
     : undefined;
 
+  // Extract price range
+  let price: string | undefined;
+  if (raw.priceRanges && raw.priceRanges.length > 0) {
+    const pr = raw.priceRanges[0];
+    if (pr.min === 0 && pr.max === 0) {
+      price = "Free";
+    } else if (pr.min === pr.max) {
+      price = `$${pr.min}`;
+    } else {
+      price = `$${pr.min}-$${pr.max}`;
+    }
+  }
+
   return {
     sourceId: `ticketmaster:${raw.id}`,
     source: "ticketmaster",
@@ -188,5 +258,6 @@ function normalizeTicketmasterEvent(
     isRecurring: false,
     tags: sourceCategories.filter(Boolean),
     metro: metro.id,
+    price,
   };
 }

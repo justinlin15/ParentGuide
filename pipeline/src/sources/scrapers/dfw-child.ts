@@ -6,6 +6,7 @@ import {
 } from "../../normalize.js";
 import { log } from "../../utils/logger.js";
 import { delay } from "../../utils/geocoder.js";
+import { getRandomHeaders, randomDelay } from "../../utils/user-agents.js";
 
 // dfwchild.com - WordPress + GeoDirectory plugin
 // Calendar page with event cards, detail pages have excellent JSON-LD
@@ -21,11 +22,7 @@ export async function scrapeDFWChild(
   try {
     // Fetch the calendar listing page
     const res = await fetch("https://dfwchild.com/calendar/", {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        Accept: "text/html",
-      },
+      headers: getRandomHeaders(),
     });
 
     if (!res.ok) {
@@ -60,7 +57,7 @@ export async function scrapeDFWChild(
         const event = await scrapeDetailPage(eventUrl, metro);
         if (event) events.push(event);
         count++;
-        await delay(2000);
+        await randomDelay(1500, 3000);
       } catch (err) {
         log.error("dfw-child", `Error fetching ${eventUrl}`, err);
       }
@@ -78,11 +75,7 @@ async function scrapeDetailPage(
   metro: MetroArea
 ): Promise<PipelineEvent | null> {
   const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-      Accept: "text/html",
-    },
+    headers: getRandomHeaders(),
   });
 
   if (!res.ok) return null;

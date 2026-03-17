@@ -62,6 +62,7 @@ async function cloudKitFetch(
       "X-Apple-CloudKit-Request-SignatureV1": signature,
     },
     body: bodyStr,
+    signal: AbortSignal.timeout(60000), // 60s timeout per request
   });
 
   if (!resp.ok) {
@@ -154,18 +155,13 @@ function toCloudKitRecord(event: PipelineEvent) {
     metro: { value: event.metro },
   };
 
-  // NOTE: Enriched fields (price, ageRange, websiteURL, phone, contactEmail)
-  // are intentionally excluded until their columns are manually added to the
-  // CloudKit schema via the CloudKit Dashboard. Sending fields that don't
-  // exist in the schema causes BAD_REQUEST errors for the entire record.
-  //
-  // To enable: add these columns in CloudKit Dashboard → Schema → Event,
-  // then uncomment the lines below:
-  // if (event.price) fields.price = { value: event.price };
-  // if (event.ageRange) fields.ageRange = { value: event.ageRange };
-  // if (event.websiteURL) fields.websiteURL = { value: event.websiteURL };
-  // if (event.phone) fields.phone = { value: event.phone };
-  // if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
+  // Enriched fields — these columns must exist in CloudKit Dashboard → Schema → Event
+  // as String fields. Add them there before running the pipeline with upload enabled.
+  if (event.price) fields.price = { value: event.price };
+  if (event.ageRange) fields.ageRange = { value: event.ageRange };
+  if (event.websiteURL) fields.websiteURL = { value: event.websiteURL };
+  if (event.phone) fields.phone = { value: event.phone };
+  if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
 
   return {
     recordType: "Event",
@@ -193,35 +189,45 @@ async function uploadBatch(
     })),
   };
 
-  try {
-    const result = await cloudKitFetch(subpath, body, privateKeyPem);
+  const MAX_RETRIES = 2;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await cloudKitFetch(subpath, body, privateKeyPem);
 
-    let saved = 0;
-    let errors = 0;
+      let saved = 0;
+      let errors = 0;
 
-    for (const rec of result.records || []) {
-      if (rec.serverErrorCode) {
-        errors++;
-        if (errors <= 3) {
-          log.warn(
-            "cloudkit",
-            `  Record error: ${rec.serverErrorCode} — ${rec.reason || rec.recordName}`
-          );
+      for (const rec of result.records || []) {
+        if (rec.serverErrorCode) {
+          errors++;
+          if (errors <= 3) {
+            log.warn(
+              "cloudkit",
+              `  Record error: ${rec.serverErrorCode} — ${rec.reason || rec.recordName}`
+            );
+          }
+        } else {
+          saved++;
         }
-      } else {
-        saved++;
       }
-    }
 
-    log.info(
-      "cloudkit",
-      `  Batch ${batchNum}/${totalBatches}: ${saved} saved, ${errors} errors`
-    );
-    return { saved, errors };
-  } catch (err) {
-    log.error("cloudkit", `  Batch ${batchNum}/${totalBatches} failed: ${err}`);
-    return { saved: 0, errors: records.length };
+      log.info(
+        "cloudkit",
+        `  Batch ${batchNum}/${totalBatches}: ${saved} saved, ${errors} errors`
+      );
+      return { saved, errors };
+    } catch (err) {
+      if (attempt < MAX_RETRIES) {
+        const backoff = 3000 * Math.pow(2, attempt);
+        log.warn("cloudkit", `  Batch ${batchNum}/${totalBatches} failed (attempt ${attempt + 1}) — retrying in ${backoff / 1000}s: ${err}`);
+        await new Promise((r) => setTimeout(r, backoff));
+        continue;
+      }
+      log.error("cloudkit", `  Batch ${batchNum}/${totalBatches} failed after ${MAX_RETRIES + 1} attempts: ${err}`);
+      return { saved: 0, errors: records.length };
+    }
   }
+  return { saved: 0, errors: records.length };
 }
 
 export async function uploadToCloudKit(

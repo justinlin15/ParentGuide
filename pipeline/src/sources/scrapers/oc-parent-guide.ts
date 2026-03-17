@@ -2,6 +2,7 @@ import { chromium, type Browser, type Page, type Frame } from "playwright";
 import { type PipelineEvent, categorizeEvent } from "../../normalize.js";
 import { type MetroArea } from "../../config.js";
 import { log } from "../../utils/logger.js";
+import { getRandomUserAgent } from "../../utils/user-agents.js";
 
 const SITE_URL = "https://www.orangecountyparentguide.com";
 const EVENTS_PATH = "/event-calendar";
@@ -27,8 +28,7 @@ export async function scrapeOCParentGuide(
   try {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
-      userAgent:
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      userAgent: getRandomUserAgent(),
       viewport: { width: 1920, height: 1080 },
     });
     const page = await context.newPage();

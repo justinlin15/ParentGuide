@@ -6,6 +6,7 @@ import {
 } from "../../normalize.js";
 import { log } from "../../utils/logger.js";
 import { delay } from "../../utils/geocoder.js";
+import { getRandomHeaders, randomDelay } from "../../utils/user-agents.js";
 
 // mykidlist.com - WordPress + Kidlist Deluxe (Chicago)
 // Excellent JSON-LD with @type: "ChildrensEvent" and ItemList on list pages
@@ -28,7 +29,7 @@ export async function scrapeMyKidList(
     try {
       const dayEvents = await scrapeDayPage(dateStr, metro);
       events.push(...dayEvents);
-      await delay(2000);
+      await randomDelay(1500, 3000);
     } catch (err) {
       log.error("mykidlist", `Error scraping ${dateStr}`, err);
     }
@@ -46,11 +47,7 @@ async function scrapeDayPage(
   const url = `https://mykidlist.com/events/?kd_date=${dateStr}`;
 
   const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-      Accept: "text/html",
-    },
+    headers: getRandomHeaders(),
   });
 
   if (!res.ok) {

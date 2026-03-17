@@ -11,6 +11,7 @@ import {
   searchForEventImage,
   extractAddressFromText,
 } from "../../utils/web-enricher.js";
+import { getRandomHeaders, randomDelay } from "../../utils/user-agents.js";
 
 // MommyPoppins covers all 5 metros with identical Drupal template.
 // Listing pages show events for a given date. We scrape multiple days
@@ -28,17 +29,10 @@ const REGION_MAP: Record<string, { id: number; slug: string }> = {
 
 const DAYS_AHEAD = 13; // 14 total days
 const DETAIL_FETCH_LIMIT = 60; // max detail pages per metro
-const DETAIL_DELAY_MS = 500; // delay between detail fetches
 const GEOCODE_LIMIT = 40; // max geocode requests per metro (Nominatim rate limit: 1/sec)
 const GEOCODE_DELAY_MS = 1100; // slightly over 1 second for Nominatim
 const WEB_ENRICH_LIMIT = 30; // max web lookups for missing addresses/images per metro
-const IMAGE_FETCH_DELAY_MS = 600; // delay between og:image fetches
 
-const HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  Accept: "text/html,application/xhtml+xml",
-};
 
 export async function scrapeMommyPoppins(
   metro: MetroArea
@@ -70,7 +64,7 @@ export async function scrapeMommyPoppins(
     const dayEvents = await scrapeDatePage(region, metro, dateStr, seenIds);
     allEvents.push(...dayEvents);
     if (dateStr !== dates[dates.length - 1]) {
-      await delay(1000);
+      await randomDelay(800, 1500);
     }
   }
 
@@ -120,7 +114,7 @@ async function scrapeDatePage(
 ): Promise<PipelineEvent[]> {
   const url = `https://mommypoppins.com/events/${region.id}/${region.slug}/all/tag/all/age/${dateStr}/all/all/type/0/deals/0/near/all`;
 
-  const res = await fetch(url, { headers: HEADERS });
+  const res = await fetch(url, { headers: getRandomHeaders() });
   if (!res.ok) {
     log.warn(
       "mommy-poppins",
@@ -388,14 +382,14 @@ async function enrichEventsFromDetailPages(
     } catch {
       // Skip failed detail fetches silently
     }
-    await delay(DETAIL_DELAY_MS);
+    await randomDelay(400, 900);
   }
 
   log.info("mommy-poppins", `  Enriched ${enriched}/${toFetch.length} events from detail pages`);
 }
 
 async function fetchDetailPage(url: string): Promise<DetailData | null> {
-  const res = await fetch(url, { headers: HEADERS });
+  const res = await fetch(url, { headers: getRandomHeaders() });
   if (!res.ok) return null;
 
   const html = await res.text();
@@ -616,7 +610,7 @@ async function geocodeEvents(events: PipelineEvent[]): Promise<void> {
   let geocoded = 0;
   for (const address of toGeocode) {
     const result = await geocodeAddress(address);
-    if (result) {
+    if (result && result !== "RATE_LIMITED") {
       const targetEvents = addressToEvents.get(address) || [];
       for (const event of targetEvents) {
         event.latitude = result.latitude;
@@ -729,7 +723,7 @@ async function enrichMissingFromWeb(
       }
       imagesFound++;
     }
-    await delay(IMAGE_FETCH_DELAY_MS);
+    await randomDelay(500, 900);
   }
 
   log.info(

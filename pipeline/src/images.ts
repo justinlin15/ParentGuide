@@ -235,7 +235,8 @@ async function searchUnsplash(query: string, perPage = 10): Promise<string[]> {
 
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        log.warn("images", `Unsplash HTTP ${res.status} — disabling (check UNSPLASH_ACCESS_KEY)`);
+        const body = await res.text().catch(() => "");
+        log.warn("images", `Unsplash HTTP ${res.status} — disabling. Key starts with: "${config.unsplash.accessKey?.slice(0, 8)}…" Response: ${body.slice(0, 200)}`);
         unsplashDisabled = true;
       } else {
         log.warn("images", `Unsplash HTTP ${res.status}`);
@@ -271,7 +272,8 @@ async function searchPexels(query: string, perPage = 10): Promise<string[]> {
 
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        log.warn("images", `Pexels HTTP ${res.status} — disabling (check PEXELS_API_KEY)`);
+        const body = await res.text().catch(() => "");
+        log.warn("images", `Pexels HTTP ${res.status} — disabling. Key starts with: "${config.pexels.apiKey?.slice(0, 8)}…" Response: ${body.slice(0, 200)}`);
         pexelsDisabled = true;
       } else {
         log.warn("images", `Pexels HTTP ${res.status}`);

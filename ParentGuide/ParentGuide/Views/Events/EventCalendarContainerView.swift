@@ -8,10 +8,19 @@ import SwiftUI
 struct EventCalendarContainerView: View {
     @State private var viewModel = EventCalendarViewModel()
     @State private var metroService = MetroService.shared
+    @State private var subscriptionService = SubscriptionService.shared
     @State private var showSearch = false
     @State private var showFilter = false
     @State private var showDayEvents = false
+    @State private var showPaywall = false
     @AppStorage("defaultEventView") private var defaultEventView: String = "Week"
+
+    /// Whether a given event is beyond the free viewing horizon (requires subscription).
+    private func requiresSubscription(_ event: Event) -> Bool {
+        guard !subscriptionService.isSubscribed else { return false }
+        let horizon = Calendar.current.date(byAdding: .day, value: AppConstants.freeEventHorizonDays, to: Date()) ?? Date()
+        return event.startDate > horizon
+    }
 
     var body: some View {
         NavigationStack {
@@ -56,7 +65,7 @@ struct EventCalendarContainerView: View {
                         NavigationStack {
                             List {
                                 ForEach(viewModel.filteredEventsForDate(selectedDate)) { event in
-                                    NavigationLink(destination: EventDetailView(event: event)) {
+                                    SubscriptionGatedLink(event: event) {
                                         EventCardView(event: event)
                                     }
                                     .listRowInsets(EdgeInsets())
@@ -112,6 +121,9 @@ struct EventCalendarContainerView: View {
                     EventMapView(events: viewModel.filteredEvents, selectedDate: viewModel.browsedDate)
                 }
             }
+
+            // Banner ad for non-subscribers
+            BannerAdView(adUnitID: AdService.eventsBannerID)
         }
     }
 }

@@ -65,7 +65,7 @@ struct OnboardingView: View {
 
             // Metro list
             VStack(spacing: 8) {
-                ForEach(AppConstants.metroAreas, id: \.id) { metro in
+                ForEach(AppConstants.launchMetros, id: \.id) { metro in
                     Button {
                         selectedMetro = metro
                     } label: {

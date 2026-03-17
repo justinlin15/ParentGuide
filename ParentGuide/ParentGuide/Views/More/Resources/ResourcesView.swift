@@ -7,14 +7,6 @@ import SwiftUI
 
 // MARK: - Data Models
 
-private struct QuickTip: Identifiable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    let color: Color
-    let bullets: [String]
-}
-
 private struct EmergencyContact: Identifiable {
     let id = UUID()
     let name: String
@@ -23,7 +15,7 @@ private struct EmergencyContact: Identifiable {
     let phoneNumber: String?  // nil means no tel: link (e.g. text-only)
 }
 
-private struct HelpfulWebsite: Identifiable {
+private struct ResourceLink: Identifiable {
     let id = UUID()
     let name: String
     let description: String
@@ -31,86 +23,14 @@ private struct HelpfulWebsite: Identifiable {
     let icon: String
 }
 
-private struct AgeGuide: Identifiable {
-    let id = UUID()
-    let ageRange: String
-    let label: String
-    let icon: String
-    let tips: [String]
-}
-
-private struct LocalResourceItem: Identifiable {
+private struct ResourceCategory: Identifiable {
     let id = UUID()
     let title: String
-    let description: String
-    let icon: String
-    let searchQuery: String  // used to build a Google search URL
+    let headerIcon: String
+    let links: [ResourceLink]
 }
 
 // MARK: - Static Data
-
-private let quickTips: [QuickTip] = [
-    QuickTip(
-        title: "Screen Time Guidelines",
-        icon: "tv",
-        color: .eventBlue,
-        bullets: [
-            "Under 18 months: Avoid screens except video calls",
-            "18-24 months: Co-watch high-quality programs only",
-            "2-5 years: Limit to 1 hour/day of quality content",
-            "6+: Set consistent limits; prioritize sleep & activity",
-            "Keep mealtimes and bedrooms screen-free"
-        ]
-    ),
-    QuickTip(
-        title: "Healthy Snack Ideas",
-        icon: "carrot",
-        color: .eventOrange,
-        bullets: [
-            "Apple slices with peanut butter",
-            "Yogurt with berries and granola",
-            "Cheese cubes with whole-grain crackers",
-            "Veggie sticks with hummus",
-            "Frozen banana bites dipped in chocolate"
-        ]
-    ),
-    QuickTip(
-        title: "Rainy Day Activities",
-        icon: "cloud.rain",
-        color: .eventPurple,
-        bullets: [
-            "Build a blanket fort and read stories",
-            "Indoor scavenger hunt with clues",
-            "Kitchen science experiments (volcanoes, slime)",
-            "Dance party with a family playlist",
-            "Arts & crafts with recycled materials"
-        ]
-    ),
-    QuickTip(
-        title: "Car Ride Games",
-        icon: "car.fill",
-        color: .eventGreen,
-        bullets: [
-            "I Spy with colors or letters",
-            "20 Questions (animal, vegetable, mineral)",
-            "License plate alphabet game",
-            "Story chain: each person adds a sentence",
-            "Audiobooks or kid-friendly podcasts"
-        ]
-    ),
-    QuickTip(
-        title: "Bedtime Routine Tips",
-        icon: "moon.stars",
-        color: .brandLavender,
-        bullets: [
-            "Keep a consistent bedtime, even on weekends",
-            "Start winding down 30 min before lights out",
-            "Bath, book, and lullaby sequence works well",
-            "Dim the lights to signal sleep time",
-            "Avoid sugar and screens 1 hour before bed"
-        ]
-    )
-]
 
 private let emergencyContacts: [EmergencyContact] = [
     EmergencyContact(
@@ -139,98 +59,125 @@ private let emergencyContacts: [EmergencyContact] = [
     )
 ]
 
-private let helpfulWebsites: [HelpfulWebsite] = [
-    HelpfulWebsite(
-        name: "AAP HealthyChildren.org",
-        description: "Trusted child health information from pediatricians",
-        url: URL(string: "https://www.healthychildren.org")!,
-        icon: "heart.text.square"
-    ),
-    HelpfulWebsite(
-        name: "CDC Developmental Milestones",
-        description: "Track your child's development by age",
-        url: URL(string: "https://www.cdc.gov/ncbddd/actearly/milestones/")!,
-        icon: "chart.bar.fill"
-    ),
-    HelpfulWebsite(
-        name: "Common Sense Media",
-        description: "Age-appropriate media reviews and ratings",
-        url: URL(string: "https://www.commonsensemedia.org")!,
-        icon: "film"
-    ),
-    HelpfulWebsite(
-        name: "PBS Kids for Parents",
-        description: "Educational activities and parenting advice",
-        url: URL(string: "https://www.pbs.org/parents")!,
-        icon: "book.fill"
-    ),
-    HelpfulWebsite(
-        name: "NAEYC",
-        description: "National Association for the Education of Young Children",
-        url: URL(string: "https://www.naeyc.org/our-work/families")!,
-        icon: "graduationcap.fill"
-    )
-]
-
-private let ageGuides: [AgeGuide] = [
-    AgeGuide(
-        ageRange: "0-3 months",
-        label: "Newborn",
-        icon: "heart.fill",
-        tips: [
-            "Tummy time: start with 3-5 minutes, several times a day",
-            "Respond to cries promptly to build trust and security",
-            "Talk and sing to your baby to encourage language development",
-            "Support their head and neck during holding and feeding",
-            "Sleep on their back on a firm, flat surface"
+private let resourceCategories: [ResourceCategory] = [
+    ResourceCategory(
+        title: "Health & Development",
+        headerIcon: "heart.text.square",
+        links: [
+            ResourceLink(
+                name: "HealthyChildren.org (AAP)",
+                description: "Trusted child health information from pediatricians",
+                url: URL(string: "https://www.healthychildren.org")!,
+                icon: "heart.text.square"
+            ),
+            ResourceLink(
+                name: "CDC Developmental Milestones",
+                description: "Track your child's development by age",
+                url: URL(string: "https://www.cdc.gov/ncbddd/actearly/milestones/index.html")!,
+                icon: "chart.bar.fill"
+            ),
+            ResourceLink(
+                name: "WebMD Children's Health",
+                description: "Health topics, symptoms, and wellness for kids",
+                url: URL(string: "https://www.webmd.com/children/default.htm")!,
+                icon: "stethoscope"
+            )
         ]
     ),
-    AgeGuide(
-        ageRange: "3-12 months",
-        label: "Infant",
-        icon: "figure.and.child.holdinghands",
-        tips: [
-            "Introduce solid foods around 6 months (iron-rich foods first)",
-            "Read board books together daily, even briefly",
-            "Offer safe objects to explore different textures",
-            "Play peek-a-boo and simple games to build social skills",
-            "Childproof your home as mobility increases"
+    ResourceCategory(
+        title: "Activities & Learning",
+        headerIcon: "book.fill",
+        links: [
+            ResourceLink(
+                name: "PBS Kids",
+                description: "Educational games, videos, and activities for children",
+                url: URL(string: "https://pbskids.org")!,
+                icon: "play.rectangle.fill"
+            ),
+            ResourceLink(
+                name: "Common Sense Media",
+                description: "Age-appropriate media reviews and ratings",
+                url: URL(string: "https://www.commonsensemedia.org")!,
+                icon: "film"
+            ),
+            ResourceLink(
+                name: "Khan Academy Kids",
+                description: "Free educational app for ages 2-8",
+                url: URL(string: "https://learn.khanacademy.org/khan-academy-kids/")!,
+                icon: "graduationcap.fill"
+            ),
+            ResourceLink(
+                name: "National Geographic Kids",
+                description: "Science, animals, and exploration for curious kids",
+                url: URL(string: "https://kids.nationalgeographic.com")!,
+                icon: "globe.americas.fill"
+            )
         ]
     ),
-    AgeGuide(
-        ageRange: "1-3 years",
-        label: "Toddler",
-        icon: "figure.walk",
-        tips: [
-            "Offer simple choices to build independence (\"red or blue shirt?\")",
-            "Name emotions to help them learn self-regulation",
-            "Expect and handle tantrums with patience and consistency",
-            "Encourage outdoor play for at least 60 minutes daily",
-            "Limit juice; offer water and milk instead"
+    ResourceCategory(
+        title: "Local OC & LA Resources",
+        headerIcon: "mappin.and.ellipse",
+        links: [
+            ResourceLink(
+                name: "OC Parks",
+                description: "Orange County parks, trails, and outdoor activities",
+                url: URL(string: "https://www.ocparks.com")!,
+                icon: "leaf.fill"
+            ),
+            ResourceLink(
+                name: "LA County Parks & Recreation",
+                description: "Youth sports, camps, and community programs",
+                url: URL(string: "https://parks.lacounty.gov")!,
+                icon: "figure.run"
+            ),
+            ResourceLink(
+                name: "OC Public Libraries",
+                description: "Free story times, programs, and resources",
+                url: URL(string: "https://www.ocpl.org")!,
+                icon: "books.vertical.fill"
+            ),
+            ResourceLink(
+                name: "LA Public Library",
+                description: "Children's programs, homework help, and events",
+                url: URL(string: "https://www.lapl.org")!,
+                icon: "book.fill"
+            ),
+            ResourceLink(
+                name: "OC Family Resource Centers",
+                description: "Local support services for families and children",
+                url: URL(string: "https://www.ochealthinfo.com/about-hca/family-health/family-health-community-resources")!,
+                icon: "house.fill"
+            )
         ]
     ),
-    AgeGuide(
-        ageRange: "3-5 years",
-        label: "Preschool",
-        icon: "paintpalette.fill",
-        tips: [
-            "Encourage imaginative play and dress-up",
-            "Practice letters, numbers, and shapes through games",
-            "Teach basic manners: please, thank you, sharing",
-            "Set up playdates to develop social skills",
-            "Establish a predictable daily routine"
-        ]
-    ),
-    AgeGuide(
-        ageRange: "5-12 years",
-        label: "School Age",
-        icon: "backpack.fill",
-        tips: [
-            "Create a consistent homework routine and quiet workspace",
-            "Encourage at least one extracurricular activity",
-            "Have regular family meals and open conversations",
-            "Teach online safety and responsible device use",
-            "Praise effort and perseverance, not just results"
+    ResourceCategory(
+        title: "Parenting Support",
+        headerIcon: "figure.and.child.holdinghands",
+        links: [
+            ResourceLink(
+                name: "NAEYC for Families",
+                description: "National Association for the Education of Young Children",
+                url: URL(string: "https://www.naeyc.org/our-work/families")!,
+                icon: "person.3.fill"
+            ),
+            ResourceLink(
+                name: "Postpartum Support International",
+                description: "Help for perinatal mood and anxiety disorders",
+                url: URL(string: "https://www.postpartum.net")!,
+                icon: "heart.circle.fill"
+            ),
+            ResourceLink(
+                name: "La Leche League",
+                description: "Breastfeeding support and information",
+                url: URL(string: "https://www.llli.org")!,
+                icon: "hand.raised.fingers.spread.fill"
+            ),
+            ResourceLink(
+                name: "Zero to Three",
+                description: "Early childhood development resources for parents",
+                url: URL(string: "https://www.zerotothree.org")!,
+                icon: "figure.and.child.holdinghands"
+            )
         ]
     )
 ]
@@ -238,16 +185,20 @@ private let ageGuides: [AgeGuide] = [
 // MARK: - ResourcesView
 
 struct ResourcesView: View {
-    private let metro = MetroService.shared.selectedMetro
-
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 28) {
-                quickTipsSection
+                // Subtitle header
+                Text("Curated resources for OC & LA families")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 emergencySection
-                websitesSection
-                ageGuidesSection
-                localResourcesSection
+
+                ForEach(resourceCategories) { category in
+                    resourceSection(for: category)
+                }
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
@@ -255,24 +206,6 @@ struct ResourcesView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Resources")
-    }
-
-    // MARK: - Quick Tips
-
-    private var quickTipsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Quick Tips", icon: "lightbulb.fill")
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(quickTips) { tip in
-                        QuickTipCard(tip: tip)
-                    }
-                }
-                .padding(.horizontal, 2)
-                .padding(.vertical, 4)
-            }
-        }
     }
 
     // MARK: - Emergency Info
@@ -297,79 +230,18 @@ struct ResourcesView: View {
         }
     }
 
-    // MARK: - Helpful Websites
+    // MARK: - Resource Category Section
 
-    private var websitesSection: some View {
+    private func resourceSection(for category: ResourceCategory) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Helpful Websites", icon: "globe")
+            sectionHeader(title: category.title, icon: category.headerIcon)
 
             VStack(spacing: 10) {
-                ForEach(helpfulWebsites) { site in
-                    WebsiteCard(site: site)
+                ForEach(category.links) { link in
+                    ResourceLinkCard(link: link)
                 }
             }
         }
-    }
-
-    // MARK: - Age-Specific Guides
-
-    private var ageGuidesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Age-Specific Guides", icon: "person.3.fill")
-
-            VStack(spacing: 10) {
-                ForEach(ageGuides) { guide in
-                    AgeGuideCard(guide: guide)
-                }
-            }
-        }
-    }
-
-    // MARK: - Local Resources
-
-    private var localResourcesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "Local Resources", icon: "mappin.and.ellipse")
-
-            Text("Based on your metro: \(metro.name)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            VStack(spacing: 10) {
-                ForEach(localResourceItems) { item in
-                    LocalResourceCard(item: item, metroName: metro.name)
-                }
-            }
-        }
-    }
-
-    private var localResourceItems: [LocalResourceItem] {
-        [
-            LocalResourceItem(
-                title: "Public Libraries",
-                description: "Find your local library system for free programs and story times",
-                icon: "books.vertical.fill",
-                searchQuery: "\(metro.name) public library system kids programs"
-            ),
-            LocalResourceItem(
-                title: "Parks & Recreation",
-                description: "Youth sports, camps, and community classes near you",
-                icon: "leaf.fill",
-                searchQuery: "\(metro.name) parks and recreation youth programs"
-            ),
-            LocalResourceItem(
-                title: "Family Resource Centers",
-                description: "Local support services for families and children",
-                icon: "house.fill",
-                searchQuery: "\(metro.name) family resource center"
-            ),
-            LocalResourceItem(
-                title: "Pediatricians Near You",
-                description: "Find a board-certified pediatrician in your area",
-                icon: "stethoscope",
-                searchQuery: "\(metro.name) pediatrician near me"
-            )
-        ]
     }
 
     // MARK: - Section Header
@@ -383,62 +255,6 @@ struct ResourcesView: View {
                 .font(.title2)
                 .fontWeight(.bold)
         }
-    }
-}
-
-// MARK: - Quick Tip Card
-
-private struct QuickTipCard: View {
-    let tip: QuickTip
-    @State private var isExpanded = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
-                Image(systemName: tip.icon)
-                    .font(.title2)
-                    .foregroundStyle(tip.color)
-                Spacer()
-            }
-
-            Text(tip.title)
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(tip.bullets, id: \.self) { bullet in
-                        HStack(alignment: .top, spacing: 6) {
-                            Text("\u{2022}")
-                                .foregroundStyle(tip.color)
-                                .fontWeight(.bold)
-                            Text(bullet)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                    }
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                Text(isExpanded ? "Show Less" : "Read More")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(tip.color)
-            }
-        }
-        .padding(16)
-        .frame(width: 200, alignment: .topLeading)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.08), radius: 8, y: 3)
     }
 }
 
@@ -486,29 +302,29 @@ private struct EmergencyRow: View {
     }
 }
 
-// MARK: - Website Card
+// MARK: - Resource Link Card
 
-private struct WebsiteCard: View {
-    let site: HelpfulWebsite
+private struct ResourceLinkCard: View {
+    let link: ResourceLink
 
     var body: some View {
-        Link(destination: site.url) {
+        Link(destination: link.url) {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(Color.brandBlue.opacity(0.12))
                         .frame(width: 44, height: 44)
-                    Image(systemName: site.icon)
+                    Image(systemName: link.icon)
                         .font(.title3)
                         .foregroundStyle(Color.brandBlue)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(site.name)
+                    Text(link.name)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
-                    Text(site.description)
+                    Text(link.description)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
@@ -516,8 +332,9 @@ private struct WebsiteCard: View {
 
                 Spacer()
 
-                Image(systemName: "arrow.up.right.square")
-                    .font(.body)
+                Image(systemName: "arrow.up.right")
+                    .font(.caption)
+                    .fontWeight(.semibold)
                     .foregroundStyle(Color.brandBlue.opacity(0.6))
             }
             .padding(14)
@@ -525,133 +342,6 @@ private struct WebsiteCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
         }
-    }
-}
-
-// MARK: - Age Guide Card
-
-private struct AgeGuideCard: View {
-    let guide: AgeGuide
-    @State private var isExpanded = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack(spacing: 12) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.brandLavender.opacity(0.2))
-                            .frame(width: 44, height: 44)
-                        Image(systemName: guide.icon)
-                            .font(.title3)
-                            .foregroundStyle(Color.brandLavender)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(guide.label)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.primary)
-                        Text(guide.ageRange)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(14)
-            }
-
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(guide.tips, id: \.self) { tip in
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.caption)
-                                .foregroundStyle(Color.brandBlue)
-                                .padding(.top, 1)
-                            Text(tip)
-                                .font(.subheadline)
-                                .foregroundStyle(.primary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                    }
-                }
-                .padding(.horizontal, 14)
-                .padding(.bottom, 14)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
-    }
-}
-
-// MARK: - Local Resource Card
-
-private struct LocalResourceCard: View {
-    let item: LocalResourceItem
-    let metroName: String
-
-    private var searchURL: URL? {
-        let query = item.searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        return URL(string: "https://www.google.com/search?q=\(query)")
-    }
-
-    var body: some View {
-        Group {
-            if let url = searchURL {
-                Link(destination: url) {
-                    cardContent
-                }
-            } else {
-                cardContent
-            }
-        }
-    }
-
-    private var cardContent: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.eventGreen.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: item.icon)
-                    .font(.title3)
-                    .foregroundStyle(Color.eventGreen)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-                Text(item.description)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-
-            Spacer()
-
-            Image(systemName: "magnifyingglass")
-                .font(.body)
-                .foregroundStyle(Color.eventGreen.opacity(0.6))
-        }
-        .padding(14)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
     }
 }
 

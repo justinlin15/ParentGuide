@@ -6,6 +6,7 @@ import {
 } from "../../normalize.js";
 import { log } from "../../utils/logger.js";
 import { delay } from "../../utils/geocoder.js";
+import { getRandomHeaders, randomDelay } from "../../utils/user-agents.js";
 
 // atlantaparent.com - WordPress + The Events Calendar (Tribe Events)
 // List of event links on /topevents/, detail pages have JSON-LD @type: "Event"
@@ -21,11 +22,7 @@ export async function scrapeAtlantaParent(
   try {
     // Fetch the top events listing page
     const res = await fetch("https://www.atlantaparent.com/topevents/", {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        Accept: "text/html",
-      },
+      headers: getRandomHeaders(),
     });
 
     if (!res.ok) {
@@ -61,7 +58,7 @@ export async function scrapeAtlantaParent(
         const event = await scrapeDetailPage(eventUrl, metro);
         if (event) events.push(event);
         count++;
-        await delay(2000);
+        await randomDelay(1500, 3000);
       } catch (err) {
         log.error("atlanta-parent", `Error fetching ${eventUrl}`, err);
       }
@@ -98,11 +95,7 @@ async function scrapeEventsCalendar(
 
     try {
       const res = await fetch(url, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-          Accept: "text/html",
-        },
+        headers: getRandomHeaders(),
       });
 
       if (!res.ok) continue;
@@ -122,13 +115,13 @@ async function scrapeEventsCalendar(
         try {
           const event = await scrapeDetailPage(eventUrl, metro);
           if (event) events.push(event);
-          await delay(2000);
+          await randomDelay(1500, 3000);
         } catch {
           // skip
         }
       }
 
-      await delay(2000);
+      await randomDelay(1500, 3000);
     } catch (err) {
       log.error("atlanta-parent", `Error scraping calendar week ${weekOffset}`, err);
     }
@@ -142,11 +135,7 @@ async function scrapeDetailPage(
   metro: MetroArea
 ): Promise<PipelineEvent | null> {
   const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-      Accept: "text/html",
-    },
+    headers: getRandomHeaders(),
   });
 
   if (!res.ok) return null;

@@ -19,10 +19,10 @@ struct SubscriptionPlan: Identifiable {
         id: "monthly",
         productID: SubscriptionService.monthlyID,
         name: "Monthly Membership",
-        price: "$4",
+        price: "$5",
         period: "Every month",
         trialDays: 7,
-        features: ["1,500+ monthly events", "Subscriber meet-ups", "Local partner discounts"],
+        features: ["View all upcoming events", "Calendar sync", "Ad-free experience"],
         isBestValue: false
     )
 
@@ -30,10 +30,10 @@ struct SubscriptionPlan: Identifiable {
         id: "annual",
         productID: SubscriptionService.annualID,
         name: "Annual Membership",
-        price: "$45",
-        period: "Every year",
+        price: "$48",
+        period: "Every year — save 20%",
         trialDays: 7,
-        features: ["1,500+ monthly events", "Subscriber meet-ups", "Local partner discounts"],
+        features: ["View all upcoming events", "Calendar sync", "Ad-free experience"],
         isBestValue: true
     )
 

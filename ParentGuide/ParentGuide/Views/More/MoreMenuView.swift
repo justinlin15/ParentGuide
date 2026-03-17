@@ -7,10 +7,25 @@ import SwiftUI
 
 struct MoreMenuView: View {
     @State private var authService = AuthService.shared
+    @State private var adminService = AdminService.shared
 
     var body: some View {
         NavigationStack {
             List {
+                // Admin section (only visible to admins)
+                if adminService.isAdmin {
+                    Section("Admin") {
+                        NavigationLink(destination: AdminDashboardView()) {
+                            Label("Event Dashboard", systemImage: "square.grid.2x2")
+                                .foregroundStyle(Color.brandBlue)
+                        }
+                        NavigationLink(destination: AdminReviewQueueView()) {
+                            Label("Review Queue", systemImage: "tray.full")
+                                .foregroundStyle(Color.brandBlue)
+                        }
+                    }
+                }
+
                 Section {
                     NavigationLink(destination: ProfileView()) {
                         Label("Profile & Settings", systemImage: "person.circle")
@@ -20,6 +35,11 @@ struct MoreMenuView: View {
                     }
                     NavigationLink(destination: ResourcesView()) {
                         Label("Resources", systemImage: "doc.fill")
+                    }
+                    if authService.isSignedIn {
+                        NavigationLink(destination: SuggestEventView()) {
+                            Label("Suggest an Event", systemImage: "plus.bubble")
+                        }
                     }
                 }
 
@@ -31,6 +51,20 @@ struct MoreMenuView: View {
                         }
                     }
                 }
+
+                #if DEBUG
+                Section("🛠 Debug (Remove Before Release)") {
+                    Toggle(isOn: Binding(
+                        get: { adminService.debugAdminOverride ?? adminService.isAdmin },
+                        set: { newValue in
+                            adminService.debugAdminOverride = newValue
+                        }
+                    )) {
+                        Label("Admin Role", systemImage: "shield.lefthalf.filled")
+                    }
+                    .tint(.orange)
+                }
+                #endif
 
                 Section {
                     HStack {

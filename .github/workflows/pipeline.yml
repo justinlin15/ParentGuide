@@ -1,9 +1,9 @@
 name: Event Pipeline
 
 on:
-  # Run every 12 hours
+  # Run twice daily at non-round times
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "17 5,18 * * *"
   # Allow manual trigger from GitHub Actions tab
   workflow_dispatch:
     inputs:
@@ -21,7 +21,7 @@ on:
 jobs:
   fetch-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 90
     permissions:
       contents: write
       issues: write
@@ -60,6 +60,12 @@ jobs:
           OC_PARENT_GUIDE_EMAIL: ${{ secrets.OC_PARENT_GUIDE_EMAIL }}
           OC_PARENT_GUIDE_PASSWORD: ${{ secrets.OC_PARENT_GUIDE_PASSWORD }}
         run: |
+          # Random jitter only for scheduled runs (not manual triggers)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            JITTER=$((RANDOM % 300))
+            echo "Scheduled run — sleeping ${JITTER}s jitter"
+            sleep $JITTER
+          fi
           ARGS=""
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             ARGS="$ARGS --dry-run"

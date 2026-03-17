@@ -24,12 +24,16 @@ async function main() {
   log.divider();
   log.info("pipeline", "ParentGuide Event Pipeline starting...");
   log.info("pipeline", `Mode: ${config.dryRun ? "DRY RUN" : "LIVE"}`);
-  log.info("pipeline", `Metros: ${METRO_AREAS.map((m) => m.name).join(", ")}`);
+
+  // Only process enabled metros (Phase 1: OC + LA)
+  const activeMetros = METRO_AREAS.filter((m) => m.enabled);
+  log.info("pipeline", `Active metros: ${activeMetros.map((m) => m.name).join(", ")}`);
+  log.info("pipeline", `Skipped metros: ${METRO_AREAS.filter((m) => !m.enabled).map((m) => m.name).join(", ") || "none"}`);
   log.divider();
 
   const allEvents: PipelineEvent[] = [];
 
-  for (const metro of METRO_AREAS) {
+  for (const metro of activeMetros) {
     log.divider();
     log.info("pipeline", `Processing ${metro.name}...`);
 

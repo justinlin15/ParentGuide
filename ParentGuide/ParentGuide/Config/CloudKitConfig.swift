@@ -18,5 +18,6 @@ nonisolated enum CloudKitConfig {
         static let resource = "Resource"
         static let aboutSection = "AboutSection"
         static let userProfile = "UserProfile"
+        static let eventSuggestion = "EventSuggestion"
     }
 }

@@ -22,7 +22,9 @@ struct EventDetailView: View {
     @State private var showCalendarSuccess = false
     @State private var showCalendarDenied = false
     @State private var calendarErrorMessage: String?
+    @State private var subscriptionService = SubscriptionService.shared
     @State private var isAddingToCalendar = false
+    @State private var showCalendarPaywall = false
     @State private var geocodedCoordinate: CLLocationCoordinate2D?
     @State private var isGeocoding = false
 
@@ -290,14 +292,24 @@ struct EventDetailView: View {
                     Divider()
 
                     VStack(spacing: 12) {
-                        // Add to Calendar button
+                        // Add to Calendar button (premium feature)
                         Button {
-                            addToCalendar()
+                            if subscriptionService.isSubscribed {
+                                addToCalendar()
+                            } else {
+                                showCalendarPaywall = true
+                            }
                         } label: {
-                            Label(
-                                isAddingToCalendar ? "Adding..." : "Add to Calendar",
-                                systemImage: "calendar.badge.plus"
-                            )
+                            HStack(spacing: 8) {
+                                Label(
+                                    isAddingToCalendar ? "Adding..." : "Add to Calendar",
+                                    systemImage: "calendar.badge.plus"
+                                )
+                                if !subscriptionService.isSubscribed {
+                                    Image(systemName: "lock.fill")
+                                        .font(.caption)
+                                }
+                            }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(Color.brandBlue)
@@ -382,6 +394,9 @@ struct EventDetailView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(calendarErrorMessage ?? "An error occurred.")
+        }
+        .sheet(isPresented: $showCalendarPaywall) {
+            PaywallView(lockedContentName: "calendar sync")
         }
     }
 

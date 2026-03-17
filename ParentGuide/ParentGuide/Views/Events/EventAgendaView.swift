@@ -85,7 +85,7 @@ struct EventAgendaView: View {
             } else {
                 List {
                     ForEach(eventsForSelectedDate) { event in
-                        NavigationLink(destination: EventDetailView(event: event)) {
+                        SubscriptionGatedLink(event: event) {
                             HStack(spacing: 12) {
                                 // Time column
                                 VStack(spacing: 2) {

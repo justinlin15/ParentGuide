@@ -17,7 +17,10 @@ struct HomeView: View {
     @State private var popularEvents: [Event] = []
     @State private var favoriteEvents: [Event] = []
     @State private var todayEvents: [Event] = []
+    @State private var recommendedEvents: [Event] = []
     @State private var isLoading = false
+
+    private var recommendationService: RecommendationService { RecommendationService.shared }
 
     private var isSignedIn: Bool {
         authService.currentUser != nil
@@ -100,7 +103,7 @@ struct HomeView: View {
             if !todayEvents.isEmpty {
                 feedSection(title: "Happening Today", icon: "sparkles") {
                     ForEach(todayEvents.prefix(5)) { event in
-                        NavigationLink(destination: EventDetailView(event: event)) {
+                        SubscriptionGatedLink(event: event) {
                             CompactEventCard(event: event)
                         }
                         .buttonStyle(.plain)
@@ -108,17 +111,63 @@ struct HomeView: View {
                 }
             }
 
+            // Recommended For You
+            if !recommendedEvents.isEmpty {
+                feedSection(title: "Recommended For You", icon: "sparkle.magnifyingglass") {
+                    ForEach(recommendedEvents.prefix(5)) { event in
+                        SubscriptionGatedLink(event: event) {
+                            CompactEventCard(event: event)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            } else if recommendationService.userHasInterests() == false && isSignedIn {
+                // Prompt to set interests
+                VStack(spacing: 8) {
+                    Image(systemName: "sparkle.magnifyingglass")
+                        .font(.title2)
+                        .foregroundStyle(Color.brandBlue)
+                    Text("Get Personalized Picks")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text("Set your interests in Profile to see events curated just for you.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button {
+                        showProfile = true
+                    } label: {
+                        Text("Set Interests")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.brandBlue)
+                            .clipShape(Capsule())
+                    }
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity)
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.horizontal, 16)
+            }
+
             // Favorites section
             if !favoriteEvents.isEmpty {
                 feedSection(title: "Your Favorites", icon: "heart.fill") {
                     ForEach(favoriteEvents.prefix(5)) { event in
-                        NavigationLink(destination: EventDetailView(event: event)) {
+                        SubscriptionGatedLink(event: event) {
                             CompactEventCard(event: event)
                         }
                         .buttonStyle(.plain)
                     }
                 }
             }
+
+            // Banner ad for non-subscribers
+            BannerAdView(adUnitID: AdService.homeBannerID)
 
             // Popular events carousel
             if !popularEvents.isEmpty {
@@ -205,6 +254,14 @@ struct HomeView: View {
             if !favoritesService.favoriteIDs.isEmpty {
                 favoriteEvents = try await EventService.shared.fetchFavoriteEvents(ids: favoritesService.favoriteIDs)
             }
+
+            // Build recommendations from all loaded events
+            let allMetroEvents = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
+            recommendedEvents = recommendationService.recommendedEvents(
+                from: allMetroEvents,
+                favoriteIDs: favoritesService.favoriteIDs,
+                limit: 10
+            )
         } catch {
             NSLog("[HomeView] Feed load error: %@", error.localizedDescription)
         }

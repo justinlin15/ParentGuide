@@ -28,6 +28,9 @@ struct FavoritesView: View {
                     VStack(spacing: 0) {
                         eventsList
 
+                        // Banner ad for non-subscribers
+                        BannerAdView(adUnitID: AdService.favoritesBannerID)
+
                         // Add Favorites to Calendar button
                         addToCalendarButton
                     }
@@ -83,7 +86,7 @@ struct FavoritesView: View {
     private var eventsList: some View {
         List {
             ForEach(favoriteEvents) { event in
-                NavigationLink(destination: EventDetailView(event: event)) {
+                SubscriptionGatedLink(event: event) {
                     EventCardView(event: event)
                 }
                 .listRowInsets(EdgeInsets())

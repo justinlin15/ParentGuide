@@ -9,6 +9,8 @@ export interface MetroArea {
   radiusMiles: number;
   // Macaroni KID subdomain slugs for this metro
   macaroniKidSlugs: string[];
+  // Whether this metro is active for the current launch phase
+  enabled: boolean;
 }
 
 export const METRO_AREAS: MetroArea[] = [
@@ -24,6 +26,7 @@ export const METRO_AREAS: MetroArea[] = [
       "pasadena",
       "santamonica",
     ],
+    enabled: true,
   },
   {
     id: "orange-county",
@@ -35,6 +38,7 @@ export const METRO_AREAS: MetroArea[] = [
       "orangecounty",
       "irvine",
     ],
+    enabled: true,
   },
   {
     id: "new-york",
@@ -50,6 +54,7 @@ export const METRO_AREAS: MetroArea[] = [
       "longisland",
       "newjersey",
     ],
+    enabled: false,
   },
   {
     id: "dallas",
@@ -58,6 +63,7 @@ export const METRO_AREAS: MetroArea[] = [
     longitude: -96.797,
     radiusMiles: 40,
     macaroniKidSlugs: ["dallas", "fortworth", "plano", "frisco", "arlington"],
+    enabled: false,
   },
   {
     id: "chicago",
@@ -71,6 +77,7 @@ export const METRO_AREAS: MetroArea[] = [
       "naperville",
       "schaumburg",
     ],
+    enabled: false,
   },
   {
     id: "atlanta",
@@ -85,6 +92,7 @@ export const METRO_AREAS: MetroArea[] = [
       "decatur",
       "roswell",
     ],
+    enabled: false,
   },
 ];
 

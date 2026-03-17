@@ -33,8 +33,8 @@ class MetroService {
     private init() {
         // Restore saved metro from UserDefaults, or fall back to first metro (LA/OC)
         let savedId = UserDefaults.standard.string(forKey: Self.selectedMetroKey)
-        selectedMetro = AppConstants.metroAreas.first { $0.id == savedId }
-            ?? AppConstants.metroAreas[0]
+        selectedMetro = AppConstants.launchMetros.first { $0.id == savedId }
+            ?? AppConstants.launchMetros[0]
         hasCompletedOnboarding = UserDefaults.standard.bool(forKey: Self.onboardingKey)
     }
 
@@ -66,7 +66,7 @@ class MetroService {
                     continuation.resume(returning: nearest)
                 } else {
                     print("[MetroService] Auto-detect failed — falling back to default")
-                    continuation.resume(returning: AppConstants.metroAreas[0])
+                    continuation.resume(returning: AppConstants.launchMetros[0])
                 }
             }
         }
@@ -75,7 +75,7 @@ class MetroService {
     /// Restore the metro from a signed-in user's CloudKit profile (if they have one saved).
     func restoreFromProfile(_ profile: UserProfile) {
         if let savedMetroId = profile.favoriteCities.first,
-           let metro = AppConstants.metroAreas.first(where: { $0.id == savedMetroId }) {
+           let metro = AppConstants.launchMetros.first(where: { $0.id == savedMetroId }) {
             selectedMetro = metro
             print("[MetroService] Restored metro from profile: \(metro.name)")
         }

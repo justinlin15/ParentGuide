@@ -37,7 +37,7 @@ struct PaywallView: View {
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(Color.brandBlue)
 
-                    Text("Subscribe to access \(lockedContentName), exclusive meet-ups, local discounts and giveaways!")
+                    Text("Subscribe to unlock \(lockedContentName), sync events to your calendar, and enjoy an ad-free experience!")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

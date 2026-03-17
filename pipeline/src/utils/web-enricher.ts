@@ -1,5 +1,6 @@
 import { log } from "./logger.js";
 import { geocodeAddress, delay } from "./geocoder.js";
+import { getRandomUserAgent } from "./user-agents.js";
 
 // ─── Address extraction from text ──────────────────────────────────────────
 
@@ -57,7 +58,7 @@ export async function searchForVenueLocation(
   const extractedAddress = extractAddressFromText(description);
   if (extractedAddress) {
     const result = await geocodeAddress(extractedAddress);
-    if (result) {
+    if (result && result !== "RATE_LIMITED") {
       log.info(
         "web-enricher",
         `  ✓ Found via description address: ${extractedAddress}`
@@ -71,7 +72,7 @@ export async function searchForVenueLocation(
   if (venueName && venueName.length > 2) {
     const query = `${venueName}, ${metroCity}`;
     const result = await geocodeAddress(query);
-    if (result) {
+    if (result && result !== "RATE_LIMITED") {
       log.info("web-enricher", `  ✓ Found via venue+city: ${query}`);
       return result;
     }
@@ -87,7 +88,7 @@ export async function searchForVenueLocation(
     const venueFromDesc = atVenueMatch[1].trim();
     const query = `${venueFromDesc}, ${metroCity}`;
     const result = await geocodeAddress(query);
-    if (result) {
+    if (result && result !== "RATE_LIMITED") {
       log.info(
         "web-enricher",
         `  ✓ Found via description venue: ${venueFromDesc}`
@@ -102,11 +103,6 @@ export async function searchForVenueLocation(
 
 // ─── Image search from venue websites ──────────────────────────────────────
 
-const IMAGE_HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  Accept: "text/html,application/xhtml+xml",
-};
 
 /**
  * Try to find an image for an event by fetching its webpage and extracting
@@ -142,7 +138,10 @@ async function fetchOgImage(url: string): Promise<string | null> {
     const timeout = setTimeout(() => controller.abort(), 8000);
 
     const res = await fetch(url, {
-      headers: IMAGE_HEADERS,
+      headers: {
+        "User-Agent": getRandomUserAgent(),
+        Accept: "text/html,application/xhtml+xml",
+      },
       signal: controller.signal,
       redirect: "follow",
     });

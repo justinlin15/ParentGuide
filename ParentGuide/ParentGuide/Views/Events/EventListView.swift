@@ -28,7 +28,7 @@ struct EventListView: View {
                 ForEach(groupedEvents, id: \.0) { date, dayEvents in
                     Section {
                         ForEach(dayEvents) { event in
-                            NavigationLink(destination: EventDetailView(event: event)) {
+                            SubscriptionGatedLink(event: event) {
                                 EventCardView(event: event)
                             }
                             .listRowInsets(EdgeInsets())
