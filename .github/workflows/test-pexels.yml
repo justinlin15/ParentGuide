@@ -1,0 +1,28 @@
+name: Test Pexels API
+on: workflow_dispatch
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Test Pexels API Key
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: |
+          echo "Key starts with: ${PEXELS_API_KEY:0:8}..."
+          echo "Key length: ${#PEXELS_API_KEY}"
+          echo ""
+          echo "--- Testing Pexels search endpoint ---"
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: ${PEXELS_API_KEY}" \
+            "https://api.pexels.com/v1/search?query=family+kids+park&per_page=1")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY" | head -5
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Pexels API key is valid!"
+          else
+            echo "❌ Pexels API key failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
