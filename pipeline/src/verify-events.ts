@@ -8,22 +8,29 @@ import { log } from "./utils/logger.js";
  * "draft"     — needs admin review before publishing (honeypot / no verified URL)
  *
  * Strategy:
- * - API sources (Ticketmaster, SeatGeek, Yelp, Eventbrite, Kidsguide) are
- *   authorized data partners → always published.
- * - Scrapers: if we found a real venue/event website (websiteURL or externalURL
- *   that isn't an aggregator or Google search) → published.
- * - Scrapers with only a Google search fallback URL or no URL at all → draft.
- *   These events could be honeypot watermarks injected by the source site to
- *   detect scrapers. Admin review prevents fake events from reaching users.
+ * - Trusted sources (API partners + OC Parent Guide with credentialed login)
+ *   are always published — no honeypot risk.
+ * - Unauthenticated scrapers (MommyPoppins, MacaroniKid, etc.): if we found a
+ *   real venue/event website (websiteURL or externalURL that isn't the aggregator
+ *   site or a Google search) → published.
+ * - Unauthenticated scrapers with only a Google search fallback URL or no URL
+ *   → draft for admin review. These could be honeypot watermarks injected by
+ *   the source site to detect scrapers.
  */
 
-// Sources that are verified API partners — no honeypot risk
-const TRUSTED_API_SOURCES = new Set([
+// Sources that are fully trusted — no honeypot risk.
+// Includes authorized API partners AND scrapers with authenticated/credentialed access.
+const TRUSTED_SOURCES = new Set([
+  // Authorized API partners
   "ticketmaster",
   "seatgeek",
   "yelp",
   "eventbrite",
   "kidsguide",
+  // Credentialed member scraper — we log in with a paid account,
+  // so OC Parent Guide explicitly knows we're accessing their calendar.
+  // No honeypot risk; they are the primary OC source.
+  "oc-parent-guide",
 ]);
 
 // Aggregator domains — URLs from these sites don't count as "verified"
@@ -78,8 +85,8 @@ export function verifyEvents(events: PipelineEvent[]): PipelineEvent[] {
   let draftCount = 0;
 
   const result = events.map((event) => {
-    // API sources — always trusted
-    if (TRUSTED_API_SOURCES.has(event.source)) {
+    // Trusted sources (API partners + credentialed scrapers) — always published
+    if (TRUSTED_SOURCES.has(event.source)) {
       publishedCount++;
       return { ...event, status: "published" as const };
     }
