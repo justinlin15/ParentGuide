@@ -17,6 +17,11 @@ on:
         required: false
         default: "false"
         type: boolean
+      reprocess:
+        description: "Reprocess existing events (skip scraping, re-run enrichment+geocode+images+upload)"
+        required: false
+        default: "false"
+        type: boolean
 
 jobs:
   fetch-events:
@@ -42,6 +47,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright (for scrapers)
+        if: ${{ inputs.reprocess != 'true' }}
         working-directory: pipeline
         run: npx playwright install --with-deps chromium
 
@@ -85,6 +91,9 @@ jobs:
           fi
           if [ "${{ inputs.scrapers_only }}" = "true" ]; then
             ARGS="$ARGS --scrapers-only"
+          fi
+          if [ "${{ inputs.reprocess }}" = "true" ]; then
+            ARGS="$ARGS --reprocess"
           fi
           npx tsx src/index.ts $ARGS
 

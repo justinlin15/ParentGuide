@@ -23,13 +23,120 @@ import { saveAiCache } from "./utils/ai-cache.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
+import { readFileSync } from "fs";
+import { resolve } from "path";
+
+// ─── Reprocess helpers ────────────────────────────────────────────────────────
+
+/** Sources whose coordinates come from their own API — accurate, don't re-geocode */
+const TRUSTED_COORD_SOURCES = new Set(["ticketmaster", "seatgeek", "yelp", "eventbrite", "kidsguide"]);
+
+/** Stock-photo CDN hostnames — these should be cleared so we get real venue photos */
+function isStockOrAggregatorImage(url: string, source: string): boolean {
+  try {
+    const host = new URL(url).hostname;
+    if (host.includes("unsplash.com") || host.includes("images.pexels.com")) return true;
+    const aggregatorHosts = ["mommypoppins.com", "macaronikid.com", "orangecountyparentguide.com", "squarespace.com", "sqsp.net"];
+    if (aggregatorHosts.some((h) => host.includes(h))) return true;
+    // Aggregator-sourced events keep only non-CDN images
+    if (["mommypoppins", "macaronikid", "oc-parent-guide"].includes(source)) {
+      if (host.includes("squarespace") || host.includes("sqsp")) return true;
+    }
+    return false;
+  } catch { return false; }
+}
+
+/**
+ * Load the committed docs/api/events.json and convert each entry to PipelineEvent.
+ * Clears stale geocoding (scraper events only) and stock/aggregator images so the
+ * improved geocode + image steps re-run with fresh logic.
+ */
+function loadEventsForReprocess(): PipelineEvent[] {
+  const jsonPath = resolve(process.cwd(), "../docs/api/events.json");
+  const raw = JSON.parse(readFileSync(jsonPath, "utf8")) as Array<Record<string, unknown>>;
+
+  log.info("pipeline", `Reprocess: loaded ${raw.length} events from docs/api/events.json`);
+
+  return raw.map((e): PipelineEvent => {
+    const source = String(e.source ?? "unknown");
+    const imageURL = e.imageURL ? String(e.imageURL) : undefined;
+
+    // Keep API-source coordinates; clear scraper coords so improved city-validated
+    // geocoding runs fresh (fixes Tustin event → Irvine address mismatches)
+    const keepCoords = TRUSTED_COORD_SOURCES.has(source);
+
+    // Clear stock / aggregator images so Google Places Photos + improved
+    // Unsplash queries run fresh. Keep real venue images from API sources.
+    const keepImage = imageURL && !isStockOrAggregatorImage(imageURL, source) ? imageURL : undefined;
+
+    return {
+      sourceId: String(e.id ?? e.sourceId ?? ""),
+      title: String(e.title ?? ""),
+      description: String(e.description ?? ""),
+      startDate: String(e.startDate ?? ""),
+      endDate: e.endDate ? String(e.endDate) : undefined,
+      locationName: e.location ? String(e.location) : (e.locationName ? String(e.locationName) : undefined),
+      city: String(e.city ?? ""),
+      metro: String(e.metro ?? ""),
+      category: String(e.category ?? "Other"),
+      imageURL: keepImage,
+      externalURL: e.externalURL ? String(e.externalURL) : undefined,
+      websiteURL: e.websiteURL ? String(e.websiteURL) : undefined,
+      latitude: keepCoords && e.latitude ? Number(e.latitude) : undefined,
+      longitude: keepCoords && e.longitude ? Number(e.longitude) : undefined,
+      address: e.address ? String(e.address) : undefined,
+      source,
+      tags: Array.isArray(e.tags) ? e.tags.map(String) : [],
+      price: e.price ? String(e.price) : undefined,
+      ageRange: e.ageRange ? String(e.ageRange) : undefined,
+      status: e.status ? String(e.status) : undefined,
+    };
+  });
+}
 
 async function main() {
   const startTime = Date.now();
 
   log.divider();
   log.info("pipeline", "ParentGuide Event Pipeline starting...");
-  log.info("pipeline", `Mode: ${config.dryRun ? "DRY RUN" : "LIVE"}`);
+  const modeLabel = config.reprocess ? "REPROCESS (skip scraping)" : config.dryRun ? "DRY RUN" : "LIVE";
+  log.info("pipeline", `Mode: ${modeLabel}`);
+
+  // ── REPROCESS MODE: skip all scraping, load existing events ─────────────────
+  // Use --reprocess to re-run enrichment/geocoding/images/upload on the current
+  // docs/api/events.json without hitting any source sites.
+  if (config.reprocess) {
+    const events = loadEventsForReprocess();
+
+    log.divider();
+    log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
+    const aiEnriched = await aiEnrichEvents(events);
+
+    log.divider();
+    log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
+    const verified = await verifyEvents(aiEnriched);
+
+    const todayMidnightUTC = new Date();
+    todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+    const todayStr = todayMidnightUTC.toISOString();
+    const upcoming = verified.filter((e) => e.startDate >= todayStr);
+    log.info("pipeline", `Upcoming events after stale filter: ${upcoming.length}`);
+
+    log.divider();
+    log.info("pipeline", "Geocoding events with missing coordinates...");
+    const geocoded = await geocodeEvents(upcoming);
+
+    const withImages = await fillMissingImages(geocoded);
+
+    log.divider();
+    await uploadToCloudKit(withImages);
+
+    saveAiCache();
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    log.divider();
+    log.success("pipeline", `Reprocess done! ${withImages.length} events in ${elapsed}s`);
+    return;
+  }
 
   // Only process enabled metros (Phase 1: OC + LA)
   const activeMetros = METRO_AREAS.filter((m) => m.enabled);

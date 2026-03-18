@@ -139,4 +139,8 @@ export const config = {
   // Pipeline settings
   dryRun: process.argv.includes("--dry-run"),
   scrapersOnly: process.argv.includes("--scrapers-only"),
+  // Reprocess mode: skip scraping, load existing events from docs/api/events.json,
+  // clear stale geocoding/images, re-run enrichment + geocode + images + upload.
+  // Use when you want to apply pipeline improvements without re-hitting source sites.
+  reprocess: process.argv.includes("--reprocess"),
 };
