@@ -68,6 +68,37 @@ const EXTRACTABLE_CITIES = [
 ];
 
 /**
+ * Extract the specific city from a geocoded address string.
+ * Handles both Google Places format ("1234 Main St, Anaheim, CA 92801, USA")
+ * and Nominatim format ("1234 Main St, Anaheim, Orange County, California, 92801, USA").
+ * Returns null if the address is ambiguous or too short to parse reliably.
+ */
+function extractCityFromAddress(address: string): string | null {
+  const parts = address.split(", ").map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 3) return null;
+
+  // Walk through parts looking for the first one that looks like a city:
+  // - Not a street number / street name (index 0)
+  // - Not a state abbreviation + ZIP ("CA 92677")
+  // - Not a full state name ("California")
+  // - Not a country ("USA", "United States")
+  // - Not a ZIP code alone ("92677")
+  const stateNames = new Set(["california", "new york", "texas", "illinois", "georgia", "florida"]);
+  for (let i = 1; i < parts.length; i++) {
+    const p = parts[i];
+    if (/^\d{5}(-\d{4})?$/.test(p)) continue;            // bare ZIP
+    if (/^[A-Z]{2}\s+\d{5}/.test(p)) continue;           // "CA 92677"
+    if (/^[A-Z]{2}$/.test(p)) continue;                   // state abbreviation "CA"
+    if (stateNames.has(p.toLowerCase())) continue;        // full state name
+    if (p === "USA" || p === "United States") continue;
+    if (/^\d/.test(p)) continue;                           // starts with a number (street)
+    // Looks like a city name
+    return p;
+  }
+  return null;
+}
+
+/**
  * Try to extract a real city name from an event title.
  * E.g. "Corona Del Mar Songs and Stories" → "Corona del Mar"
  * Looks for known city names at the start of the title or after common prepositions.
@@ -522,6 +553,17 @@ export async function geocodeEvents(
         // Only fill address if event didn't have one and we found one
         if (!event.address && result.address) {
           event.address = result.address;
+        }
+        // Promote generic city ("Orange County", "Los Angeles") to the real
+        // city extracted from the geocoded address ("Laguna Niguel", "Stanton").
+        // This way the JSON feed carries the true city and the app doesn't need
+        // to parse it at display time.
+        if (result.address && isGenericCity(event.city || "")) {
+          const realCity = extractCityFromAddress(result.address);
+          if (realCity) {
+            log.info("geocode", `  City promoted: "${event.city}" → "${realCity}" for "${event.title}"`);
+            event.city = realCity;
+          }
         }
         // Use Google Places venue photo only when:
         //  1. Event has no image yet, AND
