@@ -133,7 +133,10 @@ actor EventService {
 
         // 1. Try remote JSON feed first (most up-to-date, updated every 12h by pipeline)
         do {
-            let (data, response) = try await URLSession.shared.data(from: Self.eventsJSONURL)
+            // Always bypass URLSession disk cache so we never serve a stale 404
+            var request = URLRequest(url: Self.eventsJSONURL, cachePolicy: .reloadIgnoringLocalCacheData)
+            request.timeoutInterval = 15
+            let (data, response) = try await URLSession.shared.data(for: request)
             if let httpResponse = response as? HTTPURLResponse,
                httpResponse.statusCode == 200 {
                 let pipelineEvents = try decoder.decode([PipelineEvent].self, from: data)
