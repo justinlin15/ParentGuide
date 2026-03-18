@@ -62,6 +62,7 @@ export async function fetchYelpEvents(
         sort_on: "time_start",
         sort_by: "asc",
         start_date: Math.floor(Date.now() / 1000).toString(),
+        categories: "kids_activities,parentschildren",
       });
 
       const url = `${config.yelp.baseUrl}/events?${params}`;
