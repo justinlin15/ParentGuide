@@ -36,11 +36,11 @@ interface SeatGeekResponse {
 }
 
 // SeatGeek taxonomies that are family-friendly
+// NOTE: "comedy" removed — comedy clubs (Irvine Improv, Brea Improv, etc.) are 21+ venues
 const FAMILY_TAXONOMIES = [
   "family",
   "theater",
   "circus",
-  "comedy",
   "dance_performance_tour",
   "festival",
   "music_festival",
@@ -127,7 +127,7 @@ function normalizeSeatGeekEvent(
     source: "seatgeek",
     title: raw.title,
     description: cleanDescription(raw.description || ""),
-    startDate: raw.datetime_utc,
+    startDate: raw.datetime_local,
     isAllDay: false,
     category: categorizeEvent(raw.title, raw.description || "", taxonomyNames),
     city: raw.venue.city,

@@ -106,7 +106,13 @@ async function main() {
   // Use --reprocess to re-run enrichment/geocoding/images/upload on the current
   // docs/api/events.json without hitting any source sites.
   if (config.reprocess) {
-    const events = loadEventsForReprocess();
+    const rawReprocess = loadEventsForReprocess();
+
+    // Strip adult/21+ events from the existing dataset
+    const ADULT_TITLE_RE = [/\b21\+/i, /\b18\+/i, /\b21\s*and\s*(over|up)\b/i, /\b18\s*and\s*(over|up)\b/i, /\badults?\s*only\b/i];
+    const events = rawReprocess.filter((e) => !ADULT_TITLE_RE.some((p) => p.test(e.title)));
+    const removedAdult = rawReprocess.length - events.length;
+    if (removedAdult > 0) log.info("pipeline", `Removed ${removedAdult} adult/21+ events during reprocess`);
 
     log.divider();
     log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
@@ -274,8 +280,42 @@ async function main() {
     log.info("pipeline", `Reassigned ${ocReassigned} events from los-angeles → orange-county`);
   }
 
+  // ── Adult Content Filter ─────────────────────────────────────────────────────
+  // Reject any event that is explicitly 21+, 18+, or adults-only.
+  // These slip through from SeatGeek/Ticketmaster and have no place in a
+  // family events app.
+  const ADULT_TITLE_PATTERNS = [
+    /\b21\+/i,
+    /\b18\+/i,
+    /\b21\s*and\s*(over|up)\b/i,
+    /\b18\s*and\s*(over|up)\b/i,
+    /\b21\s*&\s*(over|up)\b/i,
+    /\badults?\s*only\b/i,
+    /\bmature\s*audiences?\b/i,
+  ];
+  const ADULT_DESC_PATTERNS = [
+    /\b21\+\s*(event|show|only|venue|required|admission)/i,
+    /\b18\+\s*(event|show|only|venue|required|admission)/i,
+    /must\s+be\s+21/i,
+    /must\s+be\s+18/i,
+    /\bno\s+(one\s+)?under\s+(21|18)\b/i,
+  ];
+
+  const beforeAdultFilter = allEvents.length;
+  const familyFiltered = allEvents.filter((e) => {
+    const titleAdult = ADULT_TITLE_PATTERNS.some((p) => p.test(e.title));
+    if (titleAdult) return false;
+    const descAdult = ADULT_DESC_PATTERNS.some((p) => p.test(e.description || ""));
+    if (descAdult) return false;
+    return true;
+  });
+  const adultRemoved = beforeAdultFilter - familyFiltered.length;
+  if (adultRemoved > 0) {
+    log.info("pipeline", `Removed ${adultRemoved} adult/21+ events (not family-appropriate)`);
+  }
+
   // Deduplicate
-  const deduped = deduplicateEvents(allEvents);
+  const deduped = deduplicateEvents(familyFiltered);
 
   // Clean promotional language and scraper mentions from descriptions
   const cleaned = cleanDescriptions(deduped);
