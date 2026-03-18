@@ -24,7 +24,7 @@ nonisolated enum AppConstants {
     // MARK: - Subscription Gates
     /// Free users can only view events within this many days from today.
     /// Events beyond this window are visible but tapping them triggers the paywall.
-    static let freeEventHorizonDays = 3
+    static let freeEventHorizonDays = 1
     static let eventCount = "1,500+"
     static let defaultRegionLatitude = 33.7175  // Orange County center
     static let defaultRegionLongitude = -117.8311
