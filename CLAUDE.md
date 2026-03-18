@@ -128,6 +128,7 @@ Scraper sites may embed fake "watermark" events to detect unauthorized scraping.
 
 ### Geocoding Details
 - **City extraction from title** — When `event.city` is a generic metro name ("Orange County", "Los Angeles"), `extractCityFromTitle()` parses the actual city from the title (e.g., "Songs and Stories in Corona Del Mar" → "Corona del Mar"). The extracted city is used as `effectiveCity` for geocoding queries.
+- **City written back after geocoding** — After a successful geocode, if `event.city` was generic, `extractCityFromAddress()` parses the real city from the returned address string (e.g., "28971 Golden Lantern # A110, Laguna Niguel, CA 92677, USA" → "Laguna Niguel") and writes it back to `event.city` in the JSON output. Logged as `City promoted: "Orange County" → "Laguna Niguel"`.
 - **City validation** — Google Places results are rejected if `formattedAddress` doesn't contain `effectiveCity`, preventing wrong-city matches (e.g., Tustin event won't get an Irvine result)
 - **Venue-as-city detection** — Venue names stored as city (e.g., "Discovery Cube OC", "Irvine Park Railroad") are treated as generic and corrected via title extraction or metro fallback
 - **Google Places Photos** — Fetched during geocoding as venue image fallback. Skipped when event already has a `websiteURL` (event-page og:image is preferred over generic venue photos)
@@ -233,11 +234,19 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 - Admin-only: `EventService.fetchDraftEvents()`, `publishEvent()`, `rejectEvent()`
 - Source file: `ParentGuide/Views/Admin/DraftEventsView.swift`
 
-### Event Data Loading (Simulator vs Device)
-- **Primary:** Remote JSON feed at `https://raw.githubusercontent.com/justinlin15/ParentGuide/main/docs/api/events.json`
+### Event Data Loading
+- **Repo visibility:** Public (made public 2026-03-18 — required for `raw.githubusercontent.com` to return 200 without a GitHub Pro subscription)
+- **Primary:** Remote JSON feed at `https://raw.githubusercontent.com/justinlin15/ParentGuide/main/docs/api/events.json` — fetched with `.reloadIgnoringLocalCacheData` to bypass URLSession disk cache (prevents stale 404 from blocking load after visibility changes)
 - **Fallback:** Bundled `ParentGuide/ParentGuide/Resources/events.json` (updated automatically by every pipeline run)
-- **Simulator note:** GitHub raw frequently returns non-200 in the simulator → app falls back to bundled JSON. To get latest data in the simulator: `git pull` then rebuild in Xcode.
-- Check Xcode console for: `[EventService] Remote JSON feed: X events` (remote) vs `[EventService] Loaded X events from disk cache` (bundled/cached)
+- **Last resort:** CloudKit direct query (capped at ~200–500 records, not reliable as primary)
+- **Simulator note:** To get latest data in the simulator: `git pull` then rebuild in Xcode.
+- Check Xcode console for: `[EventService] Remote JSON feed: X events` (remote) vs `[EventService] Bundled JSON: X events` (bundled fallback)
+
+### City Display
+- `Event.displayCity` computed property — returns the specific city for display. When `event.city` is a generic region name ("Orange County", "Los Angeles"), it extracts the real city from `event.address` (e.g., "28971 Golden Lantern # A110, Laguna Niguel, CA 92677, USA" → "Laguna Niguel"). Falls back to `event.city` if address is absent or unparseable.
+- All display views (EventDetailView, EventCardView, EventAgendaView, HomeView, PopularCarouselSection, AdminDashboard, DraftEvents, NotificationsView) use `event.displayCity` — never raw `event.city`.
+- Filter/search/metro-matching code still uses raw `event.city` (the metro-level value is correct for routing).
+- Pipeline also promotes city after geocoding (see Geocoding Details), so future JSON output carries the specific city directly.
 
 ### Map
 - Uses `Marker` (not `Annotation`) for smooth zoom/pan — natively rendered by MapKit GPU pipeline
