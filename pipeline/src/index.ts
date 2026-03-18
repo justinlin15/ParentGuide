@@ -108,9 +108,17 @@ async function main() {
   if (config.reprocess) {
     const rawReprocess = loadEventsForReprocess();
 
-    // Strip adult/21+ events from the existing dataset
-    const ADULT_TITLE_RE = [/\b21\+/i, /\b18\+/i, /\b21\s*and\s*(over|up)\b/i, /\b18\s*and\s*(over|up)\b/i, /\badults?\s*only\b/i];
-    const events = rawReprocess.filter((e) => !ADULT_TITLE_RE.some((p) => p.test(e.title)));
+    // Strip adult/21+ events and known adult comedy venues from the existing dataset
+    const ADULT_TITLE_RE = [/\b21\+/i, /\b18\+/i, /\b21\s*and\s*(over|up)\b/i, /\b18\s*and\s*(over|up)\b/i, /\badults?\s*only\b/i, /\bmature\s*audiences?\b/i];
+    const ADULT_VENUES_RE = ["irvine improv", "brea improv", "ontario improv", "the improv", "comedy store", "laugh factory", "ice house comedy", "comedy cellar"];
+    const events = rawReprocess.filter((e) => {
+      if (ADULT_TITLE_RE.some((p) => p.test(e.title))) return false;
+      if (["seatgeek", "ticketmaster"].includes(e.source)) {
+        const venueLower = (e.locationName || "").toLowerCase();
+        if (ADULT_VENUES_RE.some((v) => venueLower.includes(v))) return false;
+      }
+      return true;
+    });
     const removedAdult = rawReprocess.length - events.length;
     if (removedAdult > 0) log.info("pipeline", `Removed ${removedAdult} adult/21+ events during reprocess`);
 
@@ -281,9 +289,10 @@ async function main() {
   }
 
   // ── Adult Content Filter ─────────────────────────────────────────────────────
-  // Reject any event that is explicitly 21+, 18+, or adults-only.
-  // These slip through from SeatGeek/Ticketmaster and have no place in a
-  // family events app.
+  // Reject events that are explicitly 21+/18+/adults-only OR at known adult
+  // comedy club venues (Improv, Comedy Store, Laugh Factory, etc. are 21+).
+  // These slip through from SeatGeek "comedy" taxonomy and have no place in
+  // a family events app.
   const ADULT_TITLE_PATTERNS = [
     /\b21\+/i,
     /\b18\+/i,
@@ -300,6 +309,13 @@ async function main() {
     /must\s+be\s+18/i,
     /\bno\s+(one\s+)?under\s+(21|18)\b/i,
   ];
+  // Known 21+ comedy club venue name substrings.
+  // These venues serve alcohol and enforce 21+ admission for most shows.
+  const ADULT_COMEDY_VENUES = [
+    "irvine improv", "brea improv", "ontario improv", "tempe improv",
+    "the improv", "comedy store", "laugh factory", "ice house comedy",
+    "cellar comedy", "comedy cellar",
+  ];
 
   const beforeAdultFilter = allEvents.length;
   const familyFiltered = allEvents.filter((e) => {
@@ -307,6 +323,13 @@ async function main() {
     if (titleAdult) return false;
     const descAdult = ADULT_DESC_PATTERNS.some((p) => p.test(e.description || ""));
     if (descAdult) return false;
+    // Filter stand-up comedy events at known adult-only venues
+    // (only for API sources — scrapers curate family content so venue-blocking
+    // would incorrectly remove legitimate events at multi-use spaces)
+    if (["seatgeek", "ticketmaster"].includes(e.source)) {
+      const venueLower = (e.locationName || "").toLowerCase();
+      if (ADULT_COMEDY_VENUES.some((v) => venueLower.includes(v))) return false;
+    }
     return true;
   });
   const adultRemoved = beforeAdultFilter - familyFiltered.length;

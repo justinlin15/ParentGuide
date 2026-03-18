@@ -27,6 +27,60 @@ const METRO_CITIES: Record<string, string> = {
   atlanta: "Atlanta, GA",
 };
 
+/**
+ * Generic/metro-level city names that are too broad for city-validated geocoding.
+ * When an event has one of these as its city, we try to extract the real city
+ * from the event title before geocoding.
+ */
+const GENERIC_CITY_NAMES = new Set([
+  "orange county", "los angeles", "la", "oc", "southern california", "socal",
+  "greater los angeles", "greater orange county",
+]);
+
+function isGenericCity(city: string): boolean {
+  return GENERIC_CITY_NAMES.has(city.toLowerCase().trim());
+}
+
+/**
+ * Known OC and LA city names ordered longest-first to prefer more specific matches
+ * (e.g. "Laguna Niguel" before "Laguna").
+ */
+const EXTRACTABLE_CITIES = [
+  "Corona del Mar", "Newport Coast", "Laguna Niguel", "Laguna Hills", "Laguna Woods",
+  "Laguna Beach", "Huntington Beach", "Newport Beach", "Mission Viejo", "Lake Forest",
+  "Rancho Santa Margarita", "San Juan Capistrano", "Aliso Viejo", "San Clemente",
+  "Dana Point", "Fountain Valley", "Garden Grove", "Yorba Linda", "Buena Park",
+  "Santa Ana", "Costa Mesa", "Fullerton", "Anaheim", "Placentia", "La Habra",
+  "Stanton", "Cypress", "Westminster", "Los Alamitos", "Seal Beach", "Irvine",
+  "Tustin", "Orange", "Brea", "Villa Park",
+  // LA cities
+  "Santa Monica", "Long Beach", "Pasadena", "Burbank", "Glendale", "Torrance",
+  "El Segundo", "Culver City", "Inglewood", "Hawthorne", "Redondo Beach",
+  "Hermosa Beach", "Manhattan Beach", "Malibu", "Calabasas", "Thousand Oaks",
+  "Chatsworth", "Northridge", "Sherman Oaks", "Studio City", "Van Nuys",
+  "North Hollywood", "Hollywood", "West Hollywood", "Koreatown",
+];
+
+/**
+ * Try to extract a real city name from an event title.
+ * E.g. "Corona Del Mar Songs and Stories" → "Corona del Mar"
+ * Looks for known city names at the start of the title or after common prepositions.
+ */
+function extractCityFromTitle(title: string): string | null {
+  const lower = title.toLowerCase();
+  for (const city of EXTRACTABLE_CITIES) {
+    const cityLower = city.toLowerCase();
+    // City at the start of the title (e.g. "Corona Del Mar Songs and Stories")
+    if (lower.startsWith(cityLower)) return city;
+    // City after "at", "in", "-", "–"
+    const prefixMatch = lower.match(
+      new RegExp(`(?:^|\\bat\\b|\\bin\\b|\\s[-–]\\s)\\s*${cityLower.replace(/\s+/g, "\\s+")}`, "i")
+    );
+    if (prefixMatch) return city;
+  }
+  return null;
+}
+
 /** Check if an event has valid (non-zero) coordinates. */
 function hasValidCoords(event: PipelineEvent): boolean {
   if (event.latitude == null || event.longitude == null) return false;
@@ -46,14 +100,27 @@ async function geocodeEvent(
 ): Promise<{ latitude: number; longitude: number; address?: string } | null> {
   const metroCity = METRO_CITIES[event.metro] || event.city;
 
+  // When the stored city is a generic metro/county name (e.g. "Orange County"),
+  // try to extract the real neighbourhood/city from the event title so we can
+  // do precise geocoding instead of falling back to the wrong metro default.
+  // E.g. "Corona Del Mar Songs and Stories" → effectiveCity = "Corona del Mar"
+  let effectiveCity = event.city;
+  if (!effectiveCity || isGenericCity(effectiveCity)) {
+    const extracted = extractCityFromTitle(event.title);
+    if (extracted) {
+      effectiveCity = extracted;
+      log.info("geocode", `  Extracted city "${extracted}" from title "${event.title}"`);
+    }
+  }
+
   // Strategy 0: Google Places Text Search (most accurate — knows businesses by name)
   // Build the most specific query we can from available event data.
-  // Prefer event.city over metroCity so "Tustin Farmers Market" searches in
+  // Prefer effectiveCity over metroCity so "Tustin Farmers Market" searches in
   // Tustin, not the metro default of Irvine. City is passed as expectedCity
   // so results from a different city are rejected even if within metro bounds.
   if (config.googlePlaces.apiKey) {
     const queries: string[] = [];
-    const specificCity = event.city ? `${event.city}, CA` : metroCity;
+    const specificCity = effectiveCity ? `${effectiveCity}, CA` : metroCity;
 
     // Most specific: venue name + address + event city
     if (event.locationName && event.address) {
@@ -76,13 +143,15 @@ async function geocodeEvent(
     }
 
     for (const query of queries) {
-      // Pass event.city as expectedCity so wrong-city results are rejected.
-      // Skip city validation on the last fallback query (no event.city constraint).
+      // Pass effectiveCity as expectedCity so wrong-city results are rejected.
+      // effectiveCity may be extracted from the title when event.city is generic
+      // (e.g. "REDO Market in Costa Mesa" → effectiveCity = "Costa Mesa").
+      // Skip city validation on the last fallback query (no constraint).
       const isMetroFallback = query.endsWith(metroCity) && specificCity !== metroCity;
       const result = await lookupGooglePlaces(
         query,
         event.metro,
-        isMetroFallback ? undefined : event.city
+        isMetroFallback ? undefined : (effectiveCity && !isGenericCity(effectiveCity) ? effectiveCity : undefined)
       );
       if (result) {
         log.info("geocode", `  ✓ [Google Places] "${event.title}" → ${result.address ?? query}`);
