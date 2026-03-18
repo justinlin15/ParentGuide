@@ -527,15 +527,22 @@ struct EventDetailView: View {
 
     private var heroPlaceholder: some View {
         ZStack {
-            Rectangle()
-                .fill(event.category.color.opacity(0.15))
-            VStack(spacing: 8) {
+            LinearGradient(
+                colors: [event.category.color, event.category.color.opacity(0.6)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Image(systemName: event.category.iconName)
+                .font(.system(size: 64, weight: .ultraLight))
+                .foregroundStyle(.white.opacity(0.25))
+            VStack(spacing: 6) {
                 Image(systemName: event.category.iconName)
-                    .font(.system(size: 40))
-                    .foregroundStyle(event.category.color)
+                    .font(.system(size: 32))
+                    .foregroundStyle(.white)
                 Text(event.category.rawValue)
-                    .font(.headline)
-                    .foregroundStyle(event.category.color)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white.opacity(0.9))
             }
         }
         .frame(height: 220)

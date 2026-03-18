@@ -28,11 +28,11 @@ struct FavoritesView: View {
                     VStack(spacing: 0) {
                         eventsList
 
-                        // Banner ad for non-subscribers
-                        BannerAdView(adUnitID: AdService.favoritesBannerID)
-
                         // Add Favorites to Calendar button
                         addToCalendarButton
+
+                        // Banner ad pinned to bottom for non-subscribers
+                        BannerAdView(adUnitID: AdService.AdUnitID.banner)
                     }
                 }
             }

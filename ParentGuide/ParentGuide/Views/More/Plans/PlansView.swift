@@ -167,13 +167,10 @@ struct PlanCardView: View {
                 Text(plan.period)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Text("\(plan.trialDays) day free trial")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
             }
 
             Button(action: onSubscribe) {
-                Text("Start free trial")
+                Text("Subscribe")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(.white)

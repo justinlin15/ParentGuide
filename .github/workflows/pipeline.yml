@@ -59,6 +59,7 @@ jobs:
           CLOUDKIT_ENVIRONMENT: ${{ secrets.CLOUDKIT_ENVIRONMENT }}
           OC_PARENT_GUIDE_EMAIL: ${{ secrets.OC_PARENT_GUIDE_EMAIL }}
           OC_PARENT_GUIDE_PASSWORD: ${{ secrets.OC_PARENT_GUIDE_PASSWORD }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
         run: |
           # Random jitter only for scheduled runs (not manual triggers)
           if [ "${{ github.event_name }}" = "schedule" ]; then

@@ -4,6 +4,7 @@
 //
 
 import CloudKit
+import CoreLocation
 import Foundation
 
 struct UserProfile: Identifiable {
@@ -15,8 +16,21 @@ struct UserProfile: Identifiable {
     var favoriteCities: [String]
     var subscriptionTier: String?
     var subscriptionExpiresAt: Date?
+    // Home location — for "distance from home" filter
+    var homeCity: String?
+    var homeLatitude: Double?
+    var homeLongitude: Double?
     let createdAt: Date
     var modifiedAt: Date
+
+    var hasHomeLocation: Bool {
+        homeLatitude != nil && homeLongitude != nil
+    }
+
+    var homeLocation: CLLocation? {
+        guard let lat = homeLatitude, let lon = homeLongitude else { return nil }
+        return CLLocation(latitude: lat, longitude: lon)
+    }
 
     // MARK: - CloudKit Init
 
@@ -29,6 +43,9 @@ struct UserProfile: Identifiable {
         self.favoriteCities = (record["favoriteCities"] as? [String]) ?? []
         self.subscriptionTier = record["subscriptionTier"] as? String
         self.subscriptionExpiresAt = record["subscriptionExpiresAt"] as? Date
+        self.homeCity = record["homeCity"] as? String
+        self.homeLatitude = record["homeLatitude"] as? Double
+        self.homeLongitude = record["homeLongitude"] as? Double
         self.createdAt = (record["createdAt"] as? Date) ?? record.creationDate ?? Date()
         self.modifiedAt = (record["modifiedAt"] as? Date) ?? record.modificationDate ?? Date()
     }
@@ -44,6 +61,9 @@ struct UserProfile: Identifiable {
         favoriteCities: [String] = [],
         subscriptionTier: String? = nil,
         subscriptionExpiresAt: Date? = nil,
+        homeCity: String? = nil,
+        homeLatitude: Double? = nil,
+        homeLongitude: Double? = nil,
         createdAt: Date = Date(),
         modifiedAt: Date = Date()
     ) {
@@ -55,6 +75,9 @@ struct UserProfile: Identifiable {
         self.favoriteCities = favoriteCities
         self.subscriptionTier = subscriptionTier
         self.subscriptionExpiresAt = subscriptionExpiresAt
+        self.homeCity = homeCity
+        self.homeLatitude = homeLatitude
+        self.homeLongitude = homeLongitude
         self.createdAt = createdAt
         self.modifiedAt = modifiedAt
     }
@@ -72,10 +95,13 @@ struct UserProfile: Identifiable {
         record["displayName"] = displayName as CKRecordValue
         record["email"] = email as CKRecordValue
         if let avatarURL { record["avatarURL"] = avatarURL as CKRecordValue }
-        record["favoriteEventIDs"] = favoriteEventIDs as CKRecordValue
-        record["favoriteCities"] = favoriteCities as CKRecordValue
+        if !favoriteEventIDs.isEmpty { record["favoriteEventIDs"] = favoriteEventIDs as CKRecordValue }
+        if !favoriteCities.isEmpty { record["favoriteCities"] = favoriteCities as CKRecordValue }
         if let subscriptionTier { record["subscriptionTier"] = subscriptionTier as CKRecordValue }
         if let subscriptionExpiresAt { record["subscriptionExpiresAt"] = subscriptionExpiresAt as CKRecordValue }
+        if let homeCity { record["homeCity"] = homeCity as CKRecordValue }
+        if let homeLatitude { record["homeLatitude"] = homeLatitude as CKRecordValue }
+        if let homeLongitude { record["homeLongitude"] = homeLongitude as CKRecordValue }
         record["createdAt"] = createdAt as CKRecordValue
         record["modifiedAt"] = Date() as CKRecordValue
     }

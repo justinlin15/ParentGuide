@@ -8,6 +8,9 @@ import SwiftUI
 struct EventFilterView: View {
     @Binding var filter: EventFilter
     var hasLocation: Bool
+    var hasHomeLocation: Bool = false
+    var homeCity: String? = nil
+    var onSetHome: (() -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -18,7 +21,14 @@ struct EventFilterView: View {
                     Divider()
                     DateRangeSection(dateRange: $filter.dateRange, customStartDate: $filter.customStartDate, customEndDate: $filter.customEndDate)
                     Divider()
-                    DistanceSection(distanceOption: $filter.distanceOption, hasLocation: hasLocation)
+                    DistanceSection(
+                        distanceOption: $filter.distanceOption,
+                        distanceFrom: $filter.distanceFrom,
+                        hasLocation: hasLocation,
+                        hasHomeLocation: hasHomeLocation,
+                        homeCity: homeCity,
+                        onSetHome: onSetHome
+                    )
                     Divider()
                     PriceSection(priceFilter: $filter.priceFilter)
                     Divider()
@@ -162,7 +172,15 @@ private struct DateRangeSection: View {
 
 private struct DistanceSection: View {
     @Binding var distanceOption: DistanceOption
+    @Binding var distanceFrom: DistanceFromOption
     var hasLocation: Bool
+    var hasHomeLocation: Bool
+    var homeCity: String?
+    var onSetHome: (() -> Void)?
+
+    private var isLocationAvailable: Bool {
+        distanceFrom == .currentLocation ? hasLocation : hasHomeLocation
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -171,19 +189,77 @@ private struct DistanceSection: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.secondary)
 
-            if !hasLocation {
+            // Distance from selector
+            HStack(spacing: 8) {
+                ForEach(DistanceFromOption.allCases, id: \.self) { option in
+                    let icon = option == .currentLocation ? "location.fill" : "house.fill"
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            distanceFrom = option
+                        }
+                    } label: {
+                        Label(option.rawValue, systemImage: icon)
+                            .font(.caption)
+                            .fontWeight(distanceFrom == option ? .bold : .medium)
+                            .foregroundStyle(distanceFrom == option ? .white : .primary)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(distanceFrom == option ? Color.brandBlue : Color(.systemGray6))
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+
+            // Status/warning messages
+            if distanceFrom == .currentLocation && !hasLocation {
                 HStack(spacing: 6) {
                     Image(systemName: "location.slash")
                         .font(.caption)
-                    Text("Enable location services to filter by distance")
+                    Text("Enable location services in Settings to use this filter")
+                        .font(.caption)
+                }
+                .foregroundStyle(.orange)
+                .padding(.vertical, 4)
+            } else if distanceFrom == .home && !hasHomeLocation {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "house.circle")
+                            .font(.caption)
+                        Text("Set your home location to use this filter")
+                            .font(.caption)
+                    }
+                    .foregroundStyle(.orange)
+
+                    if let onSetHome {
+                        Button {
+                            onSetHome()
+                        } label: {
+                            Label("Set Home Location", systemImage: "house.fill")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.brandBlue)
+                                .clipShape(Capsule())
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            } else if distanceFrom == .home, let city = homeCity {
+                HStack(spacing: 6) {
+                    Image(systemName: "house.fill")
+                        .font(.caption)
+                    Text("From \(city)")
                         .font(.caption)
                 }
                 .foregroundStyle(.secondary)
             }
 
+            // Distance radius options
             HStack(spacing: 8) {
                 ForEach(DistanceOption.allCases, id: \.self) { option in
-                    let disabled = !hasLocation && option != .unlimited
+                    let disabled = !isLocationAvailable && option != .unlimited
                     FilterChipButton(
                         label: option.displayName,
                         isSelected: distanceOption == option,
@@ -346,6 +422,8 @@ private struct FilterChipButton: View {
 #Preview {
     EventFilterView(
         filter: .constant(EventFilter()),
-        hasLocation: true
+        hasLocation: true,
+        hasHomeLocation: true,
+        homeCity: "Irvine"
     )
 }

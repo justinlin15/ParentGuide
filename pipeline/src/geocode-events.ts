@@ -5,6 +5,7 @@ import {
   extractAddressFromText,
 } from "./utils/web-enricher.js";
 import { log } from "./utils/logger.js";
+import { config } from "./config.js";
 
 /**
  * Post-scrape geocoding step.
@@ -44,6 +45,38 @@ async function geocodeEvent(
   event: PipelineEvent
 ): Promise<{ latitude: number; longitude: number; address?: string } | null> {
   const metroCity = METRO_CITIES[event.metro] || event.city;
+
+  // Strategy 0: Google Places Text Search (most accurate — knows businesses by name)
+  // Build the most specific query we can from available event data.
+  if (config.googlePlaces.apiKey) {
+    const queries: string[] = [];
+
+    // Most specific: venue name + address + city
+    if (event.locationName && event.address) {
+      queries.push(`${event.locationName}, ${event.address}, ${metroCity}`);
+    }
+    // Venue name + city
+    if (event.locationName) {
+      queries.push(`${event.locationName}, ${metroCity}`);
+    }
+    // Title venue extraction + city
+    const titleVenue = extractVenueFromTitle(event.title);
+    if (titleVenue && titleVenue !== event.locationName) {
+      queries.push(`${titleVenue}, ${metroCity}`);
+    }
+    // Full event title + city (e.g. "Storytime at Ladera Ranch Library, Ladera Ranch, CA")
+    queries.push(`${event.title}, ${metroCity}`);
+
+    for (const query of queries) {
+      const result = await lookupGooglePlaces(query, event.metro);
+      if (result) {
+        log.info("geocode", `  ✓ [Google Places] "${event.title}" → ${query}`);
+        await delay(200); // Respect rate limits (modest, Places API is generous)
+        return result;
+      }
+    }
+    await delay(200);
+  }
 
   // Strategy 1: Full street address + city (most precise)
   if (event.address && event.address.length > 5) {
@@ -220,6 +253,67 @@ function getStateForMetro(metro: string): string | null {
       return "GA";
     default:
       return null;
+  }
+}
+
+// ─── Google Places API (New) lookup ──────────────────────────────────────────
+
+interface PlacesSearchResponse {
+  places?: Array<{
+    location?: { latitude: number; longitude: number };
+    formattedAddress?: string;
+    displayName?: { text: string };
+  }>;
+}
+
+/**
+ * Look up a venue using Google Places API (New) Text Search.
+ * Returns coordinates + formatted address, or null if not found.
+ *
+ * More reliable than Nominatim for business/venue names because Google Maps
+ * has comprehensive business data including hours, addresses, and photos.
+ */
+async function lookupGooglePlaces(
+  query: string,
+  metro: string
+): Promise<{ latitude: number; longitude: number; address?: string } | null> {
+  if (!config.googlePlaces.apiKey) return null;
+
+  try {
+    const res = await fetch(`${config.googlePlaces.baseUrl}/places:searchText`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": config.googlePlaces.apiKey,
+        "X-Goog-FieldMask": "places.location,places.formattedAddress,places.displayName",
+      },
+      body: JSON.stringify({ textQuery: query }),
+    });
+
+    if (!res.ok) {
+      if (res.status === 403) {
+        log.warn("geocode", `Google Places API key unauthorized (403). Check key + API enabled.`);
+      }
+      return null;
+    }
+
+    const data = (await res.json()) as PlacesSearchResponse;
+    const place = data.places?.[0];
+
+    if (!place?.location) return null;
+
+    const result = {
+      latitude: place.location.latitude,
+      longitude: place.location.longitude,
+      address: place.formattedAddress,
+    };
+
+    // Validate the result is within the metro bounds
+    if (!isReasonableLocation(result, metro)) return null;
+
+    return result;
+  } catch {
+    return null;
   }
 }
 

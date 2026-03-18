@@ -172,11 +172,11 @@ actor EventService {
         return allEvents.filter { $0.startDate >= startOfDay && $0.startDate < endOfDay }
     }
 
-    /// Fetch events for a metro area across 3 months from today.
+    /// Fetch events for a metro area across 2 months from today.
     func fetchUpcomingEvents(forMetro metro: String) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         let now = Calendar.current.startOfDay(for: Date())
-        let threeMonthsLater = Calendar.current.date(byAdding: .month, value: 3, to: now)!
+        let threeMonthsLater = Calendar.current.date(byAdding: .month, value: 2, to: now)!
 
         return allEvents.filter { event in
             let isUpcoming = event.startDate >= now && event.startDate <= threeMonthsLater

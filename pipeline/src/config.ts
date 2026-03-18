@@ -117,10 +117,17 @@ export const config = {
     apiKey: process.env.PEXELS_API_KEY || "",
     baseUrl: "https://api.pexels.com/v1",
   },
-    eventbrite: {
-          apiKey: process.env.EVENTBRITE_API_KEY || "",
-          baseUrl: "https://www.eventbriteapi.com/v3",
-    },
+  eventbrite: {
+    apiKey: process.env.EVENTBRITE_API_KEY || "",
+    baseUrl: "https://www.eventbriteapi.com/v3",
+  },
+  googlePlaces: {
+    // Google Places API (New) — primary venue lookup for geocoding.
+    // Add GOOGLE_PLACES_API_KEY to GitHub Secrets.
+    // Enable "Places API (New)" at console.cloud.google.com
+    apiKey: process.env.GOOGLE_PLACES_API_KEY || "",
+    baseUrl: "https://places.googleapis.com/v1",
+  },
   cloudkit: {
     container: process.env.CLOUDKIT_CONTAINER || "",
     keyId: process.env.CLOUDKIT_KEY_ID || "",

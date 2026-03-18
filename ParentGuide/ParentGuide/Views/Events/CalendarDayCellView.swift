@@ -9,6 +9,7 @@ struct CalendarDayCellView: View {
     let date: Date
     let events: [Event]
     let isToday: Bool
+    var isLocked: Bool = false
     var onTap: () -> Void = {}
 
     private var sortedEvents: [Event] {
@@ -29,36 +30,50 @@ struct CalendarDayCellView: View {
             Text("\(date.dayOfMonth)")
                 .font(.caption)
                 .fontWeight(isToday ? .bold : .regular)
-                .foregroundStyle(isToday ? .white : .primary)
+                .foregroundStyle(isToday ? .white : (isLocked ? .secondary : .primary))
                 .frame(width: 24, height: 24)
                 .background(isToday ? Color.brandBlue : Color.clear)
                 .clipShape(Circle())
 
             if !events.isEmpty {
-                VStack(spacing: 2) {
-                    ForEach(topEvents) { event in
-                        HStack(spacing: 0) {
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(event.category.color)
-                                .frame(width: 3)
-
-                            Text(event.title)
-                                .font(.system(size: 8, weight: .medium))
-                                .lineLimit(1)
-                                .padding(.leading, 2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .frame(height: 14)
-                        .background(event.category.color.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 2))
-                    }
-
-                    if remainingCount > 0 {
-                        Text("+\(remainingCount) more")
+                if isLocked {
+                    // Locked day: show lock + event count
+                    VStack(spacing: 4) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                        Text("\(events.count) events")
                             .font(.system(size: 7, weight: .semibold))
-                            .foregroundStyle(Color.brandBlue)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 6)
+                } else {
+                    // Unlocked day: show event previews
+                    VStack(spacing: 2) {
+                        ForEach(topEvents) { event in
+                            HStack(spacing: 0) {
+                                RoundedRectangle(cornerRadius: 1)
+                                    .fill(event.category.color)
+                                    .frame(width: 3)
+
+                                Text(event.title)
+                                    .font(.system(size: 8, weight: .medium))
+                                    .lineLimit(1)
+                                    .padding(.leading, 2)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(height: 14)
+                            .background(event.category.color.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 2))
+                        }
+
+                        if remainingCount > 0 {
+                            Text("+\(remainingCount) more")
+                                .font(.system(size: 7, weight: .semibold))
+                                .foregroundStyle(Color.brandBlue)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 2)
+                        }
                     }
                 }
             }
@@ -68,7 +83,7 @@ struct CalendarDayCellView: View {
         .padding(.vertical, 4)
         .padding(.horizontal, 2)
         .frame(maxWidth: .infinity, minHeight: 100, alignment: .top)
-        .background(Color(.systemBackground))
+        .background(isLocked ? Color(.systemGray6).opacity(0.5) : Color(.systemBackground))
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
     }

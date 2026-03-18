@@ -13,16 +13,16 @@ class AdminService {
     private(set) var isAdmin = false
     private(set) var appleUserID: String?
 
-    #if DEBUG
-    /// Temporary debug override for testing admin role. Remove before App Store submission.
+    /// Beta testing override for admin role. Only active when AppConstants.betaTestingEnabled is true.
+    /// Set to `nil` to use real admin check, `true`/`false` to force override.
     var debugAdminOverride: Bool? = nil {
         didSet {
+            guard AppConstants.betaTestingEnabled else { return }
             if let override = debugAdminOverride {
                 isAdmin = override
             }
         }
     }
-    #endif
 
     // Admin Apple user identifiers.
     // To find yours: sign in with Apple, check console for "[AdminService] Apple User ID: ..."
@@ -41,22 +41,13 @@ class AdminService {
         appleUserID = userID
         print("[AdminService] Apple User ID: \(userID)")
 
-        #if DEBUG
-        // In debug builds, log the user ID for easy admin setup
-        if Self.adminAppleUserIDs.isEmpty {
-            print("[AdminService] DEBUG: No admin IDs configured.")
-            print("[AdminService] DEBUG: Add \"\(userID)\" to AdminService.adminAppleUserIDs to enable admin features.")
-        }
-        #endif
-
         isAdmin = Self.adminAppleUserIDs.contains(userID)
 
-        #if DEBUG
-        if let override = debugAdminOverride {
+        // Apply beta testing override if active
+        if AppConstants.betaTestingEnabled, let override = debugAdminOverride {
             isAdmin = override
-            print("[AdminService] DEBUG override active — isAdmin: \(isAdmin)")
+            print("[AdminService] Beta override active — isAdmin: \(isAdmin)")
         }
-        #endif
 
         print("[AdminService] isAdmin: \(isAdmin)")
     }

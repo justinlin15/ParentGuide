@@ -136,16 +136,26 @@ struct Event: Identifiable, Hashable, Codable {
 
     // MARK: - Price Tier (Yelp-style $ to $$$$$)
 
-    /// Whether this event is explicitly free
+    /// Whether this event is free — nil/empty price is treated as free
+    /// since most community/library events don't list a price
     var isFree: Bool {
-        guard let price = price?.lowercased().trimmingCharacters(in: .whitespaces) else { return false }
+        guard let price = price?.lowercased().trimmingCharacters(in: .whitespaces),
+              !price.isEmpty else { return true }
         return price == "free" || price == "$0" || price == "0" || price.contains("free")
     }
 
-    /// Yelp-style price tier: 1 ($) to 5 ($$$$$), or nil if unknown
+    /// Whether this event has an explicit paid price
+    var hasPaidPrice: Bool {
+        guard let price = price?.trimmingCharacters(in: .whitespaces),
+              !price.isEmpty else { return false }
+        return !isFree
+    }
+
+    /// Yelp-style price tier: 0 (free) to 5 ($$$$$)
+    /// nil/empty price = free (tier 0)
     var priceTier: Int? {
         guard let priceStr = price?.trimmingCharacters(in: .whitespaces), !priceStr.isEmpty else {
-            return nil
+            return 0 // No price listed = free
         }
 
         let lower = priceStr.lowercased()

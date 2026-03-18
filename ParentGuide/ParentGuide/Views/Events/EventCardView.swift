@@ -34,6 +34,7 @@ struct EventCardView: View {
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundStyle(event.isFree ? .green : .orange)
+                            .fixedSize()
                     }
 
                     // Time
@@ -42,6 +43,7 @@ struct EventCardView: View {
                             .font(.caption2)
                         Text(event.formattedTime)
                             .font(.caption)
+                            .lineLimit(1)
                     }
                     .foregroundStyle(.secondary)
 
@@ -49,31 +51,37 @@ struct EventCardView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "mappin")
                             .font(.caption2)
-                        Text(event.city)
+                        Text(event.effectiveLocationName ?? event.city)
                             .font(.caption)
+                            .lineLimit(1)
                     }
                     .foregroundStyle(.secondary)
                 }
+                .lineLimit(1)
             }
 
             Spacer()
 
-            // Favorite heart button
-            Button {
-                withAnimation(.spring(response: 0.3)) {
-                    favoritesService.toggleFavorite(for: event)
+            // Heart + category icon — fixed width so they stay at the same
+            // horizontal position regardless of how much text is in the row.
+            HStack(spacing: 10) {
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        favoritesService.toggleFavorite(for: event)
+                    }
+                } label: {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .font(.body)
+                        .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
+                        .frame(width: 24, height: 24)
                 }
-            } label: {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
-                    .font(.body)
-                    .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
-            }
-            .buttonStyle(.plain)
+                .buttonStyle(.plain)
 
-            // Category icon
-            Image(systemName: event.category.iconName)
-                .font(.caption)
-                .foregroundStyle(event.category.color)
+                Image(systemName: event.category.iconName)
+                    .font(.caption)
+                    .foregroundStyle(event.category.color)
+                    .frame(width: 20, height: 20)
+            }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)

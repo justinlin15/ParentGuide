@@ -10,55 +10,62 @@ import GoogleMobileAds
 class AdService {
     static let shared = AdService()
 
-        // MARK: - Ad Unit IDs
-            // App ID: ca-app-pub-7551087457561398~1395618622
-                // (configured in Info.plist under GADApplicationIdentifier)
+    // MARK: - Ad Unit IDs
+    // App ID: ca-app-pub-7551087457561398~1395618622
+    // (configured in Info.plist under GADApplicationIdentifier)
 
-                    private enum AdUnitID {
-                            static let banner       = "ca-app-pub-7551087457561398/1877635245"
-                                    static let interstitial = "ca-app-pub-7551087457561398/6917340369"
-                                        }
+    enum AdUnitID {
+        // Real IDs — swap back before App Store submission:
+        // static let banner = "ca-app-pub-7551087457561398/1877635245"
+        // static let interstitial = "ca-app-pub-7551087457561398/6917340369"
 
-                                            // MARK: - State
-                                                private(set) var interstitialAd: GADInterstitialAd?
-                                                    private(set) var isLoadingInterstitial = false
+        // Google test IDs for simulator/development
+        static let banner = "ca-app-pub-3940256099942544/2435281174"
+        static let interstitial = "ca-app-pub-3940256099942544/4411468910"
+    }
 
-                                                        // MARK: - Init
-                                                            private init() {
-                                                                    // SDK is initialized in App entry point via GADMobileAds.sharedInstance().start()
-                                                                        }
+    // MARK: - State
+    private(set) var interstitialAd: InterstitialAd?
+    private(set) var isLoadingInterstitial = false
 
-                                                                            // MARK: - Banner
-                                                                                /// Returns the real banner ad unit ID.
-                                                                                    var bannerAdUnitID: String {
-                                                                                            AdUnitID.banner
-                                                                                                }
+    /// Whether ads should be shown (non-subscribers only).
+    var isAdEnabled: Bool {
+        !SubscriptionService.shared.isSubscribed
+    }
 
-                                                                                                    // MARK: - Interstitial
-                                                                                                        func loadInterstitial() async {
-                                                                                                                guard !isLoadingInterstitial else { return }
-                                                                                                                        isLoadingInterstitial = true
-                                                                                                                                do {
-                                                                                                                                            interstitialAd = try await GADInterstitialAd.load(
-                                                                                                                                                            withAdUnitID: AdUnitID.interstitial,
-                                                                                                                                                                            request: GADRequest()
-                                                                                                                                                                                        )
-                                                                                                                                                                                                    print("[AdService] Interstitial loaded")
-                                                                                                                                                                                                            } catch {
-                                                                                                                                                                                                                        print("[AdService] Interstitial failed to load: \(error.localizedDescription)")
-                                                                                                                                                                                                                                    interstitialAd = nil
-                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                    isLoadingInterstitial = false
-                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                            func showInterstitial(from viewController: UIViewController) {
-                                                                                                                                                                                                                                                                    guard let ad = interstitialAd else {
-                                                                                                                                                                                                                                                                                print("[AdService] Interstitial not ready")
-                                                                                                                                                                                                                                                                                            Task { await loadInterstitial() }
-                                                                                                                                                                                                                                                                                                        return
-                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                        ad.present(fromRootViewController: viewController)
-                                                                                                                                                                                                                                                                                                                                interstitialAd = nil
-                                                                                                                                                                                                                                                                                                                                        Task { await loadInterstitial() }
-                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                            }
+    // MARK: - Init
+    private init() {}
+
+    // MARK: - Banner
+    var bannerAdUnitID: String {
+        AdUnitID.banner
+    }
+
+    // MARK: - Interstitial
+    func loadInterstitial() async {
+        guard !isLoadingInterstitial else { return }
+        isLoadingInterstitial = true
+        do {
+            interstitialAd = try await InterstitialAd.load(
+                with: AdUnitID.interstitial,
+                request: Request()
+            )
+            print("[AdService] Interstitial loaded")
+        } catch {
+            print("[AdService] Interstitial failed: \(error.localizedDescription)")
+            interstitialAd = nil
+        }
+        isLoadingInterstitial = false
+    }
+
+    func showInterstitial(from viewController: UIViewController) {
+        guard let ad = interstitialAd else {
+            print("[AdService] Interstitial not ready")
+            Task { await loadInterstitial() }
+            return
+        }
+        ad.present(from: viewController)
+        interstitialAd = nil
+        Task { await loadInterstitial() }
+    }
+}

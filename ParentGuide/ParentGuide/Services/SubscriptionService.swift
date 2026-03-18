@@ -20,6 +20,17 @@ class SubscriptionService {
 
     var products: [Product] = []
     var isSubscribed = false
+
+    /// Beta testing override for subscription state. Only active when AppConstants.betaTestingEnabled is true.
+    /// Set to `nil` to use real subscription check, `true`/`false` to force override.
+    var debugSubscriptionOverride: Bool? = nil {
+        didSet {
+            guard AppConstants.betaTestingEnabled else { return }
+            if let override = debugSubscriptionOverride {
+                isSubscribed = override
+            }
+        }
+    }
     var currentSubscription: StoreKit.Transaction?
     var isLoading = false
     var errorMessage: String?
@@ -122,6 +133,11 @@ class SubscriptionService {
         isSubscribed = foundTransaction != nil
         activeProductID = foundTransaction?.productID
         expirationDate = foundTransaction?.expirationDate
+
+        // Apply beta testing override if active
+        if AppConstants.betaTestingEnabled, let override = debugSubscriptionOverride {
+            isSubscribed = override
+        }
 
         if let tx = foundTransaction {
             print("[SubscriptionService] Active subscription: \(tx.productID), expires: \(tx.expirationDate?.formatted() ?? "unknown")")

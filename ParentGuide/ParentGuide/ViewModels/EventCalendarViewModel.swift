@@ -78,9 +78,33 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
 
     // MARK: - Filtered Events
 
-    /// All events with current filters applied
+    /// All events with current filters applied.
     var filteredEvents: [Event] {
-        filter.apply(to: events, userLocation: userLocation)
+        filter.apply(to: events, userLocation: userLocation, homeLocation: homeLocation)
+    }
+
+    /// Home location from user profile for "distance from home" filter
+    var homeLocation: CLLocation? {
+        AuthService.shared.currentUser?.homeLocation
+    }
+
+    var hasHomeLocation: Bool {
+        AuthService.shared.currentUser?.hasHomeLocation ?? false
+    }
+
+    /// The cutoff date beyond which free users cannot view event details.
+    var freeHorizonDate: Date {
+        Calendar.current.date(
+            byAdding: .day,
+            value: AppConstants.freeEventHorizonDays,
+            to: Calendar.current.startOfDay(for: Date())
+        ) ?? Date()
+    }
+
+    /// Whether a given date is beyond the free viewing horizon for non-subscribers.
+    func isDateLocked(_ date: Date) -> Bool {
+        guard !SubscriptionService.shared.isSubscribed else { return false }
+        return Calendar.current.startOfDay(for: date) > freeHorizonDate
     }
 
     /// Filtered events for the currently displayed month

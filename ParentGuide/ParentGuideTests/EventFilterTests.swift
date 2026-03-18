@@ -134,26 +134,26 @@ struct PriceFilterTests {
         #expect(result.count == 3)
     }
 
-    @Test("Price filter 'free' returns only free events")
+    @Test("Price filter 'free' returns free events AND events with no price (nil = free)")
     func priceFree() {
         var filter = EventFilter()
         filter.priceFilter = .free
         let result = filter.apply(to: events, userLocation: nil)
-        #expect(result.count == 1)
-        #expect(result[0].title == "Free Event")
+        #expect(result.count == 2)
+        #expect(result.contains { $0.title == "Free Event" })
+        #expect(result.contains { $0.title == "No Price" })
     }
 
-    @Test("Price filter 'paid' excludes free events")
+    @Test("Price filter 'paid' returns only events with explicit paid price")
     func pricePaid() {
         var filter = EventFilter()
         filter.priceFilter = .paid
         let result = filter.apply(to: events, userLocation: nil)
-        #expect(result.count == 2)
-        #expect(result.contains { $0.title == "Paid Event" })
-        #expect(result.contains { $0.title == "No Price" })
+        #expect(result.count == 1)
+        #expect(result[0].title == "Paid Event")
     }
 
-    @Test("Free detection works with various price strings")
+    @Test("Free detection works with various price strings including nil")
     func freeDetection() {
         let freeVariations = [
             makeEvent(price: "Free"),
@@ -161,10 +161,21 @@ struct PriceFilterTests {
             makeEvent(price: "$0"),
             makeEvent(price: "0"),
             makeEvent(price: "Free admission"),
+            makeEvent(price: nil),      // No price = free
+            makeEvent(price: ""),       // Empty price = free
         ]
         for event in freeVariations {
             #expect(event.isFree, "Expected '\(event.price ?? "nil")' to be detected as free")
         }
+    }
+
+    @Test("Paid detection only matches explicit paid prices")
+    func paidDetection() {
+        #expect(makeEvent(price: "$25").hasPaidPrice)
+        #expect(makeEvent(price: "$5").hasPaidPrice)
+        #expect(!makeEvent(price: nil).hasPaidPrice)
+        #expect(!makeEvent(price: "").hasPaidPrice)
+        #expect(!makeEvent(price: "Free").hasPaidPrice)
     }
 
     @Test("Price tiers are calculated correctly")
@@ -175,7 +186,7 @@ struct PriceFilterTests {
         #expect(makeEvent(price: "$30").priceTier == 3)
         #expect(makeEvent(price: "$75").priceTier == 4)
         #expect(makeEvent(price: "$150").priceTier == 5)
-        #expect(makeEvent(price: nil).priceTier == nil)
+        #expect(makeEvent(price: nil).priceTier == 0)  // No price = free tier
     }
 }
 
@@ -390,6 +401,62 @@ struct DistanceFilterTests {
         // Without user location, distance filter should not exclude events
         #expect(result.count == 2)
     }
+
+    @Test("Distance from home uses home location instead of current location")
+    func distanceFromHome() {
+        // Home in LA, current location in Irvine
+        let homeInLA = laLocation
+        let events = [
+            makeEvent(title: "Near LA", latitude: 34.06, longitude: -118.25),    // ~0.5mi from LA
+            makeEvent(title: "Near Irvine", latitude: 33.69, longitude: -117.83), // ~40mi from LA, ~0.5mi from Irvine
+        ]
+        var filter = EventFilter()
+        filter.distanceOption = .five
+        filter.distanceFrom = .home
+        let result = filter.apply(to: events, userLocation: irvineLocation, homeLocation: homeInLA)
+        // Should filter from LA, not Irvine
+        #expect(result.count == 1)
+        #expect(result[0].title == "Near LA")
+    }
+
+    @Test("Distance from current location uses GPS location")
+    func distanceFromCurrentLocation() {
+        let homeInLA = laLocation
+        let events = [
+            makeEvent(title: "Near LA", latitude: 34.06, longitude: -118.25),
+            makeEvent(title: "Near Irvine", latitude: 33.69, longitude: -117.83),
+        ]
+        var filter = EventFilter()
+        filter.distanceOption = .five
+        filter.distanceFrom = .currentLocation
+        let result = filter.apply(to: events, userLocation: irvineLocation, homeLocation: homeInLA)
+        // Should filter from Irvine (current location), not LA
+        #expect(result.count == 1)
+        #expect(result[0].title == "Near Irvine")
+    }
+
+    @Test("Distance from home falls back to current location when home not set")
+    func distanceFromHomeFallback() {
+        let events = [
+            makeEvent(title: "Near Irvine", latitude: 33.69, longitude: -117.83),
+            makeEvent(title: "Far", latitude: 34.05, longitude: -118.24),
+        ]
+        var filter = EventFilter()
+        filter.distanceOption = .five
+        filter.distanceFrom = .home
+        // No home location, should fall back to current (Irvine)
+        let result = filter.apply(to: events, userLocation: irvineLocation, homeLocation: nil)
+        #expect(result.count == 1)
+        #expect(result[0].title == "Near Irvine")
+    }
+
+    @Test("clearAll resets distanceFrom to currentLocation")
+    func clearAllResetsDistanceFrom() {
+        var filter = EventFilter()
+        filter.distanceFrom = .home
+        filter.clearAll()
+        #expect(filter.distanceFrom == .currentLocation)
+    }
 }
 
 // MARK: - Sort Tests
@@ -439,21 +506,22 @@ struct SortTests {
         #expect(result[1].title == "Later")
     }
 
-    @Test("Sort by price orders free first, then by tier")
+    @Test("Sort by price orders free first (including nil), then by tier")
     func sortByPrice() {
         let events = [
             makeEvent(title: "Expensive", startDate: date(daysFromNow: 0), price: "$50"),
             makeEvent(title: "Free", startDate: date(daysFromNow: 1), price: "Free"),
             makeEvent(title: "Cheap", startDate: date(daysFromNow: 2), price: "$5"),
-            makeEvent(title: "Unknown", startDate: date(daysFromNow: 3), price: nil),
+            makeEvent(title: "No Price", startDate: date(daysFromNow: 3), price: nil),
         ]
         var filter = EventFilter()
         filter.sortBy = .priceLowToHigh
         let result = filter.apply(to: events, userLocation: nil)
+        // Free and No Price are both tier 0, sorted by date within tier
         #expect(result[0].title == "Free")
-        #expect(result[1].title == "Cheap")
-        #expect(result[2].title == "Expensive")
-        #expect(result[3].title == "Unknown")
+        #expect(result[1].title == "No Price")
+        #expect(result[2].title == "Cheap")
+        #expect(result[3].title == "Expensive")
     }
 }
 

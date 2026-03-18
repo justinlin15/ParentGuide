@@ -57,6 +57,11 @@ enum DistanceOption: Double, CaseIterable {
     }
 }
 
+enum DistanceFromOption: String, CaseIterable {
+    case currentLocation = "Current Location"
+    case home = "Home"
+}
+
 // MARK: - Event Filter
 
 struct EventFilter {
@@ -66,6 +71,7 @@ struct EventFilter {
     var customStartDate: Date? = nil
     var customEndDate: Date? = nil
     var distanceOption: DistanceOption = .unlimited
+    var distanceFrom: DistanceFromOption = .currentLocation
     var sortBy: EventSortOption = .date
 
     // MARK: - Active Filter Tracking
@@ -121,7 +127,7 @@ struct EventFilter {
 
     // MARK: - Apply Filters
 
-    func apply(to events: [Event], userLocation: CLLocation?) -> [Event] {
+    func apply(to events: [Event], userLocation: CLLocation?, homeLocation: CLLocation? = nil) -> [Event] {
         var result = events
 
         // 1. Category filter
@@ -136,7 +142,7 @@ struct EventFilter {
         case .free:
             result = result.filter { $0.isFree }
         case .paid:
-            result = result.filter { !$0.isFree }
+            result = result.filter { $0.hasPaidPrice }
         }
 
         // 3. Date range filter
@@ -195,8 +201,9 @@ struct EventFilter {
             }
         }
 
-        // 4. Distance filter
-        if distanceOption != .unlimited, let location = userLocation {
+        // 4. Distance filter — use the appropriate reference location
+        let referenceLocation: CLLocation? = distanceFrom == .home ? (homeLocation ?? userLocation) : userLocation
+        if distanceOption != .unlimited, let location = referenceLocation {
             let maxMeters = distanceOption.rawValue * 1609.34 // miles to meters
             result = result.filter { event in
                 guard event.hasValidCoordinates,
@@ -207,11 +214,12 @@ struct EventFilter {
         }
 
         // 5. Sort
+        let sortLocation: CLLocation? = distanceFrom == .home ? (homeLocation ?? userLocation) : userLocation
         switch sortBy {
         case .date:
             result.sort { $0.startDate < $1.startDate }
         case .distance:
-            if let location = userLocation {
+            if let location = sortLocation {
                 result.sort { a, b in
                     let distA = distanceInMiles(from: location, to: a)
                     let distB = distanceInMiles(from: location, to: b)
@@ -241,6 +249,7 @@ struct EventFilter {
         customStartDate = nil
         customEndDate = nil
         distanceOption = .unlimited
+        distanceFrom = .currentLocation
         sortBy = .date
     }
 

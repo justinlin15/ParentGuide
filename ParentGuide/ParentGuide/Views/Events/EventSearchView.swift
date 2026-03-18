@@ -59,7 +59,7 @@ struct EventSearchView: View {
                     )
                 } else {
                     List(filteredEvents) { event in
-                        NavigationLink(destination: EventDetailView(event: event)) {
+                        SubscriptionGatedLink(event: event) {
                             EventCardView(event: event)
                         }
                         .listRowInsets(EdgeInsets())

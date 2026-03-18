@@ -12,6 +12,10 @@ nonisolated enum AppConstants {
     static let monthlyPrice = "$5"
     static let annualPrice = "$48"
 
+    // MARK: - Beta Testing
+    /// Set to `false` before App Store submission to hide debug role toggles.
+    static let betaTestingEnabled = true
+
     // MARK: - Subscription Gates
     /// Free users can only view events within this many days from today.
     /// Events beyond this window are visible but tapping them triggers the paywall.

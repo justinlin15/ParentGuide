@@ -11,7 +11,6 @@ struct SubscriptionPlan: Identifiable {
     let name: String
     let price: String
     let period: String
-    let trialDays: Int
     let features: [String]
     let isBestValue: Bool
 
@@ -21,7 +20,6 @@ struct SubscriptionPlan: Identifiable {
         name: "Monthly Membership",
         price: "$5",
         period: "Every month",
-        trialDays: 7,
         features: ["View all upcoming events", "Calendar sync", "Ad-free experience"],
         isBestValue: false
     )
@@ -32,7 +30,6 @@ struct SubscriptionPlan: Identifiable {
         name: "Annual Membership",
         price: "$48",
         period: "Every year — save 20%",
-        trialDays: 7,
         features: ["View all upcoming events", "Calendar sync", "Ad-free experience"],
         isBestValue: true
     )

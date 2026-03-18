@@ -40,6 +40,7 @@ struct CalendarMonthView: View {
                             date: date,
                             events: viewModel.filteredEventsForDate(date),
                             isToday: date.isToday,
+                            isLocked: viewModel.isDateLocked(date),
                             onTap: {
                                 viewModel.selectedDate = date
                                 onDateSelected(date)

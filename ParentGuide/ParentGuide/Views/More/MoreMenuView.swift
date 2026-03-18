@@ -1,13 +1,13 @@
 //
 //  MoreMenuView.swift
 //  ParentGuide
-//
 
 import SwiftUI
 
 struct MoreMenuView: View {
     @State private var authService = AuthService.shared
     @State private var adminService = AdminService.shared
+    @State private var subscriptionService = SubscriptionService.shared
 
     var body: some View {
         NavigationStack {
@@ -16,7 +16,7 @@ struct MoreMenuView: View {
                 if adminService.isAdmin {
                     Section("Admin") {
                         NavigationLink(destination: AdminDashboardView()) {
-                            Label("Event Dashboard", systemImage: "square.grid.2x2")
+                            Label("Admin Dashboard", systemImage: "square.grid.2x2")
                                 .foregroundStyle(Color.brandBlue)
                         }
                         NavigationLink(destination: AdminReviewQueueView()) {
@@ -52,19 +52,34 @@ struct MoreMenuView: View {
                     }
                 }
 
-                #if DEBUG
-                Section("🛠 Debug (Remove Before Release)") {
-                    Toggle(isOn: Binding(
-                        get: { adminService.debugAdminOverride ?? adminService.isAdmin },
-                        set: { newValue in
-                            adminService.debugAdminOverride = newValue
+                if AppConstants.betaTestingEnabled {
+                    Section("🛠 Beta Testing (Disable Before Release)") {
+                        Toggle(isOn: Binding(
+                            get: { adminService.debugAdminOverride ?? adminService.isAdmin },
+                            set: { newValue in
+                                adminService.debugAdminOverride = newValue
+                            }
+                        )) {
+                            Label("Admin Role", systemImage: "shield.lefthalf.filled")
                         }
-                    )) {
-                        Label("Admin Role", systemImage: "shield.lefthalf.filled")
+                        .tint(.orange)
+
+                        Toggle(isOn: Binding(
+                            get: { subscriptionService.debugSubscriptionOverride ?? subscriptionService.isSubscribed },
+                            set: { newValue in
+                                subscriptionService.debugSubscriptionOverride = newValue
+                            }
+                        )) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Label("Premium User", systemImage: "crown.fill")
+                                Text("Calendar sync • >3 days • No ads")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .tint(.orange)
                     }
-                    .tint(.orange)
                 }
-                #endif
 
                 Section {
                     HStack {

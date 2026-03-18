@@ -3,6 +3,7 @@
 //  ParentGuide
 //
 
+import MapKit
 import SwiftUI
 
 struct EventFormView: View {
@@ -79,9 +80,35 @@ struct EventFormView: View {
 
                 // Location
                 Section("Location") {
-                    TextField("City", text: $city)
+                    LocationSearchField(
+                        placeholder: "Search for a place or address",
+                        text: $locationName
+                    ) { completion in
+                        Task { @MainActor in
+                            if let mapItem = await completion.resolve() {
+                                let placemark = mapItem.placemark
+                                self.locationName = mapItem.name ?? completion.title
+                                self.city = placemark.locality ?? placemark.subAdministrativeArea ?? ""
+                                self.address = [
+                                    placemark.subThoroughfare,
+                                    placemark.thoroughfare,
+                                    placemark.locality,
+                                    placemark.administrativeArea
+                                ].compactMap { $0 }.joined(separator: ", ")
+                                if let coord = mapItem.placemark.location?.coordinate {
+                                    self.latitude = String(coord.latitude)
+                                    self.longitude = String(coord.longitude)
+                                }
+                                // Auto-detect metro from city
+                                let cityLower = self.city.lowercased()
+                                if cityLower.contains("los angeles") || cityLower.contains("la") {
+                                    self.metro = "los-angeles"
+                                }
+                            }
+                        }
+                    }
 
-                    TextField("Venue Name", text: $locationName)
+                    TextField("City", text: $city)
 
                     TextField("Address", text: $address)
 

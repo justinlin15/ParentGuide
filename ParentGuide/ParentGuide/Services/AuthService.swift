@@ -179,6 +179,26 @@ class AuthService {
         currentUser = makeLocalProfile(appleUserID: appleUserID)
     }
 
+    /// Update profile fields (e.g., home location) and save to CloudKit.
+    func updateProfile(_ updatedProfile: UserProfile) async {
+        currentUser = updatedProfile
+
+        do {
+            let recordID = CKRecord.ID(recordName: updatedProfile.id)
+            let record: CKRecord
+            do {
+                record = try await cloudKit.fetchRecord(recordID: recordID)
+            } catch {
+                record = updatedProfile.toCKRecord()
+            }
+            updatedProfile.applyFields(to: record)
+            _ = try await cloudKit.savePublicRecord(record)
+            NSLog("[AuthService] Profile updated in CloudKit")
+        } catch {
+            NSLog("[AuthService] Failed to update profile: %@", error.localizedDescription)
+        }
+    }
+
     // MARK: - Nonce Helpers (for Sign in with Apple security)
 
     /// Generates a random nonce string and stores it. Call before presenting the Sign in with Apple sheet.

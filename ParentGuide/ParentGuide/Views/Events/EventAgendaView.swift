@@ -8,6 +8,8 @@ import SwiftUI
 struct EventAgendaView: View {
     let events: [Event]
     @Binding var selectedDate: Date
+    @State private var subscriptionService = SubscriptionService.shared
+    @State private var showPaywall = false
 
     private var datesWithEvents: [Date] {
         let grouped = Dictionary(grouping: events) { event in
@@ -21,6 +23,16 @@ struct EventAgendaView: View {
             .sorted { $0.startDate < $1.startDate }
     }
 
+    private var isSelectedDateLocked: Bool {
+        guard !subscriptionService.isSubscribed else { return false }
+        let horizon = Calendar.current.date(
+            byAdding: .day,
+            value: AppConstants.freeEventHorizonDays,
+            to: Calendar.current.startOfDay(for: Date())
+        ) ?? Date()
+        return Calendar.current.startOfDay(for: selectedDate) > horizon
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Horizontal date scroller
@@ -28,6 +40,8 @@ struct EventAgendaView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(datesWithEvents, id: \.self) { date in
+                            let dateLocked = isDateLocked(date)
+                            let isSelected = Calendar.current.isDate(date, inSameDayAs: selectedDate)
                             Button {
                                 withAnimation { selectedDate = date }
                             } label: {
@@ -35,16 +49,23 @@ struct EventAgendaView: View {
                                     Text(date.shortDayName)
                                         .font(.caption2)
                                         .fontWeight(.medium)
-                                    Text("\(date.dayOfMonth)")
-                                        .font(.title3)
-                                        .fontWeight(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .bold : .regular)
+                                    if dateLocked && !isSelected {
+                                        Image(systemName: "lock.fill")
+                                            .font(.caption2)
+                                        Text("\(date.dayOfMonth)")
+                                            .font(.caption2)
+                                    } else {
+                                        Text("\(date.dayOfMonth)")
+                                            .font(.title3)
+                                            .fontWeight(isSelected ? .bold : .regular)
+                                    }
                                 }
-                                .foregroundStyle(Calendar.current.isDate(date, inSameDayAs: selectedDate) ? .white : .primary)
+                                .foregroundStyle(isSelected ? .white : (dateLocked ? .secondary : .primary))
                                 .frame(width: 48, height: 60)
                                 .background(
-                                    Calendar.current.isDate(date, inSameDayAs: selectedDate)
+                                    isSelected
                                         ? Color.brandBlue
-                                        : Color(.systemGray6)
+                                        : (dateLocked ? Color(.systemGray5) : Color(.systemGray6))
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
@@ -74,7 +95,46 @@ struct EventAgendaView: View {
                 .padding(.vertical, 12)
 
             // Events for selected date
-            if eventsForSelectedDate.isEmpty {
+            if isSelectedDateLocked {
+                // Premium upsell for locked dates
+                Spacer()
+                VStack(spacing: 16) {
+                    Image(systemName: "lock.circle.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(Color.brandBlue.opacity(0.6))
+
+                    Text("\(eventsForSelectedDate.count) event\(eventsForSelectedDate.count == 1 ? "" : "s") on this day")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+
+                    Text("Free accounts only show 3 days of events.\nGo Premium to unlock every event — plan ahead and never miss out on family fun.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+
+                    Button {
+                        showPaywall = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "crown.fill")
+                            Text("Unlock All Events")
+                        }
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.brandBlue)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                    .padding(.horizontal, 32)
+
+                    Text("Starting at $4.99/month")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                Spacer()
+            } else if eventsForSelectedDate.isEmpty {
                 Spacer()
                 EmptyStateView(
                     icon: "calendar",
@@ -132,6 +192,19 @@ struct EventAgendaView: View {
                 .listStyle(.plain)
             }
         }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(lockedContentName: "all upcoming events")
+        }
+    }
+
+    private func isDateLocked(_ date: Date) -> Bool {
+        guard !subscriptionService.isSubscribed else { return false }
+        let horizon = Calendar.current.date(
+            byAdding: .day,
+            value: AppConstants.freeEventHorizonDays,
+            to: Calendar.current.startOfDay(for: Date())
+        ) ?? Date()
+        return Calendar.current.startOfDay(for: date) > horizon
     }
 }
 
