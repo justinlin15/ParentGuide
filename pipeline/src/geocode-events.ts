@@ -517,9 +517,17 @@ export async function geocodeEvents(
         if (!event.address && result.address) {
           event.address = result.address;
         }
-        // Use Google Places venue photo if event has no image yet — real venue
-        // photos are far more accurate than generic Unsplash stock photos.
-        if (result.photoUrl && !event.imageURL) {
+        // Use Google Places venue photo only when:
+        //  1. Event has no image yet, AND
+        //  2. Event does NOT have a specific event-page websiteURL
+        //     (if it does, the og:image step will fetch a better event-specific
+        //     promotional image — e.g. Bluey show poster, Eggstravaganza eggs —
+        //     instead of a random user-uploaded venue photo from Google Maps)
+        const hasEventPageURL = event.websiteURL &&
+          !event.websiteURL.includes("google.com/search") &&
+          !event.websiteURL.includes("mommypoppins.com") &&
+          !event.websiteURL.includes("macaronikid.com");
+        if (result.photoUrl && !event.imageURL && !hasEventPageURL) {
           event.imageURL = result.photoUrl;
         }
       }

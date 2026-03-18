@@ -67,7 +67,21 @@ function loadEventsForReprocess(): PipelineEvent[] {
 
     // Clear stock / aggregator images so Google Places Photos + improved
     // Unsplash queries run fresh. Keep real venue images from API sources.
-    const keepImage = imageURL && !isStockOrAggregatorImage(imageURL, source) ? imageURL : undefined;
+    // Also clear Google Places venue photos for events that have a specific
+    // event-page websiteURL — the og:image step will fetch a better promotional
+    // image (e.g. Eggstravaganza eggs, Bluey show poster) instead of a random
+    // user-uploaded venue photo from Google Maps.
+    const websiteURL = e.websiteURL ? String(e.websiteURL) : undefined;
+    const hasEventPageURL = websiteURL &&
+      !websiteURL.includes("google.com/search") &&
+      !websiteURL.includes("mommypoppins.com") &&
+      !websiteURL.includes("macaronikid.com");
+    const isGooglePlacesPhoto = imageURL?.includes("lh3.googleusercontent.com/place-photos") ||
+      imageURL?.includes("lh3.googleusercontent.com/places");
+    const keepImage = imageURL &&
+      !isStockOrAggregatorImage(imageURL, source) &&
+      !(isGooglePlacesPhoto && hasEventPageURL)
+        ? imageURL : undefined;
 
     return {
       sourceId: String(e.id ?? e.sourceId ?? ""),
