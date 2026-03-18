@@ -129,7 +129,10 @@ jobs:
             mkdir -p docs/api
             cp pipeline/output/all-events.json docs/api/events.json
           }
-          git add docs/api/events.json
+          # Also update the bundled fallback used by the iOS app when remote feed is unavailable
+          mkdir -p ParentGuide/ParentGuide/Resources
+          cp pipeline/output/all-events.json ParentGuide/ParentGuide/Resources/events.json
+          git add docs/api/events.json ParentGuide/ParentGuide/Resources/events.json
           git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git pull --rebase origin main && git push)
 
       - name: Upload output artifacts
