@@ -46,21 +46,29 @@ actor CloudKitService {
     /// when the CloudKit schema was auto-created via REST API without indexes.
     func fetchAllRecords(recordType: String) async throws -> [CKRecord] {
         var allRecords: [CKRecord] = []
+        var changeToken: CKServerChangeToken? = nil
 
-        let changes = try await publicDB.recordZoneChanges(
-            inZoneWith: .default,
-            since: nil
-        )
+        // Paginate until moreComing == false — CloudKit returns ~200 records per page
+        repeat {
+            let changes = try await publicDB.recordZoneChanges(
+                inZoneWith: .default,
+                since: changeToken
+            )
 
-        for (_, result) in changes.modificationResultsByID {
-            if case .success(let modification) = result {
-                let record = modification.record
-                if record.recordType == recordType {
-                    allRecords.append(record)
+            for (_, result) in changes.modificationResultsByID {
+                if case .success(let modification) = result {
+                    let record = modification.record
+                    if record.recordType == recordType {
+                        allRecords.append(record)
+                    }
                 }
             }
-        }
 
+            changeToken = changes.changeToken
+            if !changes.moreComing { break }
+        } while true
+
+        NSLog("[CloudKit] fetchAllRecords: %d total %@ records", allRecords.count, recordType)
         return allRecords
     }
 

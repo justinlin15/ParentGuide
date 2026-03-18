@@ -51,13 +51,19 @@ actor EventService {
         }
     }
 
-    /// Load previously cached events from disk. Returns nil if no cache exists.
+    /// Load previously cached events from disk. Returns nil if cache is missing or older than 6 hours.
     private func loadFromDiskCache() -> [Event]? {
         guard let url = diskCacheURL,
               FileManager.default.fileExists(atPath: url.path) else { return nil }
         do {
             let data = try Data(contentsOf: url)
             let cached = try JSONDecoder().decode(CachedEvents.self, from: data)
+            // Expire disk cache after 6 hours so stale data doesn't persist across pipeline runs
+            let age = Date().timeIntervalSince(cached.timestamp)
+            guard age < 6 * 3600 else {
+                NSLog("[EventService] Disk cache expired (%.0fh old), discarding", age / 3600)
+                return nil
+            }
             NSLog("[EventService] Loaded %d events from disk cache (saved %@)",
                   cached.events.count,
                   cached.timestamp.formatted())
