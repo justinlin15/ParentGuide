@@ -183,7 +183,7 @@ async function main() {
   // Scraped events without a verified venue URL become "draft" for admin review.
   log.divider();
   log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
-  const verified = verifyEvents(aiEnriched);
+  const verified = await verifyEvents(aiEnriched);
 
   // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
