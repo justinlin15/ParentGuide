@@ -117,6 +117,10 @@ export const config = {
     apiKey: process.env.PEXELS_API_KEY || "",
     baseUrl: "https://api.pexels.com/v1",
   },
+    eventbrite: {
+          apiKey: process.env.EVENTBRITE_API_KEY || "",
+          baseUrl: "https://www.eventbriteapi.com/v3",
+    },
   cloudkit: {
     container: process.env.CLOUDKIT_CONTAINER || "",
     keyId: process.env.CLOUDKIT_KEY_ID || "",
