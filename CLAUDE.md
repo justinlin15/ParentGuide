@@ -64,11 +64,16 @@ The pipeline uses two Claude API steps (enrichment + honeypot verification). To 
 - `status` — Moderation status: `"published"` | `"draft"` | `"rejected"` (see Honeypot Detection)
 
 ### Scraper Sources & Priority (OC/LA)
-1. **OC Parent Guide** — Primary source for OC. Playwright-based (Boom Calendar iframe). Requires Wix login credentials. Goes through honeypot verification (Layer 2 + 3) like all scrapers.
-2. **Kidsguide Magazine** — OC/LA family events. Uses The Events Calendar WordPress REST API (`/wp-json/tribe/events/v1/events`). Trusted API source (auto-published).
-3. **MommyPoppins** — Secondary source. HTML scraper, 60 days ahead. LA region 115 covers both LA + OC.
-4. **MacaroniKid** — Supplementary. HTML scraper, 60 days ahead (8 weekly page offsets).
-5. **Ticketmaster / SeatGeek / Yelp / Eventbrite** — API-based, run in parallel per metro. All 60 days forward window. Trusted API sources (auto-published).
+Each scraper declares its supported metro(s) and is only invoked for those metros — no wasted calls.
+
+| Source | Metro(s) called for | Notes |
+|--------|-------------------|-------|
+| **OC Parent Guide** | `orange-county` only | Playwright-based (Boom Calendar iframe). Wix login required. Layer 2+3 honeypot verification. |
+| **Kidsguide Magazine** | `los-angeles` only | WordPress REST API. OC metro skipped internally; OC events reassigned from LA batch in post-processing. Trusted API source (auto-published). |
+| **MommyPoppins** | `los-angeles` only | HTML scraper, 60 days. LA region 115 covers all SoCal. OC metro skipped internally; OC events reassigned in post-processing. |
+| **MacaroniKid** | `los-angeles` only | National site scraped once. OC events split out via city/coordinate reassignment. 8 weekly offsets ≈ 60 days. |
+| **Ticketmaster / SeatGeek / Yelp / Eventbrite** | Both OC + LA | API-based, run in parallel per metro. 60-day window. Auto-published. |
+| **NYC / Dallas / Chicago / Atlanta scrapers** | Disabled (metros off) | Code present but never invoked in Phase 1. |
 
 ### Event Window
 - All sources fetch **60 days forward** from current date

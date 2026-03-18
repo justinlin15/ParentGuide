@@ -73,19 +73,21 @@ async function main() {
     // Each entry declares which metro IDs it supports so scrapers are never
     // called for irrelevant regions — avoids wasted HTTP requests.
     //
-    // MommyPoppins: OC shares the LA region (id 115); LA-tagged events are
-    //   reassigned to OC in post-processing, so we only scrape for LA.
-    // MacaroniKid: national site — run once for LA only; the city/coordinate
-    //   reassignment below splits OC events out of the LA batch.
+    // OC Parent Guide:  OC only — internal guard returns [] for any other metro.
+    // Kidsguide:        LA only — internal guard skips OC; OC events reassigned
+    //                   from LA batch in post-processing.
+    // MommyPoppins:     LA only — OC shares LA region 115; OC events reassigned.
+    // MacaroniKid:      LA only — national site, run once; reassignment splits OC.
+    // NYC/Dallas/Chicago/Atlanta: disabled in Phase 1 (metros not enabled).
     const scraperDefs: Array<{ metros: string[]; fn: () => Promise<PipelineEvent[]> }> = [
-      { metros: ["orange-county", "los-angeles"], fn: () => scrapeOCParentGuide(metro) },
-      { metros: ["orange-county", "los-angeles"], fn: () => scrapeKidsguide(metro) },
-      { metros: ["los-angeles"],                  fn: () => scrapeMommyPoppins(metro) },
-      { metros: ["los-angeles"],                  fn: () => scrapeMacaroniKid(metro) },
-      { metros: ["new-york"],                     fn: () => scrapeNYCFamily(metro) },
-      { metros: ["dallas"],                       fn: () => scrapeDFWChild(metro) },
-      { metros: ["chicago"],                      fn: () => scrapeMyKidList(metro) },
-      { metros: ["atlanta"],                      fn: () => scrapeAtlantaParent(metro) },
+      { metros: ["orange-county"],  fn: () => scrapeOCParentGuide(metro) },
+      { metros: ["los-angeles"],    fn: () => scrapeKidsguide(metro) },
+      { metros: ["los-angeles"],    fn: () => scrapeMommyPoppins(metro) },
+      { metros: ["los-angeles"],    fn: () => scrapeMacaroniKid(metro) },
+      { metros: ["new-york"],       fn: () => scrapeNYCFamily(metro) },
+      { metros: ["dallas"],         fn: () => scrapeDFWChild(metro) },
+      { metros: ["chicago"],        fn: () => scrapeMyKidList(metro) },
+      { metros: ["atlanta"],        fn: () => scrapeAtlantaParent(metro) },
     ];
 
     const applicableScrapers = scraperDefs.filter((s) => s.metros.includes(metro.id));
