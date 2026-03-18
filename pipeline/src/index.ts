@@ -18,6 +18,7 @@ import { cleanDescriptions } from "./clean-descriptions.js";
 import { rewriteDescriptions } from "./rewrite.js";
 import { enrichEvents } from "./enrich.js";
 import { aiEnrichEvents } from "./utils/ai-enricher.js";
+import { verifyEvents } from "./verify-events.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
@@ -177,13 +178,20 @@ async function main() {
   log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
   const aiEnriched = await aiEnrichEvents(enriched);
 
+  // ── Honeypot / Watermark Verification ───────────────────────────────────────
+  // API sources are auto-published (trusted partners).
+  // Scraped events without a verified venue URL become "draft" for admin review.
+  log.divider();
+  log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
+  const verified = verifyEvents(aiEnriched);
+
   // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
   todayMidnightUTC.setUTCHours(0, 0, 0, 0);
   const todayStr = todayMidnightUTC.toISOString();
 
-  const upcoming = aiEnriched.filter((event) => event.startDate >= todayStr);
-  const staleCount = aiEnriched.length - upcoming.length;
+  const upcoming = verified.filter((event) => event.startDate >= todayStr);
+  const staleCount = verified.length - upcoming.length;
   if (staleCount > 0) {
     log.info(
       "pipeline",

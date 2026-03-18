@@ -8,6 +8,7 @@ struct MoreMenuView: View {
     @State private var authService = AuthService.shared
     @State private var adminService = AdminService.shared
     @State private var subscriptionService = SubscriptionService.shared
+    @State private var draftCount: Int = 0
 
     var body: some View {
         NavigationStack {
@@ -22,6 +23,28 @@ struct MoreMenuView: View {
                         NavigationLink(destination: AdminReviewQueueView()) {
                             Label("Review Queue", systemImage: "tray.full")
                                 .foregroundStyle(Color.brandBlue)
+                        }
+                        NavigationLink(destination: DraftEventsView()) {
+                            HStack {
+                                Label("Draft Events", systemImage: "exclamationmark.shield")
+                                    .foregroundStyle(draftCount > 0 ? .orange : Color.brandBlue)
+                                Spacer()
+                                if draftCount > 0 {
+                                    Text("\(draftCount)")
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 7)
+                                        .padding(.vertical, 3)
+                                        .background(Color.orange)
+                                        .clipShape(Capsule())
+                                }
+                            }
+                        }
+                    }
+                    .task {
+                        if let events = try? await EventService.shared.fetchDraftEvents() {
+                            draftCount = events.count
                         }
                     }
                 }

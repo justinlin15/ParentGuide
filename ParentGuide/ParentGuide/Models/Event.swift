@@ -37,6 +37,16 @@ struct Event: Identifiable, Hashable, Codable {
     var phone: String? = nil
     var contactEmail: String? = nil
 
+    // Moderation status: "published" | "draft" | "rejected"
+    // nil is treated as "published" for backwards compatibility with older records
+    var status: String? = nil
+
+    /// True when this event is pending admin review (scraper event with no verified URL)
+    var isDraft: Bool { status == "draft" }
+
+    /// True when this event has been rejected by an admin
+    var isRejected: Bool { status == "rejected" }
+
     /// True when the event has any location info (name, address, or valid coordinates).
     var hasLocation: Bool {
         locationName != nil || address != nil || hasValidCoordinates
@@ -314,6 +324,10 @@ nonisolated extension Event {
         self.phone = (phoneVal?.isEmpty == false) ? phoneVal : nil
         let emailVal = record["contactEmail"] as? String
         self.contactEmail = (emailVal?.isEmpty == false) ? emailVal : nil
+
+        // Moderation status (nil / missing = treated as "published" for backwards compat)
+        let statusVal = record["status"] as? String
+        self.status = (statusVal?.isEmpty == false) ? statusVal : nil
     }
 
     /// Convert to a new CKRecord for creating an event
@@ -353,5 +367,6 @@ nonisolated extension Event {
         record["websiteURL"] = (websiteURL ?? "") as CKRecordValue
         record["phone"] = (phone ?? "") as CKRecordValue
         record["contactEmail"] = (contactEmail ?? "") as CKRecordValue
+        record["status"] = (status ?? "published") as CKRecordValue
     }
 }

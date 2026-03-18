@@ -173,6 +173,7 @@ actor EventService {
     }
 
     /// Fetch events for a metro area across 2 months from today.
+    /// Excludes draft (pending review) and rejected events for regular users.
     func fetchUpcomingEvents(forMetro metro: String) async throws -> [Event] {
         let allEvents = try await fetchAllEvents()
         let now = Calendar.current.startOfDay(for: Date())
@@ -181,7 +182,8 @@ actor EventService {
         return allEvents.filter { event in
             let isUpcoming = event.startDate >= now && event.startDate <= threeMonthsLater
             let matchesMetro = (event.metro ?? "los-angeles") == metro
-            return isUpcoming && matchesMetro
+            let isVisible = !event.isDraft && !event.isRejected
+            return isUpcoming && matchesMetro && isVisible
         }.sorted { $0.startDate < $1.startDate }
     }
 
@@ -202,9 +204,10 @@ actor EventService {
         let allEvents = try await fetchAllEvents()
         let lowerQuery = query.lowercased()
         return allEvents.filter {
-            $0.title.lowercased().contains(lowerQuery) ||
-            $0.eventDescription.lowercased().contains(lowerQuery) ||
-            $0.city.lowercased().contains(lowerQuery)
+            guard !$0.isDraft && !$0.isRejected else { return false }
+            return $0.title.lowercased().contains(lowerQuery) ||
+                   $0.eventDescription.lowercased().contains(lowerQuery) ||
+                   $0.city.lowercased().contains(lowerQuery)
         }
     }
 
@@ -259,6 +262,31 @@ actor EventService {
             return a.startDate < b.startDate
         }
         return Array(sorted.prefix(limit))
+    }
+
+    // MARK: - Draft / Moderation
+
+    /// Fetch events pending admin review (status == "draft").
+    /// Only used by the admin Draft Events review view.
+    func fetchDraftEvents() async throws -> [Event] {
+        let allEvents = try await fetchAllEvents()
+        return allEvents
+            .filter { $0.isDraft }
+            .sorted { $0.startDate < $1.startDate }
+    }
+
+    /// Publish a draft event (sets status to "published").
+    func publishEvent(_ event: Event) async throws -> Event {
+        var updated = event
+        updated.status = "published"
+        return try await updateEvent(updated)
+    }
+
+    /// Reject an event (sets status to "rejected" — hidden from all users).
+    func rejectEvent(_ event: Event) async throws -> Event {
+        var updated = event
+        updated.status = "rejected"
+        return try await updateEvent(updated)
     }
 
     // MARK: - Admin CRUD
@@ -319,6 +347,7 @@ private struct PipelineEvent: Codable {
     let websiteURL: String?
     let phone: String?
     let contactEmail: String?
+    let status: String?
 
     func toEvent() -> Event? {
         guard let start = Self.parseDate(startDate) else { return nil }
@@ -359,7 +388,8 @@ private struct PipelineEvent: Codable {
             ageRange: ageRange,
             websiteURL: websiteURL,
             phone: phone,
-            contactEmail: contactEmail
+            contactEmail: contactEmail,
+            status: status
         )
     }
 

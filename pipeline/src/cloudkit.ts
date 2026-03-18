@@ -163,6 +163,9 @@ function toCloudKitRecord(event: PipelineEvent) {
   if (event.phone) fields.phone = { value: event.phone };
   if (event.contactEmail) fields.contactEmail = { value: event.contactEmail };
 
+  // Moderation status — default to "published" for backwards compatibility
+  fields.status = { value: event.status ?? "published" };
+
   return {
     recordType: "Event",
     recordName: event.sourceId.replace(/[^a-zA-Z0-9_-]/g, "_"),

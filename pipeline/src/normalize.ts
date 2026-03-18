@@ -26,6 +26,10 @@ export interface PipelineEvent {
   websiteURL?: string; // official event/venue website
   phone?: string; // venue phone number
   contactEmail?: string; // event contact email
+
+  // Moderation status (assigned by verify-events.ts)
+  // "published" = safe to show; "draft" = needs admin review; "rejected" = hidden
+  status?: "published" | "draft" | "rejected";
 }
 
 // Category mapping: keys are iOS EventCategory raw values (Title Case)
