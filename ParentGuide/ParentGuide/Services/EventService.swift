@@ -76,7 +76,8 @@ actor EventService {
 
     // MARK: - Fetch helpers
 
-    /// Fetch ALL events. Tries CloudKit first; falls back to JSON feed.
+    /// Fetch ALL events. Uses JSON feed as primary (always complete, updated every pipeline run),
+    /// falls back to CloudKit (recordZoneChanges has per-page limits on public default zone).
     func fetchAllEvents() async throws -> [Event] {
         // Return cache if fresh
         if let cached = cachedEvents, let ts = cacheTimestamp,
@@ -84,32 +85,35 @@ actor EventService {
             return cached
         }
 
-        // Try CloudKit first — use fetchAllRecords (zone changes API) because
-        // the pipeline auto-creates the schema via REST without queryable indexes.
-        // CKQuery would fail with "field not queryable" errors.
+        // Primary: JSON feed — always contains the full event set from the latest pipeline run.
+        // CloudKit's recordZoneChanges on the public default zone returns a capped page of results
+        // (~200–500 records) even with moreComing pagination, so it is unreliable as a primary
+        // source for the full catalog.
+        let jsonEvents = try? await fetchEventsFromJSON()
+        if let jsonEvents, !jsonEvents.isEmpty {
+            NSLog("[EventService] JSON feed: %d events", jsonEvents.count)
+            cachedEvents = jsonEvents
+            cacheTimestamp = Date()
+            saveToDiskCache(jsonEvents)
+            return jsonEvents
+        }
+
+        // Fallback: CloudKit (catches admin-created events not yet in the JSON feed,
+        // and works when the network can reach CloudKit but not GitHub raw).
         do {
             let records = try await cloudKit.fetchAllRecords(
                 recordType: CloudKitConfig.RecordType.event
             )
             let events = records.compactMap { Event(record: $0) }
             if !events.isEmpty {
-                NSLog("[EventService] CloudKit: %d events", events.count)
+                NSLog("[EventService] CloudKit fallback: %d events", events.count)
                 cachedEvents = events
                 cacheTimestamp = Date()
                 saveToDiskCache(events)
                 return events
             }
         } catch {
-            NSLog("[EventService] CloudKit fetch failed: %@, falling back to JSON feed", error.localizedDescription)
-        }
-
-        // Fallback: fetch from JSON feed
-        let events = try await fetchEventsFromJSON()
-        if !events.isEmpty {
-            cachedEvents = events
-            cacheTimestamp = Date()
-            saveToDiskCache(events)
-            return events
+            NSLog("[EventService] CloudKit fetch failed: %@", error.localizedDescription)
         }
 
         // Last resort: load from persistent disk cache (offline support)
@@ -274,9 +278,14 @@ actor EventService {
 
     /// Fetch events pending admin review (status == "draft").
     /// Only used by the admin Draft Events review view.
+    /// Reads directly from CloudKit (bypasses JSON cache) so admin sees real-time status
+    /// immediately after approving/rejecting events — JSON only updates at pipeline runs.
     func fetchDraftEvents() async throws -> [Event] {
-        let allEvents = try await fetchAllEvents()
-        return allEvents
+        let records = try await cloudKit.fetchAllRecords(
+            recordType: CloudKitConfig.RecordType.event
+        )
+        return records
+            .compactMap { Event(record: $0) }
             .filter { $0.isDraft }
             .sorted { $0.startDate < $1.startDate }
     }
