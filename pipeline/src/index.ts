@@ -17,6 +17,7 @@ import { fillMissingImages } from "./images.js";
 import { cleanDescriptions } from "./clean-descriptions.js";
 import { rewriteDescriptions } from "./rewrite.js";
 import { enrichEvents } from "./enrich.js";
+import { categorizeEventsWithAI } from "./utils/categorize-ai.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
@@ -167,12 +168,17 @@ async function main() {
   log.info("pipeline", "Enriching events (URL sanitization, price extraction)...");
   const enriched = await enrichEvents(rewritten);
 
+  // AI-powered category classification — re-classifies "Other" events using Claude
+  log.divider();
+  log.info("pipeline", "Running AI category classification...");
+  const categorized = await categorizeEventsWithAI(enriched);
+
   // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
   todayMidnightUTC.setUTCHours(0, 0, 0, 0);
   const todayStr = todayMidnightUTC.toISOString();
 
-  const upcoming = enriched.filter((event) => event.startDate >= todayStr);
+  const upcoming = categorized.filter((event) => event.startDate >= todayStr);
   const staleCount = enriched.length - upcoming.length;
   if (staleCount > 0) {
     log.info(
