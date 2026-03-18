@@ -10,10 +10,12 @@ import { scrapeDFWChild } from "./sources/scrapers/dfw-child.js";
 import { scrapeMyKidList } from "./sources/scrapers/mykidlist.js";
 import { scrapeAtlantaParent } from "./sources/scrapers/atlanta-parent.js";
 import { scrapeOCParentGuide } from "./sources/scrapers/oc-parent-guide.js";
+import { scrapeKidsguide } from "./sources/scrapers/kidsguide.js";
 import { deduplicateEvents } from "./deduplicate.js";
 import { fillMissingImages } from "./images.js";
 import { cleanDescriptions } from "./clean-descriptions.js";
 import { rewriteDescriptions } from "./rewrite.js";
+import { enrichEvents } from "./enrich.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
@@ -60,14 +62,16 @@ async function main() {
     }
 
     // Scrape (sequentially to be polite to servers)
+    // OC Parent Guide runs first as primary source for OC/LA
     const scraperFns = [
-      () => scrapeMommyPoppins(metro),    // covers all 5 metros
+      () => scrapeOCParentGuide(metro),    // OC primary source (Playwright)
+      () => scrapeKidsguide(metro),        // OC/LA family events (REST API)
+      () => scrapeMommyPoppins(metro),    // secondary for OC/LA, primary elsewhere
       () => scrapeMacaroniKid(metro),      // covers all 5 metros
       () => scrapeNYCFamily(metro),        // NYC only
       () => scrapeDFWChild(metro),         // Dallas only
       () => scrapeMyKidList(metro),        // Chicago only
       () => scrapeAtlantaParent(metro),    // Atlanta only
-      () => scrapeOCParentGuide(metro),    // LA/OC only (Playwright)
     ];
 
     for (const scraperFn of scraperFns) {
@@ -153,13 +157,18 @@ async function main() {
   // Rewrite descriptions to be unique
   const rewritten = rewriteDescriptions(cleaned);
 
+  // Enrich: sanitize URLs (remove scraper source links), extract prices
+  log.divider();
+  log.info("pipeline", "Enriching events (URL sanitization, price extraction)...");
+  const enriched = await enrichEvents(rewritten);
+
   // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
   todayMidnightUTC.setUTCHours(0, 0, 0, 0);
   const todayStr = todayMidnightUTC.toISOString();
 
-  const upcoming = rewritten.filter((event) => event.startDate >= todayStr);
-  const staleCount = rewritten.length - upcoming.length;
+  const upcoming = enriched.filter((event) => event.startDate >= todayStr);
+  const staleCount = enriched.length - upcoming.length;
   if (staleCount > 0) {
     log.info(
       "pipeline",

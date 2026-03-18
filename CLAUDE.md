@@ -11,12 +11,12 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 
 ### Architecture
 - **Location:** Runs on GitHub Actions (online), not locally
-- **Schedule:** Twice daily at 5:17 AM and 6:17 PM UTC, plus random 0–30 min jitter
+- **Schedule:** Twice daily at 5:17 AM and 6:17 PM UTC, plus random 0–5 min jitter (scheduled runs only)
 - **Manual trigger:** GitHub Actions tab → "Event Pipeline" → "Run workflow"
 - **Dry run:** Pass `--dry-run` to skip CloudKit upload and write to `pipeline/output/`
 
 ### Pipeline Flow
-1. **Scrape** — APIs (Ticketmaster, SeatGeek, Yelp) + scrapers (MommyPoppins, MacaroniKid, OC Parent Guide)
+1. **Scrape** — APIs (Ticketmaster, SeatGeek, Yelp) + scrapers (OC Parent Guide, Kidsguide, MommyPoppins, MacaroniKid)
 2. **Reassign metros** — Split LA/OC events based on city names and coordinates
 3. **Deduplicate** — Remove duplicate events with same title, date, etc.
 4. **Clean descriptions** — Strip promotional language
@@ -31,7 +31,8 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 - **Runs on:** GitHub Actions (cloud) — NOT on local machine
 - **Trigger:** Automatic (twice daily cron) or manual (GitHub Actions → Run workflow)
 - **Local dry run:** `cd pipeline && npx tsx src/index.ts --dry-run` (writes to `pipeline/output/`, skips CloudKit)
-- **Workflow file:** `.github/workflows/event-pipeline.yml`
+- **Timeout:** 150 minutes
+- **Workflow file:** `.github/workflows/pipeline.yml`
 - **Node version:** 20.x
 - **CloudKit environment:** Controlled by `CLOUDKIT_ENVIRONMENT` GitHub Secret (`production` or `development`)
 
@@ -48,9 +49,17 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 - `phone` — Venue phone number
 - `contactEmail` — Event contact email
 
+### Scraper Sources & Priority (OC/LA)
+1. **OC Parent Guide** — Primary source for OC. Playwright-based (Boom Calendar iframe). Requires Wix login credentials.
+2. **Kidsguide Magazine** — OC/LA family events. Uses The Events Calendar WordPress REST API (`/wp-json/tribe/events/v1/events`). No auth needed.
+3. **MommyPoppins** — Secondary source. HTML scraper, 60 days ahead. LA region 115 covers both LA + OC.
+4. **MacaroniKid** — Supplementary. HTML scraper.
+5. **Ticketmaster / SeatGeek / Yelp** — API-based, run in parallel per metro.
+
 ### Image Requirements
 - Events must have an image
 - Priority: scraper-provided image → og:image from event URL → venue/title search via Unsplash/Pexels → category-based stock photo
+- Copyright: Do NOT use og:image from aggregator domains (MommyPoppins, MacaroniKid) — only from event's own website
 
 ### Content Filtering Rules
 - Exclude events that mention the source site name

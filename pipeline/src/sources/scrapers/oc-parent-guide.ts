@@ -119,21 +119,28 @@ export async function scrapeOCParentGuide(
     const events = await extractEventsFromCalendar(calendarFrame);
     log.info(SOURCE, `  Current view: ${events.length} events`);
 
-    // Step 8: Navigate to next month for broader coverage
-    try {
-      const nextBtn = await calendarFrame.$(
-        'button.fc-next-button, button[aria-label*="next" i], ' +
-        '.fc-button-next, [class*="next-btn"], [class*="nav-next"]'
-      );
-      if (nextBtn) {
-        await nextBtn.click();
-        await page.waitForTimeout(4000);
-        const nextMonthEvents = await extractEventsFromCalendar(calendarFrame);
-        log.info(SOURCE, `  Next month: ${nextMonthEvents.length} events`);
-        events.push(...nextMonthEvents);
+    // Step 8: Navigate forward through additional months for ~60 days coverage
+    const EXTRA_MONTHS = 2; // current month + 2 more ≈ 60-90 days
+    for (let m = 1; m <= EXTRA_MONTHS; m++) {
+      try {
+        const nextBtn = await calendarFrame.$(
+          'button.fc-next-button, button[aria-label*="next" i], ' +
+          '.fc-button-next, [class*="next-btn"], [class*="nav-next"]'
+        );
+        if (nextBtn) {
+          await nextBtn.click();
+          await page.waitForTimeout(4000);
+          const nextMonthEvents = await extractEventsFromCalendar(calendarFrame);
+          log.info(SOURCE, `  Month +${m}: ${nextMonthEvents.length} events`);
+          events.push(...nextMonthEvents);
+        } else {
+          log.info(SOURCE, `  No next button found at month +${m}`);
+          break;
+        }
+      } catch {
+        log.info(SOURCE, `  Could not navigate to month +${m}`);
+        break;
       }
-    } catch {
-      log.info(SOURCE, "  Could not navigate to next month");
     }
 
     // Deduplicate by title + date

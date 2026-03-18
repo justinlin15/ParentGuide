@@ -27,11 +27,11 @@ const REGION_MAP: Record<string, { id: number; slug: string }> = {
   "atlanta": { id: 1574, slug: "atlanta" },
 };
 
-const DAYS_AHEAD = 13; // 14 total days
-const DETAIL_FETCH_LIMIT = 60; // max detail pages per metro
-const GEOCODE_LIMIT = 40; // max geocode requests per metro (Nominatim rate limit: 1/sec)
+const DAYS_AHEAD = 60; // 61 total days (~2 months)
+const DETAIL_FETCH_LIMIT = 150; // max detail pages per metro
+const GEOCODE_LIMIT = 80; // max geocode requests per metro (Nominatim rate limit: 1/sec)
 const GEOCODE_DELAY_MS = 1100; // slightly over 1 second for Nominatim
-const WEB_ENRICH_LIMIT = 30; // max web lookups for missing addresses/images per metro
+const WEB_ENRICH_LIMIT = 60; // max web lookups for missing addresses/images per metro
 
 
 export async function scrapeMommyPoppins(
