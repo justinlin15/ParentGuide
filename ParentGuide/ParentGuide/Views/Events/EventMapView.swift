@@ -76,17 +76,17 @@ struct EventMapView: View {
 
     var body: some View {
         ZStack {
-            Map(position: $mapPosition) {
+            Map(position: $mapPosition, selection: $selectedEvent) {
                 ForEach(clusteredGroups, id: \.key) { group in
                     if group.events.count == 1, let event = group.events.first {
-                        // Single event — normal marker
+                        // Single event — normal marker; selection binding handles the tap
                         Marker(
                             event.title,
                             systemImage: event.category.iconName,
                             coordinate: group.coordinate
                         )
                         .tint(event.category.color)
-                        .onTapGesture { selectedEvent = event }
+                        .tag(event)
                     } else {
                         // Cluster — show count badge
                         Annotation("", coordinate: group.coordinate) {
