@@ -247,7 +247,7 @@ struct DraftEventsView: View {
                 HStack(spacing: 10) {
                     Label(event.startDate.formatted(date: .abbreviated, time: .omitted), systemImage: "calendar")
                     if !event.city.isEmpty {
-                        Label(event.city, systemImage: "mappin")
+                        Label(event.displayCity, systemImage: "mappin")
                     }
                 }
                 .font(.caption)

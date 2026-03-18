@@ -309,7 +309,7 @@ struct AdminDashboardView: View {
                 Label(event.startDate.formatted(date: .abbreviated, time: .omitted), systemImage: "calendar")
                     .font(.caption)
 
-                Label(event.city, systemImage: "mappin")
+                Label(event.displayCity, systemImage: "mappin")
                     .font(.caption)
 
                 Spacer()

@@ -104,7 +104,7 @@ struct PopularEventHeroCard: View {
                 HStack(spacing: 8) {
                     Label(event.formattedDate, systemImage: "calendar")
                     if !event.city.isEmpty {
-                        Label(event.city, systemImage: "mappin")
+                        Label(event.displayCity, systemImage: "mappin")
                             .lineLimit(1)
                     }
                 }

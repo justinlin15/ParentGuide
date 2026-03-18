@@ -51,7 +51,7 @@ struct EventCardView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "mappin")
                             .font(.caption2)
-                        Text(event.effectiveLocationName ?? event.city)
+                        Text(event.effectiveLocationName ?? event.displayCity)
                             .font(.caption)
                             .lineLimit(1)
                     }

@@ -179,7 +179,7 @@ struct EventAgendaView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: "mappin")
                                             .font(.caption2)
-                                        Text(event.city)
+                                        Text(event.displayCity)
                                             .font(.caption)
                                     }
                                     .foregroundStyle(.secondary)

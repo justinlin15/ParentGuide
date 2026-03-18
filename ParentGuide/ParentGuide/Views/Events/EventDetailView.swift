@@ -46,9 +46,9 @@ struct EventDetailView: View {
             text += " · \(event.formattedTime)"
         }
         if let location = event.effectiveLocationName {
-            text += "\n📍 \(location), \(event.city)"
+            text += "\n📍 \(location), \(event.displayCity)"
         } else {
-            text += "\n📍 \(event.city)"
+            text += "\n📍 \(event.displayCity)"
         }
         if let url = event.websiteURL ?? event.externalURL,
            !url.contains("google.com/search") {
@@ -69,7 +69,7 @@ struct EventDetailView: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(height: 220)
+                                .frame(maxWidth: .infinity, minHeight: 220, maxHeight: 220)
                                 .clipped()
                                 .overlay(alignment: .bottomLeading) {
                                     categoryBadge
@@ -116,7 +116,7 @@ struct EventDetailView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "mappin.circle.fill")
                                 .foregroundStyle(event.category.color)
-                            Text(event.city)
+                            Text(event.displayCity)
                                 .font(.subheadline)
                         }
                     }
@@ -209,7 +209,7 @@ struct EventDetailView: View {
                     }
 
                     if !event.city.isEmpty && event.effectiveLocationName == nil {
-                        Text(event.city)
+                        Text(event.displayCity)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -342,6 +342,7 @@ struct EventDetailView: View {
                 }
                 .padding(20)
             }
+            .frame(maxWidth: .infinity)
         }
         .task {
             await geocodeIfNeeded()
@@ -551,7 +552,7 @@ struct EventDetailView: View {
                     .foregroundStyle(.white.opacity(0.9))
             }
         }
-        .frame(height: 220)
+        .frame(maxWidth: .infinity, minHeight: 220, maxHeight: 220)
         .overlay(alignment: .bottomLeading) {
             categoryBadge
         }

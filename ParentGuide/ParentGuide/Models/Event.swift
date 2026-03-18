@@ -120,6 +120,42 @@ struct Event: Identifiable, Hashable, Codable {
         return nil
     }
 
+    // MARK: - City Display
+
+    /// Generic region/county names that should never be shown as the city label.
+    private static let genericCityNames: Set<String> = [
+        "orange county", "los angeles", "los angeles county",
+        "la", "oc", "southern california", "socal",
+        "greater los angeles", "los angeles metro"
+    ]
+
+    /// City suitable for display: the stored city, unless it is a generic region
+    /// name (e.g. "Orange County"), in which case we extract the specific city
+    /// from the address string (e.g. "Laguna Niguel" from "…, Laguna Niguel, CA 92677, USA").
+    var displayCity: String {
+        let lower = city.lowercased()
+        guard Self.genericCityNames.contains(lower) else { return city }
+        return cityFromAddress() ?? city
+    }
+
+    /// Extract the city segment from a US-format address string.
+    /// Typical format: "1234 Main St, Anaheim, CA 92801, USA"
+    private func cityFromAddress() -> String? {
+        guard let address else { return nil }
+        let parts = address.components(separatedBy: ", ")
+        // Need at least: street, city, state+zip[, country]
+        guard parts.count >= 3 else { return nil }
+        let candidate = parts[1].trimmingCharacters(in: .whitespaces)
+        // Reject state abbreviation + ZIP (e.g. "CA 92677") or country names
+        let looksLikeStateZip = candidate.range(of: #"^[A-Z]{2}\s+\d{5}"#, options: .regularExpression) != nil
+        guard !candidate.isEmpty,
+              candidate != "USA",
+              candidate != "United States",
+              !looksLikeStateZip
+        else { return nil }
+        return candidate
+    }
+
     /// Best query string for directions/geocoding when coordinates are missing.
     /// Combines venue name (or inferred) with city for better results.
     var directionsQuery: String {

@@ -368,7 +368,7 @@ struct CompactEventCard: View {
                     Text(event.formattedDate)
                         .font(.caption)
                     if !event.city.isEmpty {
-                        Text("  \(event.city)")
+                        Text("  \(event.displayCity)")
                             .font(.caption)
                     }
                 }

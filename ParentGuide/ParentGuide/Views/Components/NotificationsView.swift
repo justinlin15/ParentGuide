@@ -91,7 +91,7 @@ struct NotificationsView: View {
                                         .foregroundStyle(.secondary)
 
                                     if !event.city.isEmpty {
-                                        Text(event.city)
+                                        Text(event.displayCity)
                                             .font(.caption2)
                                             .foregroundStyle(.tertiary)
                                     }
