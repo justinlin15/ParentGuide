@@ -78,9 +78,18 @@ function loadEventsForReprocess(): PipelineEvent[] {
       !websiteURL.includes("macaronikid.com");
     const isGooglePlacesPhoto = imageURL?.includes("lh3.googleusercontent.com/place-photos") ||
       imageURL?.includes("lh3.googleusercontent.com/places");
+    // Also clear scraped images from aggregator sources (mommypoppins, macaronikid,
+    // oc-parent-guide) when the event has its own event-page websiteURL.
+    // Scrapers often grab wrong/outdated images from venue media libraries
+    // (e.g. Discovery Cube's WordPress uploads returning a Vietnamese museum photo).
+    // The og:image step will fetch the real promotional image from the event page.
+    const AGGREGATOR_IMAGE_SOURCES = new Set(["mommypoppins", "macaronikid", "oc-parent-guide"]);
+    const isAggregatorSourceWithEventPage = AGGREGATOR_IMAGE_SOURCES.has(source) && !!hasEventPageURL;
+
     const keepImage = imageURL &&
       !isStockOrAggregatorImage(imageURL, source) &&
-      !(isGooglePlacesPhoto && hasEventPageURL)
+      !(isGooglePlacesPhoto && hasEventPageURL) &&
+      !isAggregatorSourceWithEventPage
         ? imageURL : undefined;
 
     return {

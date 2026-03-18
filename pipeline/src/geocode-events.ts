@@ -33,8 +33,14 @@ const METRO_CITIES: Record<string, string> = {
  * from the event title before geocoding.
  */
 const GENERIC_CITY_NAMES = new Set([
+  // Metro/county level — too broad
   "orange county", "los angeles", "la", "oc", "southern california", "socal",
   "greater los angeles", "greater orange county",
+  // Venue names that scrapers accidentally store as the city
+  "discovery cube oc", "discovery cube", "disneyland", "disney california adventure",
+  "knott's berry farm", "knotts berry farm", "universal studios",
+  "irvine spectrum", "south coast plaza", "the great park",
+  "irvine park railroad", "tanaka farms",
 ]);
 
 function isGenericCity(city: string): boolean {
