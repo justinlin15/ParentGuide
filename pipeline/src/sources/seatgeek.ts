@@ -70,7 +70,9 @@ export async function fetchSeatGeekEvents(
         per_page: "50",
         page: String(page),
         sort: "datetime_local.asc",
+        // 60-day window
         "datetime_local.gte": new Date().toISOString().split("T")[0],
+        "datetime_local.lte": (() => { const d = new Date(); d.setDate(d.getDate() + 60); return d.toISOString().split("T")[0]; })(),
       });
 
       // Add taxonomy filter for family-friendly events

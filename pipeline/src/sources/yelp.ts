@@ -61,7 +61,9 @@ export async function fetchYelpEvents(
         offset: String(offset),
         sort_on: "time_start",
         sort_by: "asc",
+        // 60-day window (Yelp uses unix timestamps)
         start_date: Math.floor(Date.now() / 1000).toString(),
+        end_date: Math.floor((Date.now() + 60 * 24 * 60 * 60 * 1000) / 1000).toString(),
         categories: "kids_activities,parentschildren",
       });
 

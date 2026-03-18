@@ -33,9 +33,9 @@ export async function scrapeMacaroniKid(
     events.push(...currentWeekEvents);
     log.info("macaroni-kid", `  Current week: ${currentWeekEvents.length} events`);
 
-    // Also try next week and the week after for broader coverage
+    // Scrape 8 additional weeks ahead (~60 days total coverage)
     // The site uses week offset: /events?week=1 for next week, etc.
-    for (let weekOffset = 1; weekOffset <= 3; weekOffset++) {
+    for (let weekOffset = 1; weekOffset <= 8; weekOffset++) {
       await randomDelay(1500, 3000);
       const weekEvents = await scrapeWeekPage(
         `${BASE_URL}/events?week=${weekOffset}`,

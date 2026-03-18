@@ -75,7 +75,10 @@ export async function scrapeKidsguide(
   let hasMore = true;
 
   while (hasMore && page <= MAX_PAGES) {
-    const url = `${API_BASE}?per_page=${PER_PAGE}&start_date=${today}&page=${page}`;
+    // 60-day window
+    const endDate = new Date(); endDate.setDate(endDate.getDate() + 60);
+    const endDateStr = endDate.toISOString().split("T")[0];
+    const url = `${API_BASE}?per_page=${PER_PAGE}&start_date=${today}&end_date=${endDateStr}&page=${page}`;
 
     try {
       const res = await fetch(url, {

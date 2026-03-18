@@ -138,8 +138,9 @@ async function fetchTicketmasterPage(
         size: "50",
         page: String(page),
         sort: "date,asc",
-        // Only future events
+        // 60-day window: today → 60 days out
         startDateTime: new Date().toISOString().split(".")[0] + "Z",
+        endDateTime: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return d.toISOString().split(".")[0] + "Z"; })(),
         ...extraParams,
       });
 
