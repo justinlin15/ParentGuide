@@ -278,14 +278,11 @@ actor EventService {
 
     /// Fetch events pending admin review (status == "draft").
     /// Only used by the admin Draft Events review view.
-    /// Reads directly from CloudKit (bypasses JSON cache) so admin sees real-time status
-    /// immediately after approving/rejecting events — JSON only updates at pipeline runs.
+    /// Uses the same fetchAllEvents() path (JSON + CloudKit) so no separate
+    /// CloudKit query is needed — avoids "recordName not queryable" schema errors.
     func fetchDraftEvents() async throws -> [Event] {
-        let records = try await cloudKit.fetchAllRecords(
-            recordType: CloudKitConfig.RecordType.event
-        )
-        return records
-            .compactMap { Event(record: $0) }
+        let allEvents = try await fetchAllEvents()
+        return allEvents
             .filter { $0.isDraft }
             .sorted { $0.startDate < $1.startDate }
     }
