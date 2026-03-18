@@ -17,7 +17,7 @@ import { fillMissingImages } from "./images.js";
 import { cleanDescriptions } from "./clean-descriptions.js";
 import { rewriteDescriptions } from "./rewrite.js";
 import { enrichEvents } from "./enrich.js";
-import { categorizeEventsWithAI } from "./utils/categorize-ai.js";
+import { aiEnrichEvents } from "./utils/ai-enricher.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
@@ -157,29 +157,33 @@ async function main() {
   // Deduplicate
   const deduped = deduplicateEvents(allEvents);
 
-  // Clean promotional language from descriptions
+  // Clean promotional language and scraper mentions from descriptions
   const cleaned = cleanDescriptions(deduped);
 
-  // Rewrite descriptions to be unique
+  // Template-based description rewrite (fast fallback — AI step below improves further)
   const rewritten = rewriteDescriptions(cleaned);
 
-  // Enrich: sanitize URLs (remove scraper source links), extract prices
+  // Enrich: sanitize URLs (replace scraper source links), extract prices via regex
   log.divider();
   log.info("pipeline", "Enriching events (URL sanitization, price extraction)...");
   const enriched = await enrichEvents(rewritten);
 
-  // AI-powered category classification — re-classifies "Other" events using Claude
+  // ── AI Enrichment ───────────────────────────────────────────────────────────
+  // One comprehensive Claude pass that simultaneously:
+  //   • Rewrites all descriptions (fresh, unique, family-focused prose)
+  //   • Validates / corrects event categories
+  //   • Extracts missing price, ageRange, locationName, address from description text
   log.divider();
-  log.info("pipeline", "Running AI category classification...");
-  const categorized = await categorizeEventsWithAI(enriched);
+  log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
+  const aiEnriched = await aiEnrichEvents(enriched);
 
   // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
   todayMidnightUTC.setUTCHours(0, 0, 0, 0);
   const todayStr = todayMidnightUTC.toISOString();
 
-  const upcoming = categorized.filter((event) => event.startDate >= todayStr);
-  const staleCount = enriched.length - upcoming.length;
+  const upcoming = aiEnriched.filter((event) => event.startDate >= todayStr);
+  const staleCount = aiEnriched.length - upcoming.length;
   if (staleCount > 0) {
     log.info(
       "pipeline",

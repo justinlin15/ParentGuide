@@ -2,7 +2,7 @@ import { chromium, type Browser, type Page, type Frame } from "playwright";
 import { type PipelineEvent, categorizeEvent } from "../../normalize.js";
 import { type MetroArea } from "../../config.js";
 import { log } from "../../utils/logger.js";
-import { getRandomUserAgent } from "../../utils/user-agents.js";
+import { getPlaywrightContextOptions } from "../../utils/user-agents.js";
 
 const SITE_URL = "https://www.orangecountyparentguide.com";
 const EVENTS_PATH = "/event-calendar";
@@ -26,12 +26,30 @@ export async function scrapeOCParentGuide(
 
   let browser: Browser | null = null;
   try {
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({
-      userAgent: getRandomUserAgent(),
-      viewport: { width: 1920, height: 1080 },
+    browser = await chromium.launch({
+      headless: true,
+      args: [
+        "--disable-blink-features=AutomationControlled",
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+      ],
     });
+    const context = await browser.newContext(getPlaywrightContextOptions());
     const page = await context.newPage();
+
+    // Mask automation signals that anti-bot systems check for
+    await page.addInitScript(() => {
+      // Hide webdriver flag
+      Object.defineProperty(navigator, "webdriver", { get: () => undefined });
+      // Realistic plugin count
+      Object.defineProperty(navigator, "plugins", {
+        get: () => ({ length: 3 }),
+      });
+      // Realistic language
+      Object.defineProperty(navigator, "languages", {
+        get: () => ["en-US", "en"],
+      });
+    });
 
     // Step 1: Navigate to the event calendar page
     log.info(SOURCE, "  Loading event calendar page...");
