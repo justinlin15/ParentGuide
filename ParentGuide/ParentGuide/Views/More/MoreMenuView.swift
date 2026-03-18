@@ -49,6 +49,26 @@ struct MoreMenuView: View {
                     }
                 }
 
+                // Share FamPass — prominent, always visible
+                Section {
+                    ShareLink(
+                        item: AppConstants.appStoreURL,
+                        message: Text(AppConstants.appShareMessage)
+                    ) {
+                        HStack {
+                            Label("Share FamPass", systemImage: "square.and.arrow.up")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowBackground(Color.brandBlue)
+                }
+
                 Section {
                     NavigationLink(destination: ProfileView()) {
                         Label("Profile & Settings", systemImage: "person.circle")

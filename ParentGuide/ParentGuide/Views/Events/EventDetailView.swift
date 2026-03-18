@@ -41,17 +41,20 @@ struct EventDetailView: View {
     }
 
     private var shareText: String {
-        var text = "\(event.title)\n\(event.formattedDate)"
+        var text = "📅 \(event.title)\n\(event.formattedDate)"
         if !event.isAllDay {
-            text += " \(event.formattedTime)"
+            text += " · \(event.formattedTime)"
         }
         if let location = event.effectiveLocationName {
-            text += "\n\(location)"
+            text += "\n📍 \(location), \(event.city)"
+        } else {
+            text += "\n📍 \(event.city)"
         }
-        text += "\n\(event.city)"
-        if let url = event.externalURL {
+        if let url = event.websiteURL ?? event.externalURL,
+           !url.contains("google.com/search") {
             text += "\n\(url)"
         }
+        text += "\n\nFound on FamPass · \(AppConstants.appStoreURL.absoluteString)"
         return text
     }
 
@@ -88,25 +91,16 @@ struct EventDetailView: View {
 
                         Spacer(minLength: 4)
 
-                        HStack(spacing: 16) {
-                            ShareLink(item: shareText) {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(.secondary)
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                favoritesService.toggleFavorite(for: event)
                             }
-                            .buttonStyle(.plain)
-
-                            Button {
-                                withAnimation(.spring(response: 0.3)) {
-                                    favoritesService.toggleFavorite(for: event)
-                                }
-                            } label: {
-                                Image(systemName: isFavorite ? "heart.fill" : "heart")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
-                            }
-                            .buttonStyle(.plain)
+                        } label: {
+                            Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                .font(.system(size: 20))
+                                .foregroundStyle(isFavorite ? Color.brandBlue : .secondary)
                         }
+                        .buttonStyle(.plain)
                         .padding(.top, 4)
                     }
 
@@ -292,6 +286,18 @@ struct EventDetailView: View {
                     Divider()
 
                     VStack(spacing: 12) {
+                        // Share Event — prominent full-width button
+                        ShareLink(item: shareText) {
+                            Label("Share Event", systemImage: "square.and.arrow.up")
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(Color.brandBlue)
+                                .foregroundStyle(.white)
+                                .font(.headline)
+                                .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+
                         // Add to Calendar button (premium feature)
                         Button {
                             if subscriptionService.isSubscribed {

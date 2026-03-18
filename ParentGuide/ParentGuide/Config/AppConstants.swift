@@ -12,6 +12,11 @@ nonisolated enum AppConstants {
     static let monthlyPrice = "$5"
     static let annualPrice = "$48"
 
+    // MARK: - App Share
+    /// Update this with the real App Store URL once the app is published.
+    static let appStoreURL = URL(string: "https://apps.apple.com/app/fampass/id0000000000")!
+    static let appShareMessage = "Discover family events near you! 🎉 Check out FamPass — the best way to find fun things to do with your kids."
+
     // MARK: - Beta Testing
     /// Set to `false` before App Store submission to hide debug role toggles.
     static let betaTestingEnabled = true
