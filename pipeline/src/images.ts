@@ -257,10 +257,13 @@ async function searchEventImage(query: string): Promise<string[]> {
   const cached = eventImageCache.get(cacheKey);
   if (cached) return cached;
 
-  // Try Unsplash with a small result set (just need 1-2)
-  let images = await searchUnsplash(query + " family kids", 3);
+  // Search with the venue/event query directly — appending generic terms like
+  // "family kids" dilutes the search and returns irrelevant stock photos
+  // (e.g. "Tustin Farmers Market family kids" → Huntington Beach pier shot).
+  // Venue-specific queries find actual venue photos or event flyers.
+  let images = await searchUnsplash(query, 3);
   if (images.length === 0) {
-    images = await searchPexels(query + " family kids", 3);
+    images = await searchPexels(query, 3);
   }
 
   eventImageCache.set(cacheKey, images);

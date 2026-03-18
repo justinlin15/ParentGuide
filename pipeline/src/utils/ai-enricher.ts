@@ -88,8 +88,10 @@ For EACH event below, return a JSON object with these fields:
   Storytime | Farmers Market | Free Movie | Toddler Activity | Craft | Music | Fire Station Tour | Museum | Outdoor | Food & Dining | Sports | Education | Festival | Seasonal | Other
 - "price": Extract a price string if mentioned in description (e.g. "Free", "$10", "$5–$15", "Included with admission"). Return null if not stated.
 - "ageRange": Extract target age range if mentioned (e.g. "All ages", "2–5 years", "6–12", "18 months–5 years"). Return null if not stated.
-- "locationName": If the description mentions a specific venue/location name that is NOT already in the provided locationName field, extract it. Otherwise return null.
-- "address": If the description mentions a specific street address that is NOT already in the provided address field, extract it. Otherwise return null.
+- "locationName": The venue name where this event takes place. If the description or title mentions a specific venue and the provided locationName is empty or wrong, provide the correct name. Use your knowledge for well-known venues (e.g. if the title says "at Kape Coffee Laguna Niguel", use "Kape Coffee Roasters" — the real venue name). Return null only if already correct.
+- "address": The street address of the venue in the given city. Use your knowledge for recognizable venues (coffee shops, libraries, parks, community centers). If the provided address is blank or seems wrong for the city, provide the correct address. Return null only if you genuinely don't know it.
+
+IMPORTANT: The "city" field tells you exactly where this event takes place. locationName and address MUST be in that city. If the current address is in a different city from the event's city field, correct it.
 
 Events (JSON array):
 ${JSON.stringify(
@@ -143,7 +145,7 @@ async function processBatch(
 
   try {
     const response = await ai.messages.create({
-      model: "claude-haiku-4-5",
+      model: "claude-sonnet-4-5",
       max_tokens: 4096,
       messages: [{ role: "user", content: buildPrompt(items) }],
     });
@@ -192,13 +194,14 @@ function applyResult(event: PipelineEvent, result: AiResult): void {
     event.ageRange = result.ageRange;
   }
 
-  // Location name — fill if missing
-  if (result.locationName && !event.locationName) {
+  // Location name — fill if missing or correct if AI found a better match
+  if (result.locationName) {
     event.locationName = result.locationName;
   }
 
-  // Address — fill if missing
-  if (result.address && !event.address) {
+  // Address — fill if missing or correct if AI found the right address
+  // (AI is instructed to only override if the current address is wrong/blank)
+  if (result.address) {
     event.address = result.address;
   }
 }

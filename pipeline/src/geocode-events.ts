@@ -48,29 +48,44 @@ async function geocodeEvent(
 
   // Strategy 0: Google Places Text Search (most accurate — knows businesses by name)
   // Build the most specific query we can from available event data.
+  // Prefer event.city over metroCity so "Tustin Farmers Market" searches in
+  // Tustin, not the metro default of Irvine. City is passed as expectedCity
+  // so results from a different city are rejected even if within metro bounds.
   if (config.googlePlaces.apiKey) {
     const queries: string[] = [];
+    const specificCity = event.city ? `${event.city}, CA` : metroCity;
 
-    // Most specific: venue name + address + city
+    // Most specific: venue name + address + event city
     if (event.locationName && event.address) {
-      queries.push(`${event.locationName}, ${event.address}, ${metroCity}`);
+      queries.push(`${event.locationName}, ${event.address}, ${specificCity}`);
     }
-    // Venue name + city
+    // Venue name + event city (primary lookup — most likely to find the right place)
     if (event.locationName) {
-      queries.push(`${event.locationName}, ${metroCity}`);
+      queries.push(`${event.locationName}, ${specificCity}`);
     }
-    // Title venue extraction + city
+    // Title venue extraction + event city
     const titleVenue = extractVenueFromTitle(event.title);
     if (titleVenue && titleVenue !== event.locationName) {
-      queries.push(`${titleVenue}, ${metroCity}`);
+      queries.push(`${titleVenue}, ${specificCity}`);
     }
-    // Full event title + city (e.g. "Storytime at Ladera Ranch Library, Ladera Ranch, CA")
-    queries.push(`${event.title}, ${metroCity}`);
+    // Full event title + event city
+    queries.push(`${event.title}, ${specificCity}`);
+    // Fallback: venue name + metro city (in case event.city is mis-labelled)
+    if (event.locationName && specificCity !== metroCity) {
+      queries.push(`${event.locationName}, ${metroCity}`);
+    }
 
     for (const query of queries) {
-      const result = await lookupGooglePlaces(query, event.metro);
+      // Pass event.city as expectedCity so wrong-city results are rejected.
+      // Skip city validation on the last fallback query (no event.city constraint).
+      const isMetroFallback = query.endsWith(metroCity) && specificCity !== metroCity;
+      const result = await lookupGooglePlaces(
+        query,
+        event.metro,
+        isMetroFallback ? undefined : event.city
+      );
       if (result) {
-        log.info("geocode", `  ✓ [Google Places] "${event.title}" → ${query}`);
+        log.info("geocode", `  ✓ [Google Places] "${event.title}" → ${result.address ?? query}`);
         await delay(200); // Respect rate limits (modest, Places API is generous)
         return result;
       }
@@ -263,20 +278,26 @@ interface PlacesSearchResponse {
     location?: { latitude: number; longitude: number };
     formattedAddress?: string;
     displayName?: { text: string };
+    photos?: Array<{ name: string }>;
   }>;
 }
 
 /**
  * Look up a venue using Google Places API (New) Text Search.
- * Returns coordinates + formatted address, or null if not found.
+ * Returns coordinates + formatted address + venue photo URL, or null if not found.
  *
  * More reliable than Nominatim for business/venue names because Google Maps
  * has comprehensive business data including hours, addresses, and photos.
+ *
+ * @param expectedCity - If provided, rejects results whose address doesn't contain
+ *   this city name. Prevents "Tustin event → Irvine address" mismatches where
+ *   Google returns a nearby city that passes the metro bounding-box check.
  */
 async function lookupGooglePlaces(
   query: string,
-  metro: string
-): Promise<{ latitude: number; longitude: number; address?: string } | null> {
+  metro: string,
+  expectedCity?: string
+): Promise<{ latitude: number; longitude: number; address?: string; photoUrl?: string } | null> {
   if (!config.googlePlaces.apiKey) return null;
 
   try {
@@ -285,7 +306,7 @@ async function lookupGooglePlaces(
       headers: {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": config.googlePlaces.apiKey,
-        "X-Goog-FieldMask": "places.location,places.formattedAddress,places.displayName",
+        "X-Goog-FieldMask": "places.location,places.formattedAddress,places.displayName,places.photos",
       },
       body: JSON.stringify({ textQuery: query }),
     });
@@ -302,6 +323,17 @@ async function lookupGooglePlaces(
 
     if (!place?.location) return null;
 
+    // City validation: if we know which city the event is in, reject results
+    // that map to a different city. Prevents e.g. "Tustin event → Irvine address"
+    // which passes the metro bounding-box check but is geographically wrong.
+    if (expectedCity && place.formattedAddress) {
+      const normalizedAddr = place.formattedAddress.toLowerCase();
+      const normalizedCity = expectedCity.toLowerCase();
+      if (!normalizedAddr.includes(normalizedCity)) {
+        return null; // Wrong city — let caller try next query variant
+      }
+    }
+
     const result = {
       latitude: place.location.latitude,
       longitude: place.location.longitude,
@@ -311,7 +343,24 @@ async function lookupGooglePlaces(
     // Validate the result is within the metro bounds
     if (!isReasonableLocation(result, metro)) return null;
 
-    return result;
+    // Fetch Google Places venue photo (free, high quality, event/venue specific)
+    // Uses Places Photos API — same key as text search, no extra quota cost.
+    let photoUrl: string | undefined;
+    if (place.photos?.[0]?.name) {
+      try {
+        const photoRes = await fetch(
+          `https://places.googleapis.com/v1/${place.photos[0].name}/media?maxWidthPx=1200&skipHttpRedirect=true&key=${config.googlePlaces.apiKey}`
+        );
+        if (photoRes.ok) {
+          const photoData = (await photoRes.json()) as { photoUri?: string };
+          if (photoData.photoUri) photoUrl = photoData.photoUri;
+        }
+      } catch {
+        // Photo is a nice-to-have — never fail geocoding because of it
+      }
+    }
+
+    return { ...result, photoUrl };
   } catch {
     return null;
   }
@@ -391,13 +440,18 @@ export async function geocodeEvents(
     const result = await geocodeEvent(representative);
 
     if (result) {
-      // Apply coordinates to ALL events in this location group
+      // Apply coordinates (and venue photo) to ALL events in this location group
       for (const event of group) {
         event.latitude = result.latitude;
         event.longitude = result.longitude;
         // Only fill address if event didn't have one and we found one
         if (!event.address && result.address) {
           event.address = result.address;
+        }
+        // Use Google Places venue photo if event has no image yet — real venue
+        // photos are far more accurate than generic Unsplash stock photos.
+        if (result.photoUrl && !event.imageURL) {
+          event.imageURL = result.photoUrl;
         }
       }
       geocoded++;
