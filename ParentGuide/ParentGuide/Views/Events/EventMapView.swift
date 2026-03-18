@@ -9,8 +9,9 @@ import CoreLocation
 
 struct EventMapView: View {
     let events: [Event]
-    let selectedDate: Date
+    @Binding var selectedDate: Date
     @State private var selectedEvent: Event?
+    @State private var selectedCluster: [Event]?
     @State private var mapPosition: MapCameraPosition = .automatic
     @State private var showLocationPrompt = false
     @State private var showZipEntry = false
@@ -49,47 +50,82 @@ struct EventMapView: View {
         return result
     }
 
+    /// Cluster key: round to 4 decimal places (~11m precision) so nearby pins share a cluster.
+    private func clusterKey(for coord: CLLocationCoordinate2D) -> String {
+        let lat = (coord.latitude * 10000).rounded() / 10000
+        let lon = (coord.longitude * 10000).rounded() / 10000
+        return "\(lat),\(lon)"
+    }
+
+    /// Groups of events at the same rounded coordinate. Single events stand alone; 2+ become a cluster.
+    private var clusteredGroups: [(key: String, events: [Event], coordinate: CLLocationCoordinate2D)] {
+        var groups: [String: (events: [Event], coordinate: CLLocationCoordinate2D)] = [:]
+        for item in mappableEvents {
+            let key = clusterKey(for: item.coordinate)
+            if groups[key] == nil {
+                groups[key] = (events: [], coordinate: item.coordinate)
+            }
+            groups[key]!.events.append(item.event)
+        }
+        return groups.map { (key: $0.key, events: $0.value.events, coordinate: $0.value.coordinate) }
+    }
+
     private var isToday: Bool {
         Calendar.current.isDateInToday(selectedDate)
     }
 
     var body: some View {
         ZStack {
-            Map(position: $mapPosition, selection: $selectedEvent) {
-                ForEach(mappableEvents, id: \.event.id) { item in
-                    Annotation(item.event.title, coordinate: item.coordinate) {
-                        VStack(spacing: 0) {
-                            Image(systemName: item.event.category.iconName)
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .frame(width: 38, height: 38)
-                                .background(item.event.category.color)
-                                .clipShape(Circle())
-                                .overlay(
+            Map(position: $mapPosition) {
+                ForEach(clusteredGroups, id: \.key) { group in
+                    if group.events.count == 1, let event = group.events.first {
+                        // Single event — normal marker
+                        Marker(
+                            event.title,
+                            systemImage: event.category.iconName,
+                            coordinate: group.coordinate
+                        )
+                        .tint(event.category.color)
+                        .onTapGesture { selectedEvent = event }
+                    } else {
+                        // Cluster — show count badge
+                        Annotation("", coordinate: group.coordinate) {
+                            Button {
+                                selectedCluster = group.events
+                            } label: {
+                                ZStack {
                                     Circle()
-                                        .stroke(.white, lineWidth: 2.5)
-                                )
-                                .shadow(color: item.event.category.color.opacity(0.4), radius: 4, y: 2)
-
-                            Image(systemName: "triangle.fill")
-                                .font(.system(size: 10))
-                                .foregroundStyle(item.event.category.color)
-                                .rotationEffect(.degrees(180))
-                                .offset(y: -3)
-                        }
-                        .onTapGesture {
-                            selectedEvent = item.event
+                                        .fill(Color.brandBlue)
+                                        .frame(width: 40, height: 40)
+                                        .shadow(color: .black.opacity(0.2), radius: 3, y: 2)
+                                    Text("\(group.events.count)")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(.white)
+                                }
+                            }
                         }
                     }
-                    .tag(item.event)
                 }
             }
 
             if !showLocationPrompt && !showZipEntry {
                 VStack {
-                    HStack {
-                        // Today indicator + event count
-                        VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 8) {
+                        // Previous day
+                        Button {
+                            withAnimation {
+                                selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
+                            }
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.brandBlue)
+                                .frame(width: 32, height: 32)
+                                .background(.ultraThinMaterial, in: Circle())
+                        }
+
+                        // Date + event count
+                        VStack(spacing: 2) {
                             HStack(spacing: 6) {
                                 if isToday {
                                     Text("TODAY")
@@ -104,13 +140,35 @@ struct EventMapView: View {
                                     .font(.caption)
                                     .fontWeight(.semibold)
                             }
-                            Text("\(mappableEvents.count) event\(mappableEvents.count == 1 ? "" : "s")")
+                            Text("\(eventsForSelectedDate.count) event\(eventsForSelectedDate.count == 1 ? "" : "s")")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 8)
                         .padding(.vertical, 8)
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                        .onTapGesture {
+                            // Tap date label to jump back to today
+                            if !isToday {
+                                withAnimation {
+                                    selectedDate = Calendar.current.startOfDay(for: Date())
+                                }
+                            }
+                        }
+
+                        // Next day
+                        Button {
+                            withAnimation {
+                                selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+                            }
+                        } label: {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.brandBlue)
+                                .frame(width: 32, height: 32)
+                                .background(.ultraThinMaterial, in: Circle())
+                        }
+
                         Spacer()
                     }
                     Spacer()
@@ -198,6 +256,49 @@ struct EventMapView: View {
                     }
             }
             .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: Binding(get: { selectedCluster != nil }, set: { if !$0 { selectedCluster = nil } })) {
+            if let cluster = selectedCluster {
+                NavigationStack {
+                    List(cluster) { event in
+                        Button {
+                            selectedCluster = nil
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                selectedEvent = event
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: event.category.iconName)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 32, height: 32)
+                                    .background(event.category.color)
+                                    .clipShape(Circle())
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(event.title)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    Text(event.formattedDate)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    .listStyle(.plain)
+                    .navigationTitle("\(cluster.count) Events Here")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Done") { selectedCluster = nil }
+                        }
+                    }
+                }
+                .presentationDetents([.medium])
+            }
         }
         .onAppear {
             let metro = metroService.selectedMetro
@@ -325,5 +426,5 @@ class LocationHelper: NSObject, CLLocationManagerDelegate {
 }
 
 #Preview {
-    EventMapView(events: PreviewData.sampleEvents, selectedDate: Date())
+    EventMapView(events: PreviewData.sampleEvents, selectedDate: .constant(Date()))
 }

@@ -15,9 +15,11 @@ struct HomeView: View {
 
     // Feed data
     @State private var popularEvents: [Event] = []
+    @State private var featuredEvents: [Event] = []
     @State private var favoriteEvents: [Event] = []
     @State private var todayEvents: [Event] = []
     @State private var recommendedEvents: [Event] = []
+    @State private var allMetroEvents: [Event] = []
     @State private var isLoading = false
 
     private var recommendationService: RecommendationService { RecommendationService.shared }
@@ -28,14 +30,19 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    if isSignedIn {
-                        signedInFeed
-                    } else {
-                        guestView
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        if isSignedIn {
+                            signedInFeed
+                        } else {
+                            guestView
+                        }
                     }
                 }
+
+                // Banner ad pinned to bottom for non-subscribers
+                BannerAdView(adUnitID: AdService.AdUnitID.banner)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -45,7 +52,7 @@ struct HomeView: View {
                             Image(systemName: "figure.2.and.child.holdinghands")
                                 .font(.subheadline)
                                 .foregroundStyle(Color.brandBlue)
-                            Text("Parent Guide")
+                            Text("FamPass")
                                 .font(.headline)
                                 .foregroundStyle(Color.brandBlue)
                         }
@@ -85,6 +92,11 @@ struct HomeView: View {
 
     // MARK: - Signed-in Feed
 
+    /// Whether the user has interests set or favorites saved
+    private var hasInterestsOrFavorites: Bool {
+        recommendationService.userHasInterests() || !favoritesService.favoriteIDs.isEmpty
+    }
+
     @ViewBuilder
     private var signedInFeed: some View {
         VStack(spacing: 24) {
@@ -99,10 +111,10 @@ struct HomeView: View {
             .padding(.top, 16)
             .padding(.horizontal, 20)
 
-            // Today's Events
-            if !todayEvents.isEmpty {
-                feedSection(title: "Happening Today", icon: "sparkles") {
-                    ForEach(todayEvents.prefix(5)) { event in
+            // 1. Featured Events (curated by admin — always first if present)
+            if !featuredEvents.isEmpty {
+                feedSection(title: "✨ Featured", icon: "star.fill") {
+                    ForEach(featuredEvents.prefix(5)) { event in
                         SubscriptionGatedLink(event: event) {
                             CompactEventCard(event: event)
                         }
@@ -111,72 +123,115 @@ struct HomeView: View {
                 }
             }
 
-            // Recommended For You
-            if !recommendedEvents.isEmpty {
-                feedSection(title: "Recommended For You", icon: "sparkle.magnifyingglass") {
-                    ForEach(recommendedEvents.prefix(5)) { event in
-                        SubscriptionGatedLink(event: event) {
-                            CompactEventCard(event: event)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            } else if recommendationService.userHasInterests() == false && isSignedIn {
-                // Prompt to set interests
-                VStack(spacing: 8) {
-                    Image(systemName: "sparkle.magnifyingglass")
-                        .font(.title2)
-                        .foregroundStyle(Color.brandBlue)
-                    Text("Get Personalized Picks")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                    Text("Set your interests in Profile to see events curated just for you.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                    Button {
-                        showProfile = true
-                    } label: {
-                        Text("Set Interests")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.brandBlue)
-                            .clipShape(Capsule())
-                    }
-                }
-                .padding(20)
-                .frame(maxWidth: .infinity)
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding(.horizontal, 16)
-            }
-
-            // Favorites section
-            if !favoriteEvents.isEmpty {
-                feedSection(title: "Your Favorites", icon: "heart.fill") {
-                    ForEach(favoriteEvents.prefix(5)) { event in
-                        SubscriptionGatedLink(event: event) {
-                            CompactEventCard(event: event)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-
-            // Banner ad for non-subscribers
-            BannerAdView(adUnitID: AdService.homeBannerID)
-
-            // Popular events carousel
+            // 2. Popular Near You
             if !popularEvents.isEmpty {
                 PopularCarouselSection(events: Array(popularEvents.prefix(5)))
             }
 
-            // Map
-            HomeMapView()
+            if hasInterestsOrFavorites {
+                // Order: Popular → Recommended → Happening Today → Events Across
+
+                // 2. Recommended For You (carousel tiles like Popular Near You)
+                if !recommendedEvents.isEmpty {
+                    RecommendedCarouselSection(events: Array(recommendedEvents.prefix(5)))
+                }
+
+                // 2b. Your Favorites (right below Recommended)
+                if !favoriteEvents.isEmpty {
+                    feedSection(title: "Your Favorites", icon: "heart.fill") {
+                        ForEach(favoriteEvents.prefix(5)) { event in
+                            SubscriptionGatedLink(event: event) {
+                                CompactEventCard(event: event)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                // 3. Happening Today
+                if !todayEvents.isEmpty {
+                    feedSection(title: "Happening Today", icon: "sparkles") {
+                        ForEach(todayEvents.prefix(5)) { event in
+                            SubscriptionGatedLink(event: event) {
+                                CompactEventCard(event: event)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            } else {
+                // Order: Popular → Happening Today → Recommended CTA → Events Across
+
+                // 2. Happening Today
+                if !todayEvents.isEmpty {
+                    feedSection(title: "Happening Today", icon: "sparkles") {
+                        ForEach(todayEvents.prefix(5)) { event in
+                            SubscriptionGatedLink(event: event) {
+                                CompactEventCard(event: event)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                // 3. Recommended For You — CTA to set interests
+                recommendedForYouCTA
+            }
+
+            // 4. Events Across [location] (always last, lazy loaded)
+            HomeMapView(events: allMetroEvents)
                 .padding(.bottom, 32)
+        }
+    }
+
+    // MARK: - Recommended For You CTA
+
+    @ViewBuilder
+    private var recommendedForYouCTA: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "wand.and.stars")
+                    .foregroundStyle(Color.brandBlue)
+                Text("Recommended For You")
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+            }
+            .padding(.horizontal, 20)
+
+            VStack(spacing: 12) {
+                Image(systemName: "sparkles")
+                    .font(.title2)
+                    .foregroundStyle(Color.brandBlue)
+
+                Text("Personalized event picks, just for your family")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+
+                Text("Tell us what your family loves and we'll surface the best events based on your interests and favorites.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+
+                Button {
+                    showProfile = true
+                } label: {
+                    Text("Set Your Interests")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color.brandBlue)
+                        .clipShape(Capsule())
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .shadow(color: Color.brandBlue.opacity(0.06), radius: 8, y: 3)
+            .padding(.horizontal, 16)
         }
     }
 
@@ -211,7 +266,8 @@ struct HomeView: View {
             PopularCarouselSection(events: Array(popularEvents.prefix(5)))
         }
 
-        HomeMapView()
+        HomeMapView(events: allMetroEvents)
+            .padding(.top, 24)
             .padding(.bottom, 32)
     }
 
@@ -243,20 +299,30 @@ struct HomeView: View {
         let metroId = metroService.selectedMetro.id
 
         do {
-            // Load popular events
+            // Load all metro events ONCE — shared with map + recommendations
+            allMetroEvents = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
+
+            // Load featured events (admin-curated)
+            featuredEvents = (try? await EventService.shared.fetchFeaturedEvents()) ?? []
+
+            // Derive popular events from all events (avoid extra fetch)
             popularEvents = try await EventService.shared.fetchPopularEvents(forMetro: metroId, limit: 10)
 
-            // Load today's events
-            todayEvents = try await EventService.shared.fetchEvents(forDay: Date())
-            todayEvents = todayEvents.filter { ($0.metro ?? "los-angeles") == metroId }
+            // Filter today's events from already-loaded data
+            let calendar = Calendar.current
+            let todayStart = calendar.startOfDay(for: Date())
+            let todayEnd = calendar.date(byAdding: .day, value: 1, to: todayStart)!
+            todayEvents = allMetroEvents.filter { event in
+                let eventEnd = event.endDate ?? event.startDate
+                return event.startDate < todayEnd && eventEnd >= todayStart
+            }
 
             // Load favorites
             if !favoritesService.favoriteIDs.isEmpty {
                 favoriteEvents = try await EventService.shared.fetchFavoriteEvents(ids: favoritesService.favoriteIDs)
             }
 
-            // Build recommendations from all loaded events
-            let allMetroEvents = try await EventService.shared.fetchUpcomingEvents(forMetro: metroId)
+            // Build recommendations from already-loaded events
             recommendedEvents = recommendationService.recommendedEvents(
                 from: allMetroEvents,
                 favoriteIDs: favoritesService.favoriteIDs,

@@ -71,23 +71,17 @@ struct ViewModeSelectorView: View {
 
                 // Filter button with badge
                 Button(action: onFilterTap) {
-                    ZStack(alignment: .topTrailing) {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                            .font(.subheadline)
-                            .foregroundStyle(.white)
-                            .frame(width: 36, height: 36)
-                            .contentShape(Rectangle())
-
-                        if viewModel.filter.activeFilterCount > 0 {
-                            Text("\(viewModel.filter.activeFilterCount)")
-                                .font(.system(size: 9, weight: .bold))
-                                .foregroundStyle(.white)
-                                .frame(width: 16, height: 16)
-                                .background(Color.orange)
-                                .clipShape(Circle())
-                                .offset(x: 6, y: -2)
-                        }
+                    HStack(spacing: 4) {
+                        Image(systemName: "line.3.horizontal.decrease")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text(viewModel.filter.activeFilterCount > 0 ? "Filter (\(viewModel.filter.activeFilterCount))" : "Filter")
+                            .font(.system(size: 13, weight: .semibold))
                     }
+                    .foregroundStyle(viewModel.filter.activeFilterCount > 0 ? Color.brandBlue : .white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(viewModel.filter.activeFilterCount > 0 ? Color.white : Color.white.opacity(0.2))
+                    .clipShape(Capsule())
                 }
 
                 Button(action: onSearchTap) {
