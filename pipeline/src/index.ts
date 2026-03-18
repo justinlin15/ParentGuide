@@ -140,6 +140,23 @@ async function main() {
     log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
     const aiEnriched = await aiEnrichEvents(events);
 
+    // Post-AI sanity: fix "Free Movie" with a price, and "($N)" titles marked Free
+    let reprocessSanitized = 0;
+    for (const event of aiEnriched) {
+      if (event.category === "Free Movie") {
+        const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
+        const titleHasPrice = /^\$\d/.test(event.title.trim());
+        if (hasCost || titleHasPrice) { event.category = "Other"; reprocessSanitized++; }
+      }
+      if (event.price?.toLowerCase() === "free") {
+        const m1 = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/);
+        const m2 = event.title.match(/^\$(\d+)/);
+        if (m1) { event.price = `$${m1[1]}`; reprocessSanitized++; }
+        else if (m2) { event.price = `$${m2[1]}`; reprocessSanitized++; }
+      }
+    }
+    if (reprocessSanitized > 0) log.info("pipeline", `Post-AI sanity: fixed ${reprocessSanitized} contradictions`);
+
     log.divider();
     log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
     const verified = await verifyEvents(aiEnriched);
@@ -331,16 +348,48 @@ async function main() {
     "cellar comedy", "comedy cellar",
   ];
 
+  // Platform-specific community meetup patterns — these are adult social events
+  // tied to a specific app/platform (Yelp Elite, Nextdoor, etc.), not family events.
+  // "UYE" = Yelp Elite event abbreviation used in Yelp's API event titles.
+  const PLATFORM_MEETUP_PATTERNS = [
+    /\bUYE\b/,                            // Yelp Elite event prefix
+    /\byelp\s+(elite|community|event)\b/i,
+    /\byelp\s+\w+\s+(lunch|dinner|brunch|meetup|mixer|party)\b/i,
+    /\blunch\s+with\s+\w+\b/i,            // "Lunch with Joel" type Yelp events
+    /\bdinner\s+with\s+\w+\b/i,
+    /\bnextdoor\s+(event|meetup)\b/i,
+    /\bcommunity\s+meetup\b/i,            // Generic adult networking
+  ];
+
+  // Multi-location guide/roundup article titles — these are blog articles
+  // ("Ice Skating in Irvine, Anaheim, Westminster, and Yorba Linda") not single events.
+  // Detect: title names 3+ cities OR has "in [City1], [City2]..., and [City3]" pattern.
+  function isGuideArticleTitle(title: string): boolean {
+    // Pattern: "in [Word], [Word], [Word], and [Word]" — 3+ comma-separated locations
+    const multiLocationMatch = title.match(/\bin\s+[\w\s]+(?:,\s+[\w\s]+){2,},?\s+and\s+[\w\s]+/i);
+    if (multiLocationMatch) return true;
+    // Count known OC/LA city names in the title — 3+ = roundup article
+    const citiesInTitle = OC_CITIES.filter((c) => new RegExp(`\\b${c}\\b`, "i").test(title));
+    if (citiesInTitle.length >= 3) return true;
+    return false;
+  }
+
   const beforeAdultFilter = allEvents.length;
   const familyFiltered = allEvents.filter((e) => {
-    const titleAdult = ADULT_TITLE_PATTERNS.some((p) => p.test(e.title));
-    if (titleAdult) return false;
-    const descAdult = ADULT_DESC_PATTERNS.some((p) => p.test(e.description || ""));
-    if (descAdult) return false;
+    // Adult age restrictions
+    if (ADULT_TITLE_PATTERNS.some((p) => p.test(e.title))) return false;
+    if (ADULT_DESC_PATTERNS.some((p) => p.test(e.description || ""))) return false;
+
+    // Platform-specific adult community meetups (Yelp Elite, etc.)
+    if (PLATFORM_MEETUP_PATTERNS.some((p) => p.test(e.title))) return false;
+
+    // Guide/roundup articles masquerading as single events
+    if (isGuideArticleTitle(e.title)) return false;
+
     // Filter stand-up comedy events at known adult-only venues
     // (only for API sources — scrapers curate family content so venue-blocking
     // would incorrectly remove legitimate events at multi-use spaces)
-    if (["seatgeek", "ticketmaster"].includes(e.source)) {
+    if (["seatgeek", "ticketmaster", "yelp", "eventbrite"].includes(e.source)) {
       const venueLower = (e.locationName || "").toLowerCase();
       if (ADULT_COMEDY_VENUES.some((v) => venueLower.includes(v))) return false;
     }
@@ -348,7 +397,7 @@ async function main() {
   });
   const adultRemoved = beforeAdultFilter - familyFiltered.length;
   if (adultRemoved > 0) {
-    log.info("pipeline", `Removed ${adultRemoved} adult/21+ events (not family-appropriate)`);
+    log.info("pipeline", `Removed ${adultRemoved} non-family events (adult/21+, platform meetups, guide articles)`);
   }
 
   // Deduplicate
@@ -373,6 +422,36 @@ async function main() {
   log.divider();
   log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
   const aiEnriched = await aiEnrichEvents(enriched);
+
+  // ── Post-AI Sanity Checks ─────────────────────────────────────────────────────
+  // Rule-based corrections that catch contradictions the AI may miss.
+  let sanitized = 0;
+  for (const event of aiEnriched) {
+    // "Free Movie" must be genuinely free — if price shows a cost, fix the category
+    if (event.category === "Free Movie") {
+      const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
+      const titleHasPrice = /^\$\d/.test(event.title.trim()); // title starts with "$6", "$3", etc.
+      if (hasCost || titleHasPrice) {
+        event.category = "Other";
+        sanitized++;
+      }
+    }
+    // Title contains "($)" or starts with "$N" but price is marked Free → fix price
+    if (event.price?.toLowerCase() === "free") {
+      const titlePriceMatch = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/); // e.g. "($29)"
+      const titleStartsWithDollar = event.title.match(/^\$(\d+)/);          // e.g. "$6 Movie"
+      if (titlePriceMatch) {
+        event.price = `$${titlePriceMatch[1]}`;
+        sanitized++;
+      } else if (titleStartsWithDollar) {
+        event.price = `$${titleStartsWithDollar[1]}`;
+        sanitized++;
+      }
+    }
+  }
+  if (sanitized > 0) {
+    log.info("pipeline", `Post-AI sanity: fixed ${sanitized} category/price contradictions`);
+  }
 
   // ── Honeypot / Watermark Verification ───────────────────────────────────────
   // API sources are auto-published (trusted partners).

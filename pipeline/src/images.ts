@@ -141,36 +141,55 @@ export async function fillMissingImages(
   }
   log.info("images", `Image APIs available: ${apis.join(", ")}`);
 
-  // Step 0: Extract og:image from event's external URL (best quality, event-specific)
+  // Step 0: Extract og:image from event's own website URL (best quality, event-specific)
   // Skip aggregator sources — their og:images are generic/copyrighted site graphics.
   // Only extract og:image from the event's own website or non-aggregator pages.
+  //
+  // Key optimisation: deduplicate by URL before fetching. Many recurring events
+  // (e.g. 50 instances of "Eggstravaganza at Disneyland") share the same websiteURL —
+  // fetch the og:image once and reuse it for every matching event. This prevents
+  // wasted HTTP requests and ensures all instances get the same correct image.
   const AGGREGATOR_SOURCES = new Set(["mommypoppins", "macaronikid"]);
   let ogFilled = 0;
-  const ogBatchSize = 50; // Limit to avoid excessive fetching
-  const ogCandidates = needImages
-    .filter((e) => {
-      if (e.imageURL) return false;
-      // If from an aggregator, only try if the event has its own websiteURL
-      if (AGGREGATOR_SOURCES.has(e.source)) {
-        return !!e.websiteURL;
-      }
-      return !!(e.externalURL || e.websiteURL);
-    })
-    .slice(0, ogBatchSize);
+
+  const ogCandidates = needImages.filter((e) => {
+    if (e.imageURL) return false;
+    if (AGGREGATOR_SOURCES.has(e.source)) return !!e.websiteURL;
+    return !!(e.externalURL || e.websiteURL);
+  });
 
   if (ogCandidates.length > 0) {
-    log.info("images", `Trying og:image extraction for ${ogCandidates.length} events...`);
-    for (const event of ogCandidates) {
-      // For aggregator events, only use their own websiteURL (not the aggregator page)
-      const extURL = AGGREGATOR_SOURCES.has(event.source) ? undefined : event.externalURL;
-      const ogImage = await searchForEventImage(extURL, event.websiteURL);
-      if (ogImage) {
-        event.imageURL = ogImage;
-        ogFilled++;
-      }
+    log.info("images", `Trying og:image extraction for ${ogCandidates.length} events (deduped by URL)...`);
+
+    // Build a map of unique URLs → og:image result (fetched once per URL)
+    const urlImageCache = new Map<string, string | null>();
+    const uniqueURLs = new Set(
+      ogCandidates.map((e) =>
+        AGGREGATOR_SOURCES.has(e.source) ? e.websiteURL! : (e.websiteURL || e.externalURL!)
+      )
+    );
+
+    for (const url of uniqueURLs) {
+      // Always pass the URL as websiteURL param — it's already the best available
+      // URL for this event (websiteURL for aggregators, websiteURL || externalURL
+      // for others). searchForEventImage tries it to extract og:image.
+      const ogImage = await searchForEventImage(undefined, url);
+      urlImageCache.set(url, ogImage || null);
       await delay(500); // Rate limit web fetches
     }
-    log.info("images", `og:image extraction filled ${ogFilled} images`);
+
+    // Apply cached results to all matching events
+    for (const event of ogCandidates) {
+      const url = AGGREGATOR_SOURCES.has(event.source)
+        ? event.websiteURL!
+        : (event.websiteURL || event.externalURL!);
+      const cached = urlImageCache.get(url);
+      if (cached) {
+        event.imageURL = cached;
+        ogFilled++;
+      }
+    }
+    log.info("images", `og:image extraction: fetched ${uniqueURLs.size} unique URLs → filled ${ogFilled} events`);
   }
 
   // Step 1: Try event-specific image search using venue/event name
