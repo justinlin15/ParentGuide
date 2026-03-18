@@ -3,6 +3,7 @@ import { type PipelineEvent } from "./normalize.js";
 import { fetchTicketmasterEvents } from "./sources/ticketmaster.js";
 import { fetchSeatGeekEvents } from "./sources/seatgeek.js";
 import { fetchYelpEvents } from "./sources/yelp.js";
+import { fetchEventbriteEvents } from "./sources/eventbrite.js";
 import { scrapeMacaroniKid } from "./sources/scrapers/macaroni-kid.js";
 import { scrapeMommyPoppins } from "./sources/scrapers/mommy-poppins.js";
 import { scrapeNYCFamily } from "./sources/scrapers/nyc-family.js";
@@ -43,7 +44,7 @@ async function main() {
 
     if (!config.scrapersOnly) {
       // Fetch from APIs (run in parallel per metro)
-      const [ticketmaster, seatgeek, yelp] = await Promise.all([
+      const [ticketmaster, seatgeek, yelp, eventbrite] = await Promise.all([
         fetchTicketmasterEvents(metro).catch((err) => {
           log.error("pipeline", "Ticketmaster failed", err);
           return [] as PipelineEvent[];
@@ -56,9 +57,13 @@ async function main() {
           log.error("pipeline", "Yelp failed", err);
           return [] as PipelineEvent[];
         }),
+                fetchEventbriteEvents(metro).catch((err) => {
+                            log.error("pipeline", "Eventbrite failed", err);
+                            return [] as PipelineEvent[];
+                }),
       ]);
 
-      metroEvents.push(...ticketmaster, ...seatgeek, ...yelp);
+      metroEvents.push(...ticketmaster, ...seatgeek, ...yelp, ...eventbrite);
     }
 
     // Scrape (sequentially to be polite to servers)
