@@ -41,35 +41,16 @@ actor CloudKitService {
         return allRecords
     }
 
-    /// Fetch ALL records of a given type using zone changes API (no queryable index needed).
-    /// This bypasses CKQuery entirely, which avoids "recordName not queryable" errors
-    /// when the CloudKit schema was auto-created via REST API without indexes.
+    /// Fetch ALL records of a given type using cursor-based CKQuery pagination.
+    /// Uses NSPredicate(value: true) so no queryable index is required on any field.
     func fetchAllRecords(recordType: String) async throws -> [CKRecord] {
-        var allRecords: [CKRecord] = []
-        var changeToken: CKServerChangeToken? = nil
-
-        // Paginate until moreComing == false — CloudKit returns ~200 records per page
-        repeat {
-            let changes = try await publicDB.recordZoneChanges(
-                inZoneWith: .default,
-                since: changeToken
-            )
-
-            for (_, result) in changes.modificationResultsByID {
-                if case .success(let modification) = result {
-                    let record = modification.record
-                    if record.recordType == recordType {
-                        allRecords.append(record)
-                    }
-                }
-            }
-
-            changeToken = changes.changeToken
-            if !changes.moreComing { break }
-        } while true
-
-        NSLog("[CloudKit] fetchAllRecords: %d total %@ records", allRecords.count, recordType)
-        return allRecords
+        let records = try await fetchRecords(
+            recordType: recordType,
+            predicate: NSPredicate(value: true),
+            resultsLimit: 400
+        )
+        NSLog("[CloudKit] fetchAllRecords: %d total %@ records", records.count, recordType)
+        return records
     }
 
     func fetchRecord(recordID: CKRecord.ID) async throws -> CKRecord {
