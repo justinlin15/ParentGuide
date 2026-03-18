@@ -69,21 +69,30 @@ async function main() {
       metroEvents.push(...ticketmaster, ...seatgeek, ...yelp, ...eventbrite);
     }
 
-    // Scrape (sequentially to be polite to servers)
-    // OC Parent Guide runs first as primary source for OC/LA
-    const scraperFns = [
-      () => scrapeOCParentGuide(metro),    // OC primary source (Playwright)
-      () => scrapeKidsguide(metro),        // OC/LA family events (REST API)
-      () => scrapeMommyPoppins(metro),    // secondary for OC/LA, primary elsewhere
-      () => scrapeMacaroniKid(metro),      // covers all 5 metros
-      () => scrapeNYCFamily(metro),        // NYC only
-      () => scrapeDFWChild(metro),         // Dallas only
-      () => scrapeMyKidList(metro),        // Chicago only
-      () => scrapeAtlantaParent(metro),    // Atlanta only
+    // Scrape (sequentially to be polite to servers).
+    // Each entry declares which metro IDs it supports so scrapers are never
+    // called for irrelevant regions — avoids wasted HTTP requests.
+    //
+    // MommyPoppins: OC shares the LA region (id 115); LA-tagged events are
+    //   reassigned to OC in post-processing, so we only scrape for LA.
+    // MacaroniKid: national site — run once for LA only; the city/coordinate
+    //   reassignment below splits OC events out of the LA batch.
+    const scraperDefs: Array<{ metros: string[]; fn: () => Promise<PipelineEvent[]> }> = [
+      { metros: ["orange-county", "los-angeles"], fn: () => scrapeOCParentGuide(metro) },
+      { metros: ["orange-county", "los-angeles"], fn: () => scrapeKidsguide(metro) },
+      { metros: ["los-angeles"],                  fn: () => scrapeMommyPoppins(metro) },
+      { metros: ["los-angeles"],                  fn: () => scrapeMacaroniKid(metro) },
+      { metros: ["new-york"],                     fn: () => scrapeNYCFamily(metro) },
+      { metros: ["dallas"],                       fn: () => scrapeDFWChild(metro) },
+      { metros: ["chicago"],                      fn: () => scrapeMyKidList(metro) },
+      { metros: ["atlanta"],                      fn: () => scrapeAtlantaParent(metro) },
     ];
 
-    for (const scraperFn of scraperFns) {
-      const scraped = await scraperFn().catch((err) => {
+    const applicableScrapers = scraperDefs.filter((s) => s.metros.includes(metro.id));
+    log.info("pipeline", `  Running ${applicableScrapers.length} scrapers for ${metro.name}`);
+
+    for (const { fn } of applicableScrapers) {
+      const scraped = await fn().catch((err) => {
         log.error("pipeline", "Scraper failed", err);
         return [] as PipelineEvent[];
       });
