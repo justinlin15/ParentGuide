@@ -20,7 +20,7 @@ struct EventCalendarContainerView: View {
 
     /// Whether a given event is beyond the free viewing horizon (requires subscription).
     private func requiresSubscription(_ event: Event) -> Bool {
-        guard !subscriptionService.isSubscribed else { return false }
+        guard !subscriptionService.hasFullAccess else { return false }
         let horizon = Calendar.current.date(byAdding: .day, value: AppConstants.freeEventHorizonDays, to: Date()) ?? Date()
         return event.startDate > horizon
     }

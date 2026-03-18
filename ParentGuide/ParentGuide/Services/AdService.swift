@@ -28,9 +28,9 @@ class AdService {
     private(set) var interstitialAd: InterstitialAd?
     private(set) var isLoadingInterstitial = false
 
-    /// Whether ads should be shown (non-subscribers only).
+    /// Whether ads should be shown (non-subscribers and non-admins only).
     var isAdEnabled: Bool {
-        !SubscriptionService.shared.isSubscribed
+        !SubscriptionService.shared.hasFullAccess
     }
 
     // MARK: - Init

@@ -103,7 +103,7 @@ class EventCalendarViewModel: NSObject, CLLocationManagerDelegate {
 
     /// Whether a given date is beyond the free viewing horizon for non-subscribers.
     func isDateLocked(_ date: Date) -> Bool {
-        guard !SubscriptionService.shared.isSubscribed else { return false }
+        guard !SubscriptionService.shared.hasFullAccess else { return false }
         return Calendar.current.startOfDay(for: date) > freeHorizonDate
     }
 

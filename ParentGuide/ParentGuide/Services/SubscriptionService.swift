@@ -21,6 +21,13 @@ class SubscriptionService {
     var products: [Product] = []
     var isSubscribed = false
 
+    /// Returns `true` if the user has full premium access — either via an active
+    /// subscription or because they are an admin. Use this for all premium gates
+    /// instead of checking `isSubscribed` directly.
+    var hasFullAccess: Bool {
+        isSubscribed || AdminService.shared.isAdmin
+    }
+
     /// Beta testing override for subscription state. Only active when AppConstants.betaTestingEnabled is true.
     /// Set to `nil` to use real subscription check, `true`/`false` to force override.
     var debugSubscriptionOverride: Bool? = nil {

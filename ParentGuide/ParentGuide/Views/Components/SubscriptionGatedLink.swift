@@ -17,7 +17,7 @@ struct SubscriptionGatedLink<Label: View>: View {
 
     /// Whether this event requires a subscription to view details.
     private var isLocked: Bool {
-        guard !subscriptionService.isSubscribed else { return false }
+        guard !subscriptionService.hasFullAccess else { return false }
         let horizon = Calendar.current.date(
             byAdding: .day,
             value: AppConstants.freeEventHorizonDays,

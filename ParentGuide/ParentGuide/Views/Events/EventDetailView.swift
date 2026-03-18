@@ -300,7 +300,7 @@ struct EventDetailView: View {
 
                         // Add to Calendar button (premium feature)
                         Button {
-                            if subscriptionService.isSubscribed {
+                            if subscriptionService.hasFullAccess {
                                 addToCalendar()
                             } else {
                                 showCalendarPaywall = true
@@ -311,7 +311,7 @@ struct EventDetailView: View {
                                     isAddingToCalendar ? "Adding..." : "Add to Calendar",
                                     systemImage: "calendar.badge.plus"
                                 )
-                                if !subscriptionService.isSubscribed {
+                                if !subscriptionService.hasFullAccess {
                                     Image(systemName: "lock.fill")
                                         .font(.caption)
                                 }

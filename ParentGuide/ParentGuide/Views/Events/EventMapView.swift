@@ -19,6 +19,7 @@ struct EventMapView: View {
     @State private var locationManager = LocationHelper()
     @State private var cityCoordinates: [String: CLLocationCoordinate2D] = [:]
     @State private var isGeocodingCities = false
+    @State private var showDatePicker = false
     var metroService = MetroService.shared
 
     // MARK: - Date-Filtered Events
@@ -110,70 +111,78 @@ struct EventMapView: View {
 
             if !showLocationPrompt && !showZipEntry {
                 VStack {
-                    HStack(spacing: 8) {
-                        // Previous day
-                        Button {
-                            withAnimation {
-                                selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
-                            }
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.brandBlue)
-                                .frame(width: 32, height: 32)
-                                .background(.ultraThinMaterial, in: Circle())
-                        }
+                    // ── Centered date navigation bar ──────────────────────
+                    HStack {
+                        Spacer()
 
-                        // Date + event count
-                        VStack(spacing: 2) {
-                            HStack(spacing: 6) {
-                                if isToday {
-                                    Text("TODAY")
-                                        .font(.system(size: 10, weight: .heavy))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(Color.brandBlue)
-                                        .clipShape(Capsule())
+                        HStack(spacing: 8) {
+                            // ← Previous day
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
                                 }
-                                Text(selectedDate.formatted(date: .abbreviated, time: .omitted))
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(Color.brandBlue)
+                                    .frame(width: 34, height: 34)
+                                    .background(.ultraThinMaterial, in: Circle())
+                                    .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
                             }
-                            Text("\(eventsForSelectedDate.count) event\(eventsForSelectedDate.count == 1 ? "" : "s")")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 8)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
-                        .onTapGesture {
-                            // Tap date label to jump back to today
-                            if !isToday {
-                                withAnimation {
-                                    selectedDate = Calendar.current.startOfDay(for: Date())
-                                }
-                            }
-                        }
 
-                        // Next day
-                        Button {
-                            withAnimation {
-                                selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+                            // Date pill — tapping opens the calendar date picker
+                            Button { showDatePicker = true } label: {
+                                VStack(spacing: 2) {
+                                    HStack(spacing: 5) {
+                                        if isToday {
+                                            Text("TODAY")
+                                                .font(.system(size: 9, weight: .heavy))
+                                                .foregroundStyle(.white)
+                                                .padding(.horizontal, 5)
+                                                .padding(.vertical, 2)
+                                                .background(Color.brandBlue)
+                                                .clipShape(Capsule())
+                                        }
+                                        Text(selectedDate.formatted(.dateTime.month(.abbreviated).day().year()))
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.primary)
+                                        Image(systemName: "calendar")
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundStyle(Color.brandBlue)
+                                    }
+                                    Text("\(eventsForSelectedDate.count) event\(eventsForSelectedDate.count == 1 ? "" : "s")")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 9)
+                                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                                .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
                             }
-                        } label: {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.brandBlue)
-                                .frame(width: 32, height: 32)
-                                .background(.ultraThinMaterial, in: Circle())
+                            .buttonStyle(.plain)
+
+                            // → Next day
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+                                }
+                            } label: {
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(Color.brandBlue)
+                                    .frame(width: 34, height: 34)
+                                    .background(.ultraThinMaterial, in: Circle())
+                                    .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
+                            }
                         }
 
                         Spacer()
                     }
+
                     Spacer()
 
-                    // My Location button
+                    // My Location button (bottom-right)
                     HStack {
                         Spacer()
                         Button {
@@ -245,6 +254,50 @@ struct EventMapView: View {
                 }
                 .padding(32).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20)).padding(24)
             }
+        }
+        // ── Date picker sheet ─────────────────────────────────────────────
+        .sheet(isPresented: $showDatePicker) {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    DatePicker(
+                        "Select Date",
+                        selection: $selectedDate,
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    .tint(Color.brandBlue)
+                    .padding(.horizontal, 8)
+
+                    Divider()
+
+                    // Jump to Today shortcut
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            selectedDate = Calendar.current.startOfDay(for: Date())
+                        }
+                        showDatePicker = false
+                    } label: {
+                        Label("Jump to Today", systemImage: "arrow.uturn.left")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(isToday ? .secondary : Color.brandBlue)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                    }
+                    .disabled(isToday)
+                }
+                .navigationTitle("Pick a Date")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showDatePicker = false }
+                            .fontWeight(.semibold)
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(20)
         }
         .sheet(item: $selectedEvent) { event in
             NavigationStack {

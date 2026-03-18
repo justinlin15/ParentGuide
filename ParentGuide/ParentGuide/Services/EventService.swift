@@ -302,9 +302,23 @@ actor EventService {
 
     func updateEvent(_ event: Event) async throws -> Event {
         let recordID = CKRecord.ID(recordName: event.id)
-        let existingRecord = try await cloudKit.fetchRecord(recordID: recordID)
-        event.applyFields(to: existingRecord)
-        let savedRecord = try await cloudKit.savePublicRecord(existingRecord)
+
+        // Try to fetch the existing CloudKit record first so we preserve
+        // any server-side metadata (changeTag, etc.). If the record doesn't
+        // exist yet (e.g. the event only lives in the JSON feed and the
+        // pipeline hasn't uploaded it to CloudKit), fall back to creating it.
+        let record: CKRecord
+        do {
+            let existing = try await cloudKit.fetchRecord(recordID: recordID)
+            event.applyFields(to: existing)
+            record = existing
+        } catch {
+            // Record not in CloudKit yet — create a fresh one with all fields.
+            NSLog("[EventService] Record not found in CloudKit (%@), creating new record", event.id)
+            record = event.toCKRecord()
+        }
+
+        let savedRecord = try await cloudKit.savePublicRecord(record)
         guard let updatedEvent = Event(record: savedRecord) else {
             throw EventServiceError.invalidRecord
         }

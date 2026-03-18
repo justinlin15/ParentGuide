@@ -32,12 +32,12 @@ struct PlansView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
 
-                // Already subscribed banner
-                if subscriptionService.isSubscribed {
+                // Already subscribed / admin banner
+                if subscriptionService.hasFullAccess {
                     HStack {
                         Image(systemName: "checkmark.seal.fill")
                             .foregroundStyle(.green)
-                        Text("You're a member!")
+                        Text(AdminService.shared.isAdmin ? "Admin — full access enabled" : "You're a member!")
                             .fontWeight(.semibold)
                     }
                     .padding()
@@ -48,7 +48,7 @@ struct PlansView: View {
                 }
 
                 // Plan cards
-                if !subscriptionService.isSubscribed {
+                if !subscriptionService.hasFullAccess {
                     HStack(spacing: 16) {
                         ForEach(SubscriptionPlan.allPlans) { plan in
                             PlanCardView(plan: plan) {

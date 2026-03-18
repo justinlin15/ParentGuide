@@ -45,6 +45,17 @@ jobs:
         working-directory: pipeline
         run: npx playwright install --with-deps chromium
 
+      - name: Restore AI cache
+        uses: actions/cache@v4
+        with:
+          path: pipeline/cache
+          # Unique key per run so each run saves its own cache entry.
+          # restore-keys allows restoring the most recent previous cache
+          # when there's no exact match (i.e. almost always).
+          key: ai-cache-v1-${{ github.run_id }}
+          restore-keys: |
+            ai-cache-v1-
+
       - name: Run pipeline
         working-directory: pipeline
         env:

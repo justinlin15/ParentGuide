@@ -24,7 +24,7 @@ struct EventAgendaView: View {
     }
 
     private var isSelectedDateLocked: Bool {
-        guard !subscriptionService.isSubscribed else { return false }
+        guard !subscriptionService.hasFullAccess else { return false }
         let horizon = Calendar.current.date(
             byAdding: .day,
             value: AppConstants.freeEventHorizonDays,
@@ -187,6 +187,7 @@ struct EventAgendaView: View {
                             }
                             .padding(.vertical, 4)
                         }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     }
                 }
                 .listStyle(.plain)
@@ -198,7 +199,7 @@ struct EventAgendaView: View {
     }
 
     private func isDateLocked(_ date: Date) -> Bool {
-        guard !subscriptionService.isSubscribed else { return false }
+        guard !subscriptionService.hasFullAccess else { return false }
         let horizon = Calendar.current.date(
             byAdding: .day,
             value: AppConstants.freeEventHorizonDays,

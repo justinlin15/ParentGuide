@@ -111,7 +111,7 @@ struct FavoritesView: View {
             Divider()
 
             Button {
-                if subscriptionService.isSubscribed {
+                if subscriptionService.hasFullAccess {
                     addAllToCalendar()
                 } else {
                     showPaywall = true
@@ -128,7 +128,7 @@ struct FavoritesView: View {
                     Text(isAddingToCalendar ? "Adding..." : "Add Favorites to Calendar")
                         .font(.headline)
 
-                    if !subscriptionService.isSubscribed {
+                    if !subscriptionService.hasFullAccess {
                         Image(systemName: "lock.fill")
                             .font(.caption)
                     }

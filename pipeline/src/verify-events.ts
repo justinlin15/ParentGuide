@@ -1,6 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { type PipelineEvent } from "./normalize.js";
 import { log } from "./utils/logger.js";
+import {
+  honeypotCacheKey,
+  getCachedHoneypot,
+  setCachedHoneypot,
+} from "./utils/ai-cache.js";
 
 /**
  * Assign a publication status to each event based on source trustworthiness.
@@ -172,22 +177,44 @@ async function aiVerifyAll(
 ): Promise<Map<string, boolean>> {
   const result = new Map<string, boolean>();
 
+  // ── Serve cached verdicts first ──────────────────────────────────────────
+  const needsVerification: PipelineEvent[] = [];
+  let cacheHits = 0;
+
+  for (const event of events) {
+    const key = honeypotCacheKey(event.sourceId, event.title);
+    const cached = getCachedHoneypot(key);
+    if (cached) {
+      result.set(event.sourceId, cached.plausible);
+      cacheHits++;
+    } else {
+      needsVerification.push(event);
+    }
+  }
+
+  if (cacheHits > 0) {
+    log.info("verify", `  Cache: ${cacheHits} verdicts from cache, ${needsVerification.length} need AI verification`);
+  }
+
+  if (needsVerification.length === 0) return result;
+
+  // ── Verify uncached events via Claude API ────────────────────────────────
   const anthropic = getClient();
   if (!anthropic) {
     log.warn(
       "verify",
       "ANTHROPIC_API_KEY not set — skipping AI verification, defaulting all to plausible"
     );
-    for (const e of events) result.set(e.sourceId, true);
+    for (const e of needsVerification) result.set(e.sourceId, true);
     return result;
   }
 
-  log.info("verify", `AI-verifying ${events.length} events without confirmed URLs...`);
+  log.info("verify", `AI-verifying ${needsVerification.length} events without confirmed URLs...`);
 
-  for (let i = 0; i < events.length; i += AI_VERIFY_BATCH_SIZE) {
-    const batch = events.slice(i, i + AI_VERIFY_BATCH_SIZE);
+  for (let i = 0; i < needsVerification.length; i += AI_VERIFY_BATCH_SIZE) {
+    const batch = needsVerification.slice(i, i + AI_VERIFY_BATCH_SIZE);
     const batchNum = Math.floor(i / AI_VERIFY_BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(events.length / AI_VERIFY_BATCH_SIZE);
+    const totalBatches = Math.ceil(needsVerification.length / AI_VERIFY_BATCH_SIZE);
 
     try {
       const verdicts = await aiVerifyBatch(batch, anthropic);
@@ -195,6 +222,11 @@ async function aiVerifyAll(
         const event = batch[verdict.index];
         if (event) {
           result.set(event.sourceId, verdict.plausible);
+          // Cache the verdict so future runs skip re-verification
+          setCachedHoneypot(honeypotCacheKey(event.sourceId, event.title), {
+            plausible: verdict.plausible,
+            reason: verdict.reason,
+          });
           if (!verdict.plausible) {
             log.warn(
               "verify",
@@ -203,18 +235,25 @@ async function aiVerifyAll(
           }
         }
       }
-      // Fill any missing verdicts with plausible (safety default)
+      // Fill any missing verdicts with plausible (safety default) and cache them
       for (const event of batch) {
-        if (!result.has(event.sourceId)) result.set(event.sourceId, true);
+        if (!result.has(event.sourceId)) {
+          result.set(event.sourceId, true);
+          setCachedHoneypot(honeypotCacheKey(event.sourceId, event.title), {
+            plausible: true,
+            reason: "missing verdict fallback",
+          });
+        }
       }
       log.info("verify", `  AI batch ${batchNum}/${totalBatches} complete`);
     } catch (err) {
       log.warn("verify", `  AI batch ${batchNum}/${totalBatches} failed: ${err} — defaulting to plausible`);
       for (const event of batch) result.set(event.sourceId, true);
+      // Don't cache error fallbacks — let them be retried next run
     }
 
     // Brief pause between batches to respect rate limits
-    if (i + AI_VERIFY_BATCH_SIZE < events.length) {
+    if (i + AI_VERIFY_BATCH_SIZE < needsVerification.length) {
       await new Promise((r) => setTimeout(r, 500));
     }
   }

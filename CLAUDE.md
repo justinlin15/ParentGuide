@@ -11,7 +11,7 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 
 ### Architecture
 - **Location:** Runs on GitHub Actions (online), not locally
-- **Schedule:** Twice daily at 5:17 AM and 6:17 PM UTC, plus random 0–5 min jitter (scheduled runs only)
+- **Schedule:** Twice daily at 5:17 AM and 6:18 PM UTC, plus random 0–5 min jitter (scheduled runs only)
 - **Manual trigger:** GitHub Actions tab → "Event Pipeline" → "Run workflow"
 - **Dry run:** Pass `--dry-run` to skip CloudKit upload and write to `pipeline/output/`
 
@@ -22,12 +22,13 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 4. **Clean descriptions** — Strip promotional language
 5. **Rewrite descriptions** — Template-based paraphrasing (fast pre-pass before AI)
 6. **Enrich** — Sanitize URLs, extract prices via regex, strip scraper tags
-7. **AI Enrichment** — Claude rewrites all descriptions, validates categories, extracts missing price/ageRange/locationName/address
-8. **Verify** — 3-layer honeypot detection (see below)
+7. **AI Enrichment** — Claude rewrites descriptions, validates categories, extracts missing price/ageRange/locationName/address. Results cached by `sourceId + content hash` to skip unchanged events on future runs.
+8. **Verify** — 3-layer honeypot detection (see below). AI verdicts cached by `sourceId + title hash`.
 9. **Filter stale** — Remove events with startDate before today
 10. **Geocode** — Fill missing coordinates via Nominatim
 11. **Fill images** — og:image extraction, venue search, stock photo fallback (Unsplash/Pexels)
 12. **Upload** — Push to CloudKit (production or development based on `CLOUDKIT_ENVIRONMENT` secret)
+13. **Save AI cache** — Flush enrichment + honeypot cache to `pipeline/cache/ai-cache.json`
 
 ### Execution
 - **Runs on:** GitHub Actions (cloud) — NOT on local machine
@@ -37,6 +38,16 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 - **Workflow file:** `.github/workflows/pipeline.yml`
 - **Node version:** 20.x
 - **CloudKit environment:** Controlled by `CLOUDKIT_ENVIRONMENT` GitHub Secret (`production` or `development`)
+
+### AI Cost Management
+The pipeline uses two Claude API steps (enrichment + honeypot verification). To control costs:
+- **Incremental cache** — Results are cached in `pipeline/cache/ai-cache.json` between GitHub Actions runs via `actions/cache`. On each run, unchanged events are served from cache with zero API calls.
+- **Cache key** — `sourceId + SHA-256 hash of (title + description + category)`. If event content changes, the cache entry is automatically invalidated and the event is reprocessed.
+- **Cache TTL** — 30 days. Entries older than 30 days are pruned on load.
+- **GitHub Actions cache** — Restored via `restore-keys: ai-cache-v1-` so every run gets the most recent cache even though each run saves under a unique key.
+- **Error fallbacks are NOT cached** — If Claude returns an error for a batch, those events are retried on the next run.
+- **Steady-state cost** — After the first (cold) run, only new/changed events call the API (~20–50/day vs ~1,500 total). Expected ~97% cache hit rate.
+- **Cache source file:** `pipeline/src/utils/ai-cache.ts`
 
 ### URL Sanitization Rules
 - `externalURL` must NEVER link back to scraper source sites (MommyPoppins, MacaroniKid, etc.)
@@ -85,6 +96,7 @@ Scraper sites may embed fake "watermark" events to detect unauthorized scraping.
 - Determines: genuine local family event vs. likely honeypot watermark
 - Plausible → `published`; Suspicious → `draft` for admin review
 - Falls back to `published` on API error or parse failure (never blocks real events)
+- Verdicts are cached — once an event is verified its result is reused on future runs until TTL expires
 
 **Status values:**
 - `"published"` — Visible to all users in the app
@@ -111,6 +123,7 @@ Single Claude pass (`claude-haiku-4-5`) over all events in batches of 15:
 - Validates/corrects event categories (14 valid categories)
 - Extracts missing structured fields from description text: price, ageRange, locationName, address
 - Falls back gracefully when `ANTHROPIC_API_KEY` is not set
+- Results cached per event — only new/changed events hit the API on repeat runs
 - Source file: `pipeline/src/utils/ai-enricher.ts`
 
 ### Category Classification
@@ -148,8 +161,15 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 ## iOS App
 
 ### Subscription Model
-- **Free tier:** See all events, but tapping events >3 days out triggers paywall. Banner ads (AdMob).
+- **Free tier:** See all events, but tapping events >1 day out triggers paywall. Banner ads (AdMob).
 - **Premium ($5/month, $48/year):** Calendar sync, extended event viewing, ad-free
+- **Admins** automatically receive full premium access (`SubscriptionService.hasFullAccess` returns true for admins)
+
+### Premium Gate Implementation
+- All premium checks use `subscriptionService.hasFullAccess` (not `isSubscribed` directly)
+- `hasFullAccess` = `isSubscribed || AdminService.shared.isAdmin`
+- Gates: event date lock (>1 day), Add to Calendar, Add Favorites to Calendar, banner ads
+- `AppConstants.freeEventHorizonDays = 1` controls the free viewing window
 
 ### Filters
 - **Sort:** Date, Distance, Price
@@ -166,8 +186,10 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 
 ### Admin Features
 - Admin dashboard accessible from More menu (admin users only)
-- Admin Apple User IDs configured in AdminService
+- Admin Apple User IDs configured in `AdminService.adminAppleUserIDs`
+- Admins automatically get full premium access (no subscription required)
 - Event CRUD: create, edit, delete events
+- `EventService.updateEvent()` handles both CloudKit records (fetch + update) and JSON-only events (creates new CloudKit record if not found)
 - Event suggestion review queue (user-submitted events)
 - **Draft Events review queue** — pipeline events pending honeypot verification (`More → Admin → Draft Events`)
   - Swipe right to publish, swipe left to reject
@@ -183,9 +205,14 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 
 ### Map
 - Uses `Marker` (not `Annotation`) for smooth zoom/pan — natively rendered by MapKit GPU pipeline
+- Cluster pins: events at the same coordinate grouped with a count badge; tap to see list
+- Date navigation bar centered over map with `< [date] >` controls + calendar icon
+- Tapping the date pill opens a graphical `DatePicker` sheet (`.medium` detent) with "Jump to Today" shortcut
+- "My Location" button (bottom-right) centers map on device GPS
 - Capped at 50 pins on HomeMapView
 - Lazy loads on appear with placeholder
 
 ### Pending iOS Tasks
-- **Debug toggles in TestFlight** — Admin/premium toggles currently `#if DEBUG` only; need runtime flag for TestFlight builds
+- **Debug toggles in TestFlight** — Admin/premium toggles visible at runtime via `AppConstants.betaTestingEnabled`; set to `false` before App Store submission
 - **CloudKit EventSuggestion submission** — Requires user to be signed into iCloud (not just Sign in with Apple); shows clear error if not signed in
+- **App Store URL** — Update `AppConstants.appStoreURL` with real App Store ID once published

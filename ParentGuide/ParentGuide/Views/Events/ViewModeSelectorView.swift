@@ -76,6 +76,8 @@ struct ViewModeSelectorView: View {
                             .font(.system(size: 12, weight: .semibold))
                         Text(viewModel.filter.activeFilterCount > 0 ? "Filter (\(viewModel.filter.activeFilterCount))" : "Filter")
                             .font(.system(size: 13, weight: .semibold))
+                            .lineLimit(1)
+                            .fixedSize()
                     }
                     .foregroundStyle(viewModel.filter.activeFilterCount > 0 ? Color.brandBlue : .white)
                     .padding(.horizontal, 10)
@@ -83,6 +85,7 @@ struct ViewModeSelectorView: View {
                     .background(viewModel.filter.activeFilterCount > 0 ? Color.white : Color.white.opacity(0.2))
                     .clipShape(Capsule())
                 }
+                .layoutPriority(1)
 
                 Button(action: onSearchTap) {
                     Image(systemName: "magnifyingglass")

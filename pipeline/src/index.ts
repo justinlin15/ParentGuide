@@ -19,6 +19,7 @@ import { rewriteDescriptions } from "./rewrite.js";
 import { enrichEvents } from "./enrich.js";
 import { aiEnrichEvents } from "./utils/ai-enricher.js";
 import { verifyEvents } from "./verify-events.js";
+import { saveAiCache } from "./utils/ai-cache.js";
 import { uploadToCloudKit } from "./cloudkit.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
@@ -211,6 +212,10 @@ async function main() {
   // Upload to CloudKit (or write to output/)
   log.divider();
   await uploadToCloudKit(withImages);
+
+  // Flush AI cache to disk so the next run benefits from today's results
+  log.divider();
+  saveAiCache();
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   log.divider();

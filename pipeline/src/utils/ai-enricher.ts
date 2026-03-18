@@ -13,6 +13,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { type PipelineEvent } from "../normalize.js";
 import { log } from "./logger.js";
+import {
+  enrichmentCacheKey,
+  getCachedEnrichment,
+  setCachedEnrichment,
+} from "./ai-cache.js";
 
 const VALID_CATEGORIES = [
   "Storytime",
@@ -206,6 +211,9 @@ function applyResult(event: PipelineEvent, result: AiResult): void {
  * Simultaneously rewrites descriptions, corrects categories,
  * and extracts missing structured fields (price, ageRange, location, address).
  *
+ * Results are cached by sourceId + content hash so unchanged events are served
+ * from cache on subsequent pipeline runs, avoiding redundant API calls.
+ *
  * Falls back to existing data when ANTHROPIC_API_KEY is not set or API fails.
  */
 export async function aiEnrichEvents(
@@ -221,12 +229,9 @@ export async function aiEnrichEvents(
     return events;
   }
 
-  log.info(
-    "ai-enricher",
-    `AI enriching ${events.length} events in batches of ${BATCH_SIZE}...`
-  );
-
-  const totalBatches = Math.ceil(events.length / BATCH_SIZE);
+  // ── Split into cached vs. needs-processing ───────────────────────────────
+  const needsProcessing: PipelineEvent[] = [];
+  let cacheHits = 0;
   let descRewritten = 0;
   let categoryChanged = 0;
   let pricesFound = 0;
@@ -235,53 +240,112 @@ export async function aiEnrichEvents(
   let addressesFound = 0;
   let failed = 0;
 
-  for (let i = 0; i < events.length; i += BATCH_SIZE) {
-    const batch = events.slice(i, i + BATCH_SIZE);
-    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-
-    if (totalBatches > 3) {
-      log.info(
-        "ai-enricher",
-        `  Batch ${batchNum}/${totalBatches} (${batch.length} events)...`
-      );
-    }
-
-    const results = await processBatch(batch);
-
-    for (const event of batch) {
-      const result = results[event.sourceId];
-      if (!result) {
-        failed++;
-        continue;
-      }
-
+  for (const event of events) {
+    const cacheKey = enrichmentCacheKey(
+      event.sourceId,
+      event.title,
+      event.description,
+      event.category
+    );
+    const cached = getCachedEnrichment(cacheKey);
+    if (cached) {
+      // Apply cached result directly — no API call needed
       const prevDesc = event.description;
       const prevCat = event.category;
       const prevPrice = event.price;
       const prevAgeRange = event.ageRange;
       const prevLocationName = event.locationName;
       const prevAddress = event.address;
-
-      applyResult(event, result);
-
+      applyResult(event, cached);
       if (event.description !== prevDesc) descRewritten++;
       if (event.category !== prevCat) categoryChanged++;
       if (event.price !== prevPrice) pricesFound++;
       if (event.ageRange !== prevAgeRange) ageRangesFound++;
       if (event.locationName !== prevLocationName) locationsFound++;
       if (event.address !== prevAddress) addressesFound++;
-    }
-
-    // Polite delay between batches
-    if (i + BATCH_SIZE < events.length) {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      cacheHits++;
+    } else {
+      needsProcessing.push(event);
     }
   }
 
-  log.success(
+  log.info(
     "ai-enricher",
-    `AI enrichment complete:`
+    `Cache: ${cacheHits} hits, ${needsProcessing.length} events need AI processing`
   );
+
+  // ── Process uncached events via Claude API ───────────────────────────────
+  if (needsProcessing.length > 0) {
+    log.info(
+      "ai-enricher",
+      `AI enriching ${needsProcessing.length} events in batches of ${BATCH_SIZE}...`
+    );
+    const totalBatches = Math.ceil(needsProcessing.length / BATCH_SIZE);
+
+    for (let i = 0; i < needsProcessing.length; i += BATCH_SIZE) {
+      const batch = needsProcessing.slice(i, i + BATCH_SIZE);
+      const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+
+      if (totalBatches > 3) {
+        log.info(
+          "ai-enricher",
+          `  Batch ${batchNum}/${totalBatches} (${batch.length} events)...`
+        );
+      }
+
+      const results = await processBatch(batch);
+
+      for (const event of batch) {
+        const result = results[event.sourceId];
+        if (!result) {
+          failed++;
+          continue;
+        }
+
+        // Compute cache key BEFORE applyResult mutates the event
+        const cacheKey = enrichmentCacheKey(
+          event.sourceId,
+          event.title,
+          event.description,
+          event.category
+        );
+
+        const prevDesc = event.description;
+        const prevCat = event.category;
+        const prevPrice = event.price;
+        const prevAgeRange = event.ageRange;
+        const prevLocationName = event.locationName;
+        const prevAddress = event.address;
+
+        applyResult(event, result);
+
+        if (event.description !== prevDesc) descRewritten++;
+        if (event.category !== prevCat) categoryChanged++;
+        if (event.price !== prevPrice) pricesFound++;
+        if (event.ageRange !== prevAgeRange) ageRangesFound++;
+        if (event.locationName !== prevLocationName) locationsFound++;
+        if (event.address !== prevAddress) addressesFound++;
+
+        // Save enriched result to cache so future runs skip this event
+        setCachedEnrichment(cacheKey, {
+          description: event.description,
+          category: event.category,
+          price: event.price ?? null,
+          ageRange: event.ageRange ?? null,
+          locationName: event.locationName ?? null,
+          address: event.address ?? null,
+        });
+      }
+
+      // Polite delay between batches
+      if (i + BATCH_SIZE < needsProcessing.length) {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+      }
+    }
+  }
+
+  log.success("ai-enricher", `AI enrichment complete:`);
+  log.info("ai-enricher", `  ${cacheHits} served from cache (no API call)`);
   log.info("ai-enricher", `  ${descRewritten} descriptions rewritten`);
   log.info("ai-enricher", `  ${categoryChanged} categories corrected`);
   log.info("ai-enricher", `  ${pricesFound} prices extracted`);

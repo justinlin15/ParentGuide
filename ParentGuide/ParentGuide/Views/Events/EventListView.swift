@@ -31,7 +31,7 @@ struct EventListView: View {
                             SubscriptionGatedLink(event: event) {
                                 EventCardView(event: event)
                             }
-                            .listRowInsets(EdgeInsets())
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
                         }
                     } header: {
                         Text(date.formatted(date: .complete, time: .omitted))

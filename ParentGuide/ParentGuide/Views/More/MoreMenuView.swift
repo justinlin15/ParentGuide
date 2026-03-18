@@ -113,11 +113,15 @@ struct MoreMenuView: View {
                                 subscriptionService.debugSubscriptionOverride = newValue
                             }
                         )) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Label("Premium User", systemImage: "crown.fill")
-                                Text("Calendar sync • >3 days • No ads")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Premium User")
+                                    Text("Calendar sync • 2 days • No ads")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "crown.fill")
                             }
                         }
                         .tint(.orange)
