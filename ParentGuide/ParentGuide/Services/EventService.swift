@@ -124,7 +124,7 @@ actor EventService {
             return diskCached
         }
 
-        return events
+        return []
     }
 
     /// Fetch events from remote JSON feed (primary) or bundled JSON (offline fallback).
