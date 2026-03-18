@@ -51,9 +51,75 @@ interface PexelsResult {
   }>;
 }
 
+// Aggregator source identifiers — events from these scrapers carry images
+// from the aggregator's own CDN, not the actual venue.
+const AGGREGATOR_SOURCES_IMG = new Set([
+  "mommypoppins",
+  "macaronikid",
+  "ocparentguide",
+]);
+
+// Hostname patterns belonging to aggregator CDNs.
+// Any imageURL hosted on these domains is branded aggregator content
+// and must be replaced with a real venue/stock photo.
+const AGGREGATOR_IMAGE_HOSTNAMES = [
+  "mommypoppins.com",
+  "macaronikid.com",
+  "cdn.macaronikid.com",
+  "orangecountyparentguide.com",
+  "www.orangecountyparentguide.com",
+];
+
+/**
+ * Returns true if the imageURL is hosted on an aggregator's CDN.
+ * Aggregator-sourced events also get their Squarespace CDN images cleared
+ * because scrapers like MommyPoppins (Squarespace-hosted) embed their own
+ * site imagery, not the actual event venue photo.
+ */
+function isAggregatorImage(imageURL: string, source: string): boolean {
+  try {
+    const hostname = new URL(imageURL).hostname.replace(/^www\./, "");
+
+    // Always block known aggregator hostnames
+    if (AGGREGATOR_IMAGE_HOSTNAMES.some((d) => hostname === d || hostname.endsWith(`.${d}`))) {
+      return true;
+    }
+
+    // For aggregator-sourced events, also block Squarespace CDN URLs —
+    // these are the aggregator's own site assets, not venue photos.
+    if (AGGREGATOR_SOURCES_IMG.has(source)) {
+      if (hostname.includes("squarespace.com") || hostname.includes("sqsp.net")) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch {
+    return false; // Invalid URL — leave it alone; other validation will catch it
+  }
+}
+
 export async function fillMissingImages(
   events: PipelineEvent[]
 ): Promise<PipelineEvent[]> {
+  // ── Pre-processing: strip aggregator CDN images ──────────────────────────
+  // Scrapers embed images from their own site (MommyPoppins, OC Parent Guide,
+  // etc.). These are branded/copyrighted graphics, not real event photos.
+  // Clear them so the fallback chain (og:image → venue search → stock) can run.
+  let clearedAggregatorImages = 0;
+  for (const event of events) {
+    if (event.imageURL && isAggregatorImage(event.imageURL, event.source)) {
+      event.imageURL = undefined;
+      clearedAggregatorImages++;
+    }
+  }
+  if (clearedAggregatorImages > 0) {
+    log.info(
+      "images",
+      `Cleared ${clearedAggregatorImages} aggregator CDN images — replacing with venue/stock photos`
+    );
+  }
+
   const needImages = events.filter((e) => !e.imageURL);
   if (needImages.length === 0) {
     log.info("images", "All events already have images");
@@ -76,16 +142,28 @@ export async function fillMissingImages(
   log.info("images", `Image APIs available: ${apis.join(", ")}`);
 
   // Step 0: Extract og:image from event's external URL (best quality, event-specific)
+  // Skip aggregator sources — their og:images are generic/copyrighted site graphics.
+  // Only extract og:image from the event's own website or non-aggregator pages.
+  const AGGREGATOR_SOURCES = new Set(["mommypoppins", "macaronikid"]);
   let ogFilled = 0;
   const ogBatchSize = 50; // Limit to avoid excessive fetching
   const ogCandidates = needImages
-    .filter((e) => !e.imageURL && (e.externalURL || e.websiteURL))
+    .filter((e) => {
+      if (e.imageURL) return false;
+      // If from an aggregator, only try if the event has its own websiteURL
+      if (AGGREGATOR_SOURCES.has(e.source)) {
+        return !!e.websiteURL;
+      }
+      return !!(e.externalURL || e.websiteURL);
+    })
     .slice(0, ogBatchSize);
 
   if (ogCandidates.length > 0) {
     log.info("images", `Trying og:image extraction for ${ogCandidates.length} events...`);
     for (const event of ogCandidates) {
-      const ogImage = await searchForEventImage(event.externalURL, event.websiteURL);
+      // For aggregator events, only use their own websiteURL (not the aggregator page)
+      const extURL = AGGREGATOR_SOURCES.has(event.source) ? undefined : event.externalURL;
+      const ogImage = await searchForEventImage(extURL, event.websiteURL);
       if (ogImage) {
         event.imageURL = ogImage;
         ogFilled++;

@@ -202,6 +202,12 @@ export async function enrichEvents(
   for (const event of events) {
     const extUrl = event.externalURL;
 
+    // Clear websiteURL if it's a scraper URL — the iOS app prefers websiteURL
+    // over externalURL, so a scraper websiteURL would bypass our URL fix entirely.
+    if (event.websiteURL && isScraperUrl(event.websiteURL)) {
+      event.websiteURL = undefined;
+    }
+
     // If websiteURL exists and isn't a scraper URL, it's the best link
     if (event.websiteURL && !isScraperUrl(event.websiteURL)) {
       // websiteURL is good — use it as externalURL if needed
