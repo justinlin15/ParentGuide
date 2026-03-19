@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 extension Color {
     init(hex: String) {
@@ -35,7 +36,13 @@ extension Color {
     static let brandPink = Color(hex: "F8E8EC")         // Light Rose Mist (soft backgrounds)
     static let brandNavy = Color(hex: "3D3232")          // Warm Charcoal (dark contrast)
     static let brandLavender = Color(hex: "B8A9C9")     // Soft Lavender
-    static let warmSurface = Color(hex: "FBF4F6")       // Warm Rose Surface (card bg)
+    /// Adaptive card surface: warm rose in light mode, dark warm gray in dark mode.
+    /// Hardcoded hex (#FBF4F6) was unreadable in dark mode — white text on light pink.
+    static let warmSurface = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.14, green: 0.11, blue: 0.12, alpha: 1) // ~241C1E dark warm
+            : UIColor(red: 0.984, green: 0.957, blue: 0.965, alpha: 1) // #FBF4F6 light rose
+    })
 
     // Event category colors — soft pastels
     static let eventGreen = Color(hex: "7CB69A")         // Soft Sage

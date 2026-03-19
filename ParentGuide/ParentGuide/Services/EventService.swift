@@ -396,7 +396,10 @@ private struct PipelineEvent: Codable {
             eventDescription: Self.decodeHTMLEntities(description),
             startDate: start,
             endDate: end,
-            isAllDay: isAllDay ?? false,
+            // Treat midnight timestamps as all-day — scrapers that don't know
+            // the event time store T00:00:00, which should display as "All Day"
+            // rather than "12:00 AM".
+            isAllDay: isAllDay ?? startDate.contains("T00:00:00"),
             category: categoryEnum,
             city: Self.decodeHTMLEntities(city ?? ""),
             address: address.map { Self.decodeHTMLEntities($0) },
