@@ -56,7 +56,11 @@ class MetroService {
     func autoDetect() async -> AppConstants.Metro {
         await withCheckedContinuation { continuation in
             let helper = LocationHelper()
-            helper.requestLocation { coordinate in
+            // Capture helper strongly so it stays alive until the callback fires.
+            // Without this, helper is deallocated immediately after requestLocation returns,
+            // taking the CLLocationManager delegate with it and hanging the continuation.
+            helper.requestLocation { [helper] coordinate in
+                _ = helper  // retain until callback
                 if let coordinate {
                     let nearest = AppConstants.nearestMetro(
                         latitude: coordinate.latitude,

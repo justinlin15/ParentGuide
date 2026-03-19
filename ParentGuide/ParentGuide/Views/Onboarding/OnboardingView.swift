@@ -4,13 +4,11 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct OnboardingView: View {
     @State private var metroService = MetroService.shared
     @State private var selectedMetro: AppConstants.Metro?
     @State private var isDetecting = false
-    @State private var locationManager = CLLocationManager()
 
     var body: some View {
         VStack(spacing: 24) {
@@ -111,12 +109,6 @@ struct OnboardingView: View {
             .disabled(selectedMetro == nil)
             .padding(.horizontal, 32)
             .padding(.bottom, 32)
-        }
-        .onAppear {
-            // Immediately request location permission on first launch
-            if locationManager.authorizationStatus == .notDetermined {
-                locationManager.requestWhenInUseAuthorization()
-            }
         }
     }
 }
