@@ -199,23 +199,31 @@ struct DraftEventsView: View {
 
     private var eventsList: some View {
         List(vm.sortedEvents) { event in
-            draftEventRow(event)
-                .swipeActions(edge: .leading) {
-                    Button {
-                        vm.approveSingle(event)
-                    } label: {
-                        Label("Publish", systemImage: "checkmark.circle.fill")
-                    }
-                    .tint(.green)
-                }
-                .swipeActions(edge: .trailing) {
-                    Button(role: .destructive) {
-                        eventToReject = event
-                        showRejectConfirm = true
-                    } label: {
-                        Label("Reject", systemImage: "xmark.circle.fill")
+            Group {
+                if vm.isSelecting {
+                    draftEventRow(event)
+                } else {
+                    NavigationLink(destination: EventDetailView(event: event)) {
+                        draftEventRow(event)
                     }
                 }
+            }
+            .swipeActions(edge: .leading) {
+                Button {
+                    vm.approveSingle(event)
+                } label: {
+                    Label("Publish", systemImage: "checkmark.circle.fill")
+                }
+                .tint(.green)
+            }
+            .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                    eventToReject = event
+                    showRejectConfirm = true
+                } label: {
+                    Label("Reject", systemImage: "xmark.circle.fill")
+                }
+            }
         }
         .listStyle(.plain)
     }
@@ -287,9 +295,9 @@ struct DraftEventsView: View {
                 // Swipe hint (when not in selection mode)
                 if !vm.isSelecting {
                     HStack(spacing: 4) {
-                        Image(systemName: "arrow.left.and.right")
+                        Image(systemName: "hand.tap")
                             .font(.caption2)
-                        Text("Swipe to publish or reject")
+                        Text("Tap to preview · Swipe to publish or reject")
                             .font(.caption2)
                     }
                     .foregroundStyle(.tertiary)
