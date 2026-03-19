@@ -365,8 +365,8 @@ private struct PipelineEvent: Codable {
     let locationName: String?
     let imageURL: String?
     let externalURL: String?
-    let isFeatured: Bool
-    let isRecurring: Bool
+    let isFeatured: Bool?
+    let isRecurring: Bool?
     let tags: [String]?
     let metro: String
 
@@ -405,8 +405,8 @@ private struct PipelineEvent: Codable {
             locationName: locationName.map { Self.decodeHTMLEntities($0) },
             imageURL: imageURL,
             externalURL: externalURL,
-            isFeatured: isFeatured,
-            isRecurring: isRecurring,
+            isFeatured: isFeatured ?? false,
+            isRecurring: isRecurring ?? false,
             tags: tags ?? [],
             metro: metro,
             source: source,
