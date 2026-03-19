@@ -242,6 +242,12 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 - **Simulator note:** To get latest data in the simulator: `git pull` then rebuild in Xcode.
 - Check Xcode console for: `[EventService] Remote JSON feed: X events` (remote) vs `[EventService] Bundled JSON: X events` (bundled fallback)
 
+### PipelineEvent JSON Decoding
+- `PipelineEvent` in `EventService.swift` is the private struct that decodes the pipeline JSON
+- All non-optional fields **must** be present in every JSON event or the entire decode silently fails with 0 events
+- `isFeatured` and `isRecurring` are declared as `Bool?` (optional) with `?? false` fallback in `toEvent()` — the pipeline does not output these fields
+- **Gotcha:** If the pipeline adds a new required field or renames an existing one, all events will fail to load. Always make new fields optional with a sensible default.
+
 ### City Display
 - `Event.displayCity` computed property — returns the specific city for display. When `event.city` is a generic region name ("Orange County", "Los Angeles"), it extracts the real city from `event.address` (e.g., "28971 Golden Lantern # A110, Laguna Niguel, CA 92677, USA" → "Laguna Niguel"). Falls back to `event.city` if address is absent or unparseable.
 - All display views (EventDetailView, EventCardView, EventAgendaView, HomeView, PopularCarouselSection, AdminDashboard, DraftEvents, NotificationsView) use `event.displayCity` — never raw `event.city`.
