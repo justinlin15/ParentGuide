@@ -2,6 +2,7 @@ import { type PipelineEvent } from "./normalize.js";
 import { log } from "./utils/logger.js";
 import { getRandomUserAgent } from "./utils/user-agents.js";
 import { delay } from "./utils/geocoder.js";
+import { lookupVenueUrl } from "./utils/venue-urls.js";
 
 // Scraper source domains that should NEVER appear as the user-facing link.
 // When a user taps "More Information" in the app, they should see the
@@ -289,7 +290,34 @@ export async function enrichEvents(
     );
   }
 
-  // ─── Step 3: Apply Google search fallback for remaining scraper URLs ─────
+  // ─── Step 3: Apply known venue URL mapping ─────────────────────────────
+  // For events that still have scraper/Google URLs, check our curated venue
+  // mapping (libraries, parks, museums, etc.) before falling back to Google.
+  let venueUrlsApplied = 0;
+  for (const event of events) {
+    const hasGoodUrl =
+      event.websiteURL && !isScraperUrl(event.websiteURL) && !event.websiteURL.includes("google.com/search");
+    if (hasGoodUrl) continue; // Already has a real URL
+
+    const venueEntry = lookupVenueUrl(event.locationName);
+    if (venueEntry) {
+      if (!event.websiteURL || isScraperUrl(event.websiteURL) || event.websiteURL.includes("google.com/search")) {
+        event.websiteURL = venueEntry.websiteURL ?? venueEntry.url;
+      }
+      if (!event.externalURL || isScraperUrl(event.externalURL) || event.externalURL.includes("google.com/search")) {
+        event.externalURL = venueEntry.url;
+      }
+      venueUrlsApplied++;
+    }
+  }
+  if (venueUrlsApplied > 0) {
+    log.info(
+      "enrich",
+      `Applied known venue URLs for ${venueUrlsApplied} events`
+    );
+  }
+
+  // ─── Step 4: Apply Google search fallback for remaining scraper URLs ─────
   let googleFallbacks = 0;
   for (const event of events) {
     if (event.externalURL && isScraperUrl(event.externalURL)) {
@@ -309,7 +337,7 @@ export async function enrichEvents(
     );
   }
 
-  // ─── Step 4: Strip scraper source names from tags ─────────────────────────
+  // ─── Step 5: Strip scraper source names from tags ─────────────────────────
   const scraperTags = new Set([
     "mommypoppins",
     "macaronikid",

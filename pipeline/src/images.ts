@@ -1,5 +1,5 @@
 import { config } from "./config.js";
-import { type PipelineEvent } from "./normalize.js";
+import { type PipelineEvent, isAggregatorSource } from "./normalize.js";
 import { searchForEventImage } from "./utils/web-enricher.js";
 import { log } from "./utils/logger.js";
 import { delay } from "./utils/geocoder.js";
@@ -103,12 +103,13 @@ export async function fillMissingImages(
   events: PipelineEvent[]
 ): Promise<PipelineEvent[]> {
   // ── Pre-processing: strip aggregator CDN images ──────────────────────────
-  // Scrapers embed images from their own site (MommyPoppins, OC Parent Guide,
+  // Aggregator scrapers embed images from their own site (MommyPoppins, OC Parent Guide,
   // etc.). These are branded/copyrighted graphics, not real event photos.
   // Clear them so the fallback chain (og:image → venue search → stock) can run.
+  // Direct sources keep their original images — they come from the venue itself.
   let clearedAggregatorImages = 0;
   for (const event of events) {
-    if (event.imageURL && isAggregatorImage(event.imageURL, event.source)) {
+    if (isAggregatorSource(event.source) && event.imageURL && isAggregatorImage(event.imageURL, event.source)) {
       event.imageURL = undefined;
       clearedAggregatorImages++;
     }

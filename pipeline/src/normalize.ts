@@ -32,6 +32,22 @@ export interface PipelineEvent {
   status?: "published" | "draft" | "rejected";
 }
 
+/**
+ * Aggregator sources whose content (descriptions, titles, images) must be
+ * rewritten to avoid copyright/legal issues. Events from direct venue sources,
+ * APIs, and official calendars should preserve their original content.
+ */
+const AGGREGATOR_SOURCES = new Set([
+  "oc-parent-guide",
+  "mommypoppins",
+  "macaronikid",
+]);
+
+/** Returns true if the event source is an aggregator site whose content needs rewriting. */
+export function isAggregatorSource(source: string): boolean {
+  return AGGREGATOR_SOURCES.has(source);
+}
+
 // Category mapping: keys are iOS EventCategory raw values (Title Case)
 // These MUST match the EventCategory enum in the iOS app exactly.
 // Keywords are checked against the full event text (title + description + source categories).

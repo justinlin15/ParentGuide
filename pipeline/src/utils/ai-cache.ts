@@ -44,14 +44,26 @@ export interface CachedHoneypot {
   cachedAt: string;
 }
 
+export interface CachedGuideEnrichment {
+  description: string;
+  address: string | null;
+  phone: string | null;
+  ageRange: string | null;
+  priceLevel: string | null;
+  kidsEatFreeVerified: boolean | null;
+  dealDetails: string | null;
+  cachedAt: string;
+}
+
 interface CacheData {
   enrichment: Record<string, CachedEnrichment>;
   honeypot: Record<string, CachedHoneypot>;
+  guideEnrichment: Record<string, CachedGuideEnrichment>;
 }
 
 // ─── In-memory state ──────────────────────────────────────────────────────────
 
-let cache: CacheData = { enrichment: {}, honeypot: {} };
+let cache: CacheData = { enrichment: {}, honeypot: {}, guideEnrichment: {} };
 let isDirty = false;
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
@@ -63,6 +75,7 @@ function load(): void {
       const parsed = JSON.parse(raw) as Partial<CacheData>;
       cache.enrichment = parsed.enrichment ?? {};
       cache.honeypot = parsed.honeypot ?? {};
+      cache.guideEnrichment = parsed.guideEnrichment ?? {};
       prune();
       const e = Object.keys(cache.enrichment).length;
       const h = Object.keys(cache.honeypot).length;
@@ -72,7 +85,7 @@ function load(): void {
     }
   } catch (err) {
     log.warn("ai-cache", `Failed to load cache, starting fresh: ${err}`);
-    cache = { enrichment: {}, honeypot: {} };
+    cache = { enrichment: {}, honeypot: {}, guideEnrichment: {} };
   }
 }
 
@@ -92,6 +105,12 @@ function prune(): void {
   for (const key of Object.keys(cache.honeypot)) {
     if ((cache.honeypot[key].cachedAt ?? "") < cutoffStr) {
       delete cache.honeypot[key];
+      pruned++;
+    }
+  }
+  for (const key of Object.keys(cache.guideEnrichment)) {
+    if ((cache.guideEnrichment[key].cachedAt ?? "") < cutoffStr) {
+      delete cache.guideEnrichment[key];
       pruned++;
     }
   }
@@ -176,6 +195,35 @@ export function setCachedHoneypot(
   entry: Omit<CachedHoneypot, "cachedAt">
 ): void {
   cache.honeypot[key] = { ...entry, cachedAt: new Date().toISOString() };
+  isDirty = true;
+}
+
+// ─── Guide enrichment cache ──────────────────────────────────────────────────
+
+export function guideEnrichmentCacheKey(
+  guideId: string,
+  name: string,
+  city: string,
+  category: string
+): string {
+  const contentFingerprint = hash16(`${name}|${city}|${category}`);
+  return `guide:${guideId}:${contentFingerprint}`;
+}
+
+export function getCachedGuideEnrichment(
+  key: string
+): CachedGuideEnrichment | null {
+  return cache.guideEnrichment[key] ?? null;
+}
+
+export function setCachedGuideEnrichment(
+  key: string,
+  entry: Omit<CachedGuideEnrichment, "cachedAt">
+): void {
+  cache.guideEnrichment[key] = {
+    ...entry,
+    cachedAt: new Date().toISOString(),
+  };
   isDirty = true;
 }
 

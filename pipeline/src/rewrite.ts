@@ -1,4 +1,4 @@
-import { type PipelineEvent } from "./normalize.js";
+import { type PipelineEvent, isAggregatorSource } from "./normalize.js";
 import { log } from "./utils/logger.js";
 
 /**
@@ -9,6 +9,15 @@ export function rewriteDescriptions(events: PipelineEvent[]): PipelineEvent[] {
   let rewritten = 0;
 
   const result = events.map((event) => {
+    // Only rewrite aggregator content — direct sources keep original descriptions
+    if (!isAggregatorSource(event.source)) {
+      // Still generate a brief description if completely missing
+      if (!event.description || event.description.length < 5) {
+        return { ...event, description: generateBriefDescription(event) };
+      }
+      return event;
+    }
+
     if (!event.description || event.description.length < 20) {
       // Too short to rewrite — generate a brief description from title
       return {

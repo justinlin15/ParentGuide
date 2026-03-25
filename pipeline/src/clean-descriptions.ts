@@ -1,4 +1,4 @@
-import { type PipelineEvent } from "./normalize.js";
+import { type PipelineEvent, isAggregatorSource } from "./normalize.js";
 import { log } from "./utils/logger.js";
 
 // Source site names and their variations — sentences mentioning these get removed
@@ -69,6 +69,9 @@ export function cleanDescriptions(events: PipelineEvent[]): PipelineEvent[] {
   let totalCleaned = 0;
 
   const cleaned = events.map((event) => {
+    // Only clean aggregator content — direct sources keep original text
+    if (!isAggregatorSource(event.source)) return event;
+
     const originalDesc = event.description;
     const originalTitle = event.title;
 

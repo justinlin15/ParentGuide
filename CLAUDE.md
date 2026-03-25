@@ -3,11 +3,21 @@
 ## Goal
 The goal of the app is to function similar to https://www.orangecountyparentguide.com which is to help families explore the local areas by giving them curated recommendations for playgrounds, restaurants, library programs, travel destinations, and localized events.
 
+## UI/UX Design Rules
+- **Vertical scrolling is preferred** — don't constrain content to avoid scrolling. Use the full vertical space.
+- **Titles should use 2+ lines** — never `lineLimit(1)` on event/guide titles. Users need to read the full name. Use `lineLimit(2)` minimum.
+- **Favor readability over compactness** — it's OK for rows to be taller if it means the user can see more information.
+
 ## Launch Metros
 - Phase 1: Orange County + Los Angeles only
 - Other metros (NYC, Dallas, Chicago, Atlanta) are in code but disabled
 
 ## Data Pipeline
+
+### Source Strategy
+- **Goal:** Reduce dependence on aggregator sites (OC Parent Guide, MommyPoppins, MacaroniKid) to avoid legal issues. Prefer direct venue/API sources.
+- **Direct sources (preferred):** Ticketmaster, SeatGeek, Yelp, Eventbrite, LibCal (libraries), ThemeParks.wiki (theme parks), Pretend City (WP API), Academy Museum (__NEXT_DATA__), Kidspace (WP API), South Coast Plaza (iCal), Exposition Park/Cal Science Center (WP API), NHM LA, Skirball, LA Parent Calendar
+- **Aggregator sources (being phased out):** OC Parent Guide, MommyPoppins, MacaroniKid — still running but direct sources take dedup priority and will eventually replace them
 
 ### Architecture
 - **Location:** Runs on GitHub Actions (online), not locally
@@ -17,7 +27,7 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 - **Reprocess run:** Pass `--reprocess` (or check "reprocess" in the workflow_dispatch UI) to skip scraping, re-enrich/re-geocode/re-image existing events and upload — useful for testing pipeline improvements without hitting source sites
 
 ### Pipeline Flow
-1. **Scrape** — APIs (Ticketmaster, SeatGeek, Yelp, Eventbrite) + scrapers (OC Parent Guide, Kidsguide, MommyPoppins, MacaroniKid)
+1. **Scrape** — APIs (Ticketmaster, SeatGeek, Yelp, Eventbrite, LibCal, ThemeParks.wiki) + direct venue scrapers (Pretend City, Academy Museum, Kidspace, South Coast Plaza, NHM, Skirball, Exposition Park, etc.) + aggregator scrapers (OC Parent Guide, Kidsguide, MommyPoppins, MacaroniKid — being phased out in favor of direct sources)
 2. **Reassign metros** — Split LA/OC events based on city names and coordinates
 3. **Deduplicate** — Remove duplicate events with same title, date, etc.
 4. **Clean descriptions** — Strip promotional language
@@ -55,6 +65,32 @@ The pipeline uses two Claude API steps (enrichment + honeypot verification). To 
 - **Cold run cost** — Enrichment with claude-sonnet-4-5 over all ~1,979 events ≈ $3.50 total (enrichment ~$3.40 + honeypot ~$0.10)
 - **Cache source file:** `pipeline/src/utils/ai-cache.ts`
 
+### Venue URL Mapping
+- **Purpose:** Replace Google Search fallback URLs with direct venue/calendar links for OC Parent Guide events
+- **Coverage:** 170+ venue mappings covering 73 OC libraries, 60+ non-library venues (farms, parks, museums, shopping centers, etc.)
+- **Coverage rate:** 89.7% (744/829) of OC Parent Guide events get real venue URLs
+- **Runs in:** Enrichment step (Step 3), before Google search fallback
+- **Source file:** `pipeline/src/utils/venue-urls.ts`
+
+### LibCal Direct Scraper
+- **Purpose:** Fetch library events directly from LibCal AJAX endpoints instead of scraping OC Parent Guide
+- **Endpoint:** `GET {host}/ajax/calendar/list?c={calendarId}&date={YYYY-MM-DD}&page={n}` — returns JSON, no auth needed
+- **Instances:** OCPL (29 branches), Huntington Beach (2 cals), Anaheim (6 branches), Mission Viejo, Fullerton, Yorba Linda, Orange
+- **Output:** ~543 family-friendly events with direct LibCal event page URLs
+- **Trusted source:** Auto-published (Layer 1 honeypot bypass)
+- **Dedup priority:** LibCal (score 4) beats OC Parent Guide (score 0) when same event exists in both
+- **Adult filter:** Skips ESL, job help, senior-only, adult craft/book club events
+- **Source file:** `pipeline/src/sources/libcal.ts`
+
+### Deduplication Source Priority
+Higher-priority sources win when the same event exists in multiple sources:
+- Ticketmaster/SeatGeek/Eventbrite: 5 (official ticketing APIs)
+- LibCal/Venue scrapers/Theme parks/Museums/Pretend City: 4 (direct venue sources)
+- Kidsguide/Yelp/LA Parent: 3
+- MommyPoppins: 1
+- OC Parent Guide/MacaroniKid: 0
+- Source file: `pipeline/src/deduplicate.ts`
+
 ### URL Sanitization Rules
 - `externalURL` must NEVER link back to scraper source sites (MommyPoppins, MacaroniKid, etc.)
 - The enrichment step fetches scraper article pages to find outbound links to the actual event/venue website
@@ -79,6 +115,12 @@ Each scraper declares its supported metro(s) and is only invoked for those metro
 | **MommyPoppins** | `los-angeles` only | HTML scraper, 60 days. LA region 115 covers all SoCal. OC metro skipped internally; OC events reassigned in post-processing. |
 | **MacaroniKid** | `los-angeles` only | National site scraped once. OC events split out via city/coordinate reassignment. 8 weekly offsets ≈ 60 days. |
 | **Ticketmaster / SeatGeek / Yelp / Eventbrite** | Both OC + LA | API-based, run in parallel per metro. 60-day window. Auto-published. SeatGeek uses `datetime_local` (not `datetime_utc`) to avoid wrong timezone display. |
+| **LibCal** | `orange-county` only | Scrapes public AJAX JSON endpoints from 7 OC library systems (OCPL 29 branches, HB, Anaheim, Mission Viejo, Fullerton, Yorba Linda, Orange). ~543 events. No auth needed. Trusted API source (auto-published). Dedup priority over OC Parent Guide. Source: `pipeline/src/sources/libcal.ts` |
+| **Venue Scrapers** | Both OC + LA | Direct venue website scrapers. Kidspace (WP REST API), South Coast Plaza (iCal feed), Academy Museum (__NEXT_DATA__ JSON, ~115 events), Discovery Cube OC (HTML), Underwood Farms (HTML). Trusted (auto-published). Source: `pipeline/src/sources/venue-scrapers.ts` |
+| **Theme Parks** | Both OC + LA | ThemeParks.wiki API for schedule/ticketed events at Disneyland, DCA, Universal, Six Flags, Knott's, LEGOLAND. Plus Exposition Park WP REST API for California Science Center events. Source: `pipeline/src/sources/theme-parks.ts` |
+| **Museum Scrapers** | `los-angeles` only | NHM LA (Drupal HTML parse of nhm.org/calendar), Skirball Cultural Center (Drupal Views AJAX parse of kids-and-families programs). Source: `pipeline/src/sources/museum-scrapers.ts` |
+| **Pretend City** | `orange-county` only | WordPress Tribe Events REST API (`pretendcity.org/wp-json/tribe/events/v1/events`). ~147 events. Trusted API source. Source: `pipeline/src/sources/pretend-city.ts` |
+| **LA Parent Calendar** | Both OC + LA | SceneThink platform at calendar.laparent.com. Vue.js SPA with network-intercepted API. 60+ categories, regional filters. Source: `pipeline/src/sources/la-parent.ts` |
 | **NYC / Dallas / Chicago / Atlanta scrapers** | Disabled (metros off) | Code present but never invoked in Phase 1. |
 
 ### Event Window
@@ -220,18 +262,28 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 - Admins automatically get full premium access (no subscription required)
 - Event CRUD: create, edit, delete events
 - `EventService.updateEvent()` handles both CloudKit records (fetch + update) and JSON-only events (creates new CloudKit record if not found)
-- Event suggestion review queue (user-submitted events)
-- **Draft Events review queue** — pipeline events pending honeypot verification (`More → Admin → Draft Events`)
+- **Suggested Events Queue** (`More → Admin → Suggested Events Queue`) — user-submitted event suggestions
+  - Swipe right to approve, swipe left to reject
+  - Approved/Rejected tabs: swipe right to move back to review
+  - Orange badge on menu item shows pending count
+  - Recurring suggestions show purple "Repeats" badge
+  - Source file: `ParentGuide/Views/Admin/AdminReviewQueueView.swift`
+- **Honeypot Events Queue** (`More → Admin → Honeypot Events Queue`) — pipeline events pending honeypot verification
   - Swipe right to publish, swipe left to reject
+  - Published/Rejected tabs: swipe right to move back to review
   - Multi-select mode with bulk approve/reject
   - Orange badge on menu item shows pending count
   - Uses `fetchAllEvents()` + filter for `.isDraft` (NOT raw CloudKit query — public DB doesn't support `recordZoneChanges`)
+  - Source file: `ParentGuide/Views/Admin/DraftEventsView.swift`
 
 ### Event Moderation (Status Field)
 - `status` field on every Event: `"published"` | `"draft"` | `"rejected"` (nil = published for old records)
 - Regular users only see published events (`isDraft == false && isRejected == false`)
 - `EventService.fetchUpcomingEvents()` and `searchEvents()` automatically filter out drafts/rejected
-- Admin-only: `EventService.fetchDraftEvents()`, `publishEvent()`, `rejectEvent()`
+- Admin-only: `EventService.fetchDraftEvents()`, `publishEvent()`, `rejectEvent()`, `unpublishEvent()`
+- **Cache sync**: `publishEvent()`, `rejectEvent()`, `unpublishEvent()` all update the in-memory + disk cache via `updateCachedEventStatus()` so navigating away and back shows correct data immediately
+- `Event.==` includes `status` so SwiftUI detects moderation changes and updates counts/rows instantly
+- Buttons in ScrollView use `.buttonStyle(.plain)` to prevent tap swallowing
 - Source file: `ParentGuide/Views/Admin/DraftEventsView.swift`
 
 ### Event Data Loading
@@ -262,6 +314,28 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 - "My Location" button (bottom-right) centers map on device GPS
 - Capped at 50 pins on HomeMapView
 - Lazy loads on appear with placeholder
+
+### Guides Search
+- **Robust search** with synonym expansion — searching "hiking" matches Outdoor guides with "trail", "nature walk", etc.
+- **Category keywords** — each `GuideCategory` contributes activity-related keywords to the searchable text
+- **Synonym groups** — 30+ groups covering outdoor activities, indoor play, food, education, age terms, price terms
+- **Source files:** `GuidesViewModel.swift` (search logic + synonym expansion), `GuideCategory.swift` (search keywords)
+
+### Admin Moderation (Honeypot Events + Suggested Events)
+- **EventDetailView** — shows orange "pending review" banner with Publish/Reject buttons for draft events (admin only). Published/rejected events show "Move Back to Review" button. Uses `onStatusChange` callback to update parent list. Green "Event Published" toast + auto-dismiss after 1.5s.
+- **SuggestionDetailView** — shows Approve/Reject buttons for pending suggestions. Green "Suggestion Approved" toast + auto-dismiss. Uses `onStatusChange` callback to update parent queue.
+- **Swipe confirmations** — both queues show green/red toast after swipe-to-approve/reject (2s auto-dismiss)
+- **Optimistic updates** — all approve/reject/revert actions update local state immediately, then call server. Revert on failure.
+- **Full element replacement** — array mutations use `allEvents[index] = updated` (not `allEvents[index].status = ...`) to guarantee `@Observable` triggers re-render
+- **Filter bar** — uses `fixedSize()` on the whole HStack content to prevent count badge text wrapping
+
+### Event Suggestions (User-Submitted)
+- **Suggest an Event** form (`More → Suggest an Event`) allows users to submit event suggestions
+- Fields: title, description, category, date, location (MapKit search), image (PhotosPicker), website URL
+- **Recurrence support**: toggle "Does this event repeat?" with frequency (Weekly/Biweekly/Monthly), day-of-week selector, and end date (never/specific date)
+- Recurrence data stored as `isRecurring`, `recurrenceDescription` (human-readable text), `recurrenceEndDate` on `EventSuggestion` CloudKit record
+- Requires iCloud sign-in for CloudKit write access
+- Source files: `SuggestEventView.swift`, `EventSuggestion.swift`, `EventSuggestionService.swift`
 
 ### Pending iOS Tasks
 - **Debug toggles in TestFlight** — Admin/premium toggles visible at runtime via `AppConstants.betaTestingEnabled`; set to `false` before App Store submission

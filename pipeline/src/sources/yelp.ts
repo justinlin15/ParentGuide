@@ -112,6 +112,18 @@ function normalizeYelpEvent(
   raw: YelpEvent,
   metro: MetroArea
 ): PipelineEvent {
+  // Extract price from Yelp's native fields
+  let price: string | undefined;
+  if (raw.is_free) {
+    price = "Free";
+  } else if (raw.cost != null && raw.cost > 0) {
+    if (raw.cost_max != null && raw.cost_max > raw.cost) {
+      price = `$${raw.cost.toFixed(2)}-$${raw.cost_max.toFixed(2)}`;
+    } else {
+      price = `$${raw.cost.toFixed(2)}`;
+    }
+  }
+
   return {
     sourceId: `yelp:${raw.id}`,
     source: "yelp",
@@ -136,5 +148,6 @@ function normalizeYelpEvent(
       Boolean
     ) as string[],
     metro: metro.id,
+    price,
   };
 }

@@ -4,6 +4,12 @@ import { fetchTicketmasterEvents } from "./sources/ticketmaster.js";
 import { fetchSeatGeekEvents } from "./sources/seatgeek.js";
 import { fetchYelpEvents } from "./sources/yelp.js";
 import { fetchEventbriteEvents } from "./sources/eventbrite.js";
+import { fetchLibCalEvents } from "./sources/libcal.js";
+import { fetchVenueEvents } from "./sources/venue-scrapers.js";
+import { fetchThemeParkEvents } from "./sources/theme-parks.js";
+import { fetchPretendCityEvents } from "./sources/pretend-city.js";
+import { fetchMuseumEvents } from "./sources/museum-scrapers.js";
+import { fetchLAParentEvents } from "./sources/la-parent.js";
 import { scrapeMacaroniKid } from "./sources/scrapers/macaroni-kid.js";
 import { scrapeMommyPoppins } from "./sources/scrapers/mommy-poppins.js";
 import { scrapeNYCFamily } from "./sources/scrapers/nyc-family.js";
@@ -208,7 +214,7 @@ async function main() {
 
     if (!config.scrapersOnly) {
       // Fetch from APIs (run in parallel per metro)
-      const [ticketmaster, seatgeek, yelp, eventbrite] = await Promise.all([
+      const [ticketmaster, seatgeek, yelp, eventbrite, libcal, venues, themeparks, pretendcity, museums, laparent] = await Promise.all([
         fetchTicketmasterEvents(metro).catch((err) => {
           log.error("pipeline", "Ticketmaster failed", err);
           return [] as PipelineEvent[];
@@ -225,9 +231,37 @@ async function main() {
                             log.error("pipeline", "Eventbrite failed", err);
                             return [] as PipelineEvent[];
                 }),
+        fetchLibCalEvents(metro).catch((err) => {
+          log.error("pipeline", "LibCal failed", err);
+          return [] as PipelineEvent[];
+        }),
+        fetchVenueEvents(metro).catch((err) => {
+          log.error("pipeline", "Venue scrapers failed", err);
+          return [] as PipelineEvent[];
+        }),
+        fetchThemeParkEvents(metro).catch((err) => {
+          log.error("pipeline", "Theme parks failed", err);
+          return [] as PipelineEvent[];
+        }),
+        fetchPretendCityEvents(metro).catch((err) => {
+          log.error("pipeline", "Pretend City failed", err);
+          return [] as PipelineEvent[];
+        }),
+        fetchMuseumEvents(metro).catch((err) => {
+          log.error("pipeline", "Museum scrapers failed", err);
+          return [] as PipelineEvent[];
+        }),
+        fetchLAParentEvents(metro).catch((err) => {
+          log.error("pipeline", "LA Parent failed", err);
+          return [] as PipelineEvent[];
+        }),
       ]);
 
-      metroEvents.push(...ticketmaster, ...seatgeek, ...yelp, ...eventbrite);
+      metroEvents.push(
+        ...ticketmaster, ...seatgeek, ...yelp, ...eventbrite,
+        ...libcal, ...venues, ...themeparks, ...pretendcity,
+        ...museums, ...laparent
+      );
     }
 
     // Scrape (sequentially to be polite to servers).

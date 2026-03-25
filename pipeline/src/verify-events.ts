@@ -43,6 +43,20 @@ const TRUSTED_API_SOURCES = new Set([
   "yelp",
   "eventbrite",
   "kidsguide",
+  "libcal",
+  // Direct venue scrapers — trusted because they scrape the venue's own website
+  "venue-kidspace",
+  "venue-southcoastplaza",
+  "venue-academy",
+  "venue-nhm",
+  "venue-skirball",
+  "venue-discoverycube",
+  "venue-underwood",
+  // Theme parks, museums, and other direct sources
+  "themeparks",
+  "venue-expopark",
+  "pretend-city",
+  "la-parent",
 ]);
 
 // ─── Layer 2: URL verification ────────────────────────────────────────────────
@@ -91,6 +105,39 @@ function hasVerifiedUrl(event: PipelineEvent): boolean {
   return false;
 }
 
+// ─── Layer 2b: Known venue / event pattern verification ─────────────────────
+// Many legitimate events lack extractable venue URLs (especially from OC Parent
+// Guide), but their titles reference well-known, real venues. Auto-publish these.
+
+const KNOWN_VENUES = [
+  // OC venues
+  "disneyland", "disney california adventure", "knott's berry farm", "knott's",
+  "south coast plaza", "discovery cube", "pretend city", "irvine park railroad",
+  "bowers museum", "segerstrom center", "marconi automotive museum",
+  "orange county great park", "oc great park", "irvine spectrum",
+  "dana point harbor", "laguna beach", "san clemente pier",
+  "angel stadium", "honda center", "pacific symphony",
+  "aquarium of the pacific", "the lab anti-mall", "the camp",
+  "centennial farm", "tanaka farms", "adventure playground",
+  "heritage hill", "old town irvine", "balboa island",
+  // LA venues
+  "griffith observatory", "la zoo", "the broad", "getty center", "getty villa",
+  "natural history museum", "california science center", "exposition park",
+  "the grove", "santa monica pier", "venice beach",
+  "academy museum", "hammer museum", "lacma",
+  "hollywood bowl", "greek theatre", "walt disney concert hall",
+  "universal studios", "legoland", "six flags magic mountain",
+  // Common event types that are virtually never honeypots
+  "farmers market", "library", "storytime", "story time",
+];
+
+function hasKnownVenue(event: PipelineEvent): boolean {
+  const titleLower = (event.title || "").toLowerCase();
+  const locationLower = (event.locationName || "").toLowerCase();
+  const combined = `${titleLower} ${locationLower}`;
+  return KNOWN_VENUES.some((venue) => combined.includes(venue));
+}
+
 // ─── Layer 3: Claude AI plausibility check ───────────────────────────────────
 
 // Batch size for Claude API calls — balance speed vs accuracy
@@ -127,25 +174,28 @@ async function aiVerifyBatch(
     )
     .join("\n");
 
-  const prompt = `You are a content moderator for a family events app. Your job is to identify honeypot/watermark events that scraper-detection services embed in their calendars to catch unauthorized scrapers.
+  const prompt = `You are a content moderator for a family events app in Southern California (Orange County and Los Angeles). Your ONLY job is to identify honeypot/watermark events — fake events that scraper-detection services embed to catch unauthorized scrapers.
 
-Real events have:
-- Plausible titles for local family activities (storytime, farmers market, concerts, festivals, etc.)
-- Coherent descriptions with specific details (time, venue, activity)
-- Recognizable cities in Southern California (for OC/LA sources) or other US metro areas
-- Categories that match the title
+IMPORTANT: The vast majority of these events are REAL. You should default to marking events as plausible. Only flag something as a honeypot if it is clearly fake.
 
-Honeypot events often have:
-- Nonsensical or overly generic titles
-- Empty, very short, or incoherent descriptions
-- Implausible combinations (e.g. a "Storytime" in an industrial city with no libraries)
-- Randomly generated-looking names or dates
-- Titles that are clearly promotional copy for the aggregator site itself
+Real events (mark plausible=true):
+- Any event at a recognizable venue, park, library, museum, school, church, or business
+- Storytime, farmers markets, concerts, festivals, craft fairs, open gyms, classes
+- Events with specific details like times, prices, registration info, or age ranges
+- Events in real Southern California cities (Irvine, Costa Mesa, Anaheim, Long Beach, etc.)
+- Events with short or missing descriptions — this is normal for calendar scrapers, NOT a sign of a honeypot
+- Free community events, holiday events, seasonal activities
+
+Honeypots (mark plausible=false) — ONLY flag if CLEARLY fake:
+- Completely nonsensical titles (random characters, gibberish)
+- Events that are obviously promotional copy for a website rather than a real activity
+- Implausible combinations that could not exist (e.g., "Deep Sea Diving" in a landlocked desert town)
+- Titles that look auto-generated to test scraping (random strings, test data patterns)
+
+When in doubt, ALWAYS mark as plausible. A real event incorrectly flagged is much worse than a honeypot getting through.
 
 Evaluate each event below. For each, respond with a JSON array entry:
 { "index": <number>, "plausible": <true|false>, "reason": "<brief reason>" }
-
-Be GENEROUS — only flag as honeypot if you are fairly confident it's not a real event. When in doubt, mark as plausible.
 
 Events to evaluate:
 ${eventList}
@@ -154,7 +204,7 @@ Respond with ONLY a JSON array, no other text:`;
 
   const response = await anthropic.messages.create({
     model: "claude-haiku-4-5",
-    max_tokens: 1024,
+    max_tokens: 2048,
     messages: [{ role: "user", content: prompt }],
   });
 
@@ -268,10 +318,11 @@ export async function verifyEvents(
 ): Promise<PipelineEvent[]> {
   let publishedByApi = 0;
   let publishedByUrl = 0;
+  let publishedByVenue = 0;
   let publishedByAi = 0;
   let draftCount = 0;
 
-  // Layer 1 + 2: synchronous, no API call needed
+  // Layer 1 + 2 + 2b: synchronous, no API call needed
   const needsAiCheck: PipelineEvent[] = [];
   const prelimResult = new Map<string, "published" | "needs-ai">();
 
@@ -282,6 +333,10 @@ export async function verifyEvents(
     } else if (hasVerifiedUrl(event)) {
       prelimResult.set(event.sourceId, "published");
       publishedByUrl++;
+    } else if (hasKnownVenue(event)) {
+      // Layer 2b: event references a well-known venue — auto-publish
+      prelimResult.set(event.sourceId, "published");
+      publishedByVenue++;
     } else {
       prelimResult.set(event.sourceId, "needs-ai");
       needsAiCheck.push(event);
@@ -315,7 +370,7 @@ export async function verifyEvents(
 
   log.info(
     "verify",
-    `Published: ${publishedByApi} (API) + ${publishedByUrl} (verified URL) + ${publishedByAi} (AI-cleared) = ${publishedByApi + publishedByUrl + publishedByAi} total`
+    `Published: ${publishedByApi} (API) + ${publishedByUrl} (verified URL) + ${publishedByVenue} (known venue) + ${publishedByAi} (AI-cleared) = ${publishedByApi + publishedByUrl + publishedByVenue + publishedByAi} total`
   );
   if (draftCount > 0) {
     log.info("verify", `Draft (suspected honeypot): ${draftCount} — queued for admin review`);

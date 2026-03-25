@@ -11,7 +11,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
-import { type PipelineEvent } from "../normalize.js";
+import { type PipelineEvent, isAggregatorSource } from "../normalize.js";
 import { log } from "./logger.js";
 import {
   enrichmentCacheKey,
@@ -87,7 +87,11 @@ For EACH event below, return a JSON object with these fields:
 - "category": Choose the BEST fit from this exact list:
   Storytime | Farmers Market | Free Movie | Toddler Activity | Craft | Music | Fire Station Tour | Museum | Outdoor | Food & Dining | Sports | Education | Festival | Seasonal | Other
   IMPORTANT: "Free Movie" is ONLY for movie screenings that are genuinely FREE to attend (no ticket price). If the event title starts with a dollar amount (e.g. "$6 Movie Day") or the description/price field shows a cost, do NOT use "Free Movie" — use "Other" instead.
-- "price": Extract a price string if mentioned in description (e.g. "Free", "$10", "$5–$15", "Included with admission"). Return null if not stated. IMPORTANT: If the event title contains "($)" or a dollar amount like "($29)", the event is PAID — never return "Free" for those events. Extract the dollar amount from the title or description.
+- "price": Extract a price string ONLY if explicitly mentioned in the description or title (e.g. "Free", "$10", "$5–$15", "Included with admission"). Return null if no price is stated — do NOT guess or infer. CRITICAL RULES:
+  1. If the event title contains "($)" or a dollar amount like "($29)", the event is PAID — never return "Free". Extract the dollar amount.
+  2. Events at theaters, concert venues, stadiums, or ticketed performance spaces are almost NEVER free — return null unless the description explicitly says "free" or "$0".
+  3. Do NOT return "Free" just because no price is mentioned. No price stated = return null. "Free" should only be returned when the event explicitly says it's free, no cost, complimentary, or $0.
+  4. If the existing price field already has a value, return null (don't override it).
 - "ageRange": Extract target age range if mentioned (e.g. "All ages", "2–5 years", "6–12", "18 months–5 years"). Return null if not stated.
 - "locationName": The venue name where this event takes place. If the description or title mentions a specific venue and the provided locationName is empty or wrong, provide the correct name. Use your knowledge for well-known venues (e.g. if the title says "at Kape Coffee Laguna Niguel", use "Kape Coffee Roasters" — the real venue name). Return null only if already correct.
 - "address": The street address of the venue in the given city. Use your knowledge for recognizable venues (coffee shops, libraries, parks, community centers). If the provided address is blank or seems wrong for the city, provide the correct address. Return null only if you genuinely don't know it.
@@ -171,12 +175,15 @@ async function processBatch(
 // ─── Apply results ────────────────────────────────────────────────────────────
 
 function applyResult(event: PipelineEvent, result: AiResult): void {
-  // Description — always use AI version (it's better than template)
-  if (result.description && result.description.length > 20) {
+  const aggregator = isAggregatorSource(event.source);
+
+  // Description — only rewrite for aggregator sources (legal protection)
+  // Direct sources keep their original descriptions
+  if (aggregator && result.description && result.description.length > 20) {
     event.description = result.description;
   }
 
-  // Category — update if AI provides a valid one
+  // Category — update if AI provides a valid one (applies to all sources)
   if (
     result.category &&
     VALID_CATEGORIES.includes(result.category as EventCategory) &&
@@ -185,24 +192,23 @@ function applyResult(event: PipelineEvent, result: AiResult): void {
     event.category = result.category;
   }
 
-  // Price — only fill if not already set
+  // Price — only fill if not already set (applies to all sources)
   if (result.price && !event.price) {
     event.price = result.price;
   }
 
-  // Age range — fill if missing
+  // Age range — fill if missing (applies to all sources)
   if (result.ageRange && !event.ageRange) {
     event.ageRange = result.ageRange;
   }
 
-  // Location name — fill if missing or correct if AI found a better match
-  if (result.locationName) {
+  // Location name — only correct for aggregator sources or fill if missing
+  if (result.locationName && (aggregator || !event.locationName)) {
     event.locationName = result.locationName;
   }
 
-  // Address — fill if missing or correct if AI found the right address
-  // (AI is instructed to only override if the current address is wrong/blank)
-  if (result.address) {
+  // Address — only correct for aggregator sources or fill if missing
+  if (result.address && (aggregator || !event.address)) {
     event.address = result.address;
   }
 }

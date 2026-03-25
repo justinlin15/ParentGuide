@@ -28,6 +28,11 @@ interface SeatGeekEvent {
     image?: string;
     images?: Record<string, string>;
   }>;
+  stats?: {
+    lowest_price?: number;
+    highest_price?: number;
+    average_price?: number;
+  };
 }
 
 interface SeatGeekResponse {
@@ -122,6 +127,16 @@ function normalizeSeatGeekEvent(
     raw.performers[0]?.images?.large ||
     raw.performers[0]?.image;
 
+  // Extract price from SeatGeek stats
+  let price: string | undefined;
+  if (raw.stats?.lowest_price != null && raw.stats.lowest_price > 0) {
+    if (raw.stats.highest_price != null && raw.stats.highest_price > raw.stats.lowest_price) {
+      price = `$${raw.stats.lowest_price}-$${raw.stats.highest_price}`;
+    } else {
+      price = `$${raw.stats.lowest_price}`;
+    }
+  }
+
   return {
     sourceId: `seatgeek:${raw.id}`,
     source: "seatgeek",
@@ -141,5 +156,6 @@ function normalizeSeatGeekEvent(
     isRecurring: false,
     tags: taxonomyNames,
     metro: metro.id,
+    price,
   };
 }
