@@ -123,6 +123,64 @@ function loadEventsForReprocess(): PipelineEvent[] {
   });
 }
 
+// ─── Shared Child-Friendly Event Filter ──────────────────────────────────────
+// Used by both the normal pipeline path and the --reprocess path.
+
+const ADULT_TITLE_PATS = [
+  /\b21\+/i, /\b18\+/i,
+  /\b21\s*and\s*(over|up)\b/i, /\b18\s*and\s*(over|up)\b/i,
+  /\b21\s*&\s*(over|up)\b/i,
+  /\badults?\s*only\b/i, /\bmature\s*audiences?\b/i,
+  /\bfor\s+adults\b/i,
+  /\badult\s+(enrichment|craft|coloring|book\s*club|yoga|meditation|fitness|workshop|class|program|lecture|seminar)\b/i,
+  /\b(makerspace|workshop|class|program|seminar|lecture)\s+for\s+adults\b/i,
+  /\bsenior\s+(center|citizen|group|club|program|activity|fitness|yoga|exercise)\b/i,
+  /\bseniors?\s+only\b/i,
+  /\b(computer|tech|smartphone|iphone)\s+(basics?|help|class|101)\b/i,
+  /\besl\s+(class|conversation|group)\b/i,
+  /\b(resume|job\s+search|career)\s+(help|workshop|class)\b/i,
+  /\btax\s+(prep|preparation|help|clinic)\b/i,
+  /\b(medicare|social\s+security|aarp|notary|legal\s+clinic)\b/i,
+  /\b(blood\s+pressure|health\s+screening|caregiver\s+support)\b/i,
+  /\b(grief\s+support|bereavement|dementia|alzheimer)\b/i,
+  /\bnaturalization\s+(ceremony|class|workshop)\b/i,
+  /\bcitizenship\s+(class|prep|workshop)\b/i,
+  /\bknitting\s+(circle|group|club)\b/i, /\bcrochet\s+(circle|group|club)\b/i,
+  /\bbook\s+club\s+for\s+adults\b/i,
+  /\bbingo\s+(night|for\s+seniors)\b/i,
+  /\bwine\s+(tasting|pairing|dinner|night)\b/i,
+  /\bbar\s+crawl\b/i, /\bhappy\s+hour\b/i,
+  /\bcocktail\s+(class|making|hour|party)\b/i,
+  /\bbrewing\s+(class|workshop)\b/i,
+  /\bspeed\s+dating\b/i, /\bsingles\s+(mixer|event|night)\b/i,
+  /\bnetworking\s+(event|mixer|happy\s+hour)\b/i,
+];
+const ADULT_DESC_PATS = [
+  /\b21\+\s*(event|show|only|venue|required|admission)/i,
+  /\b18\+\s*(event|show|only|venue|required|admission)/i,
+  /must\s+be\s+21/i, /must\s+be\s+18/i,
+  /\bno\s+(one\s+)?under\s+(21|18)\b/i,
+  /\bdesigned\s+for\s+adults\b/i, /\badult\s+program\b/i,
+  /\bage[sd]?\s+18\s*\+/i, /\bages?\s+55\s*\+/i, /\bages?\s+60\s*\+/i,
+  /\bfor\s+older\s+adults\b/i,
+];
+const ADULT_COMEDY_VENUE_NAMES = [
+  "irvine improv", "brea improv", "ontario improv", "tempe improv",
+  "the improv", "comedy store", "laugh factory", "ice house comedy",
+  "cellar comedy", "comedy cellar",
+];
+
+function isChildFriendlyEvent(e: PipelineEvent): boolean {
+  if (ADULT_TITLE_PATS.some((p) => p.test(e.title))) return false;
+  if (ADULT_DESC_PATS.some((p) => p.test(e.description || ""))) return false;
+  // Comedy clubs (API sources only)
+  if (["seatgeek", "ticketmaster", "yelp", "eventbrite"].includes(e.source)) {
+    const venueLower = (e.locationName || "").toLowerCase();
+    if (ADULT_COMEDY_VENUE_NAMES.some((v) => venueLower.includes(v))) return false;
+  }
+  return true;
+}
+
 async function main() {
   const startTime = Date.now();
 
@@ -137,19 +195,10 @@ async function main() {
   if (config.reprocess) {
     const rawReprocess = loadEventsForReprocess();
 
-    // Strip adult/21+ events and known adult comedy venues from the existing dataset
-    const ADULT_TITLE_RE = [/\b21\+/i, /\b18\+/i, /\b21\s*and\s*(over|up)\b/i, /\b18\s*and\s*(over|up)\b/i, /\badults?\s*only\b/i, /\bmature\s*audiences?\b/i];
-    const ADULT_VENUES_RE = ["irvine improv", "brea improv", "ontario improv", "the improv", "comedy store", "laugh factory", "ice house comedy", "comedy cellar"];
-    const events = rawReprocess.filter((e) => {
-      if (ADULT_TITLE_RE.some((p) => p.test(e.title))) return false;
-      if (["seatgeek", "ticketmaster"].includes(e.source)) {
-        const venueLower = (e.locationName || "").toLowerCase();
-        if (ADULT_VENUES_RE.some((v) => venueLower.includes(v))) return false;
-      }
-      return true;
-    });
+    // Strip adult/non-family events from the existing dataset (same filter as normal path)
+    const events = rawReprocess.filter((e) => isChildFriendlyEvent(e));
     const removedAdult = rawReprocess.length - events.length;
-    if (removedAdult > 0) log.info("pipeline", `Removed ${removedAdult} adult/21+ events during reprocess`);
+    if (removedAdult > 0) log.info("pipeline", `Removed ${removedAdult} adult/non-family events during reprocess`);
 
     log.divider();
     log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
@@ -367,30 +416,6 @@ async function main() {
   // comedy club venues (Improv, Comedy Store, Laugh Factory, etc. are 21+).
   // These slip through from SeatGeek "comedy" taxonomy and have no place in
   // a family events app.
-  const ADULT_TITLE_PATTERNS = [
-    /\b21\+/i,
-    /\b18\+/i,
-    /\b21\s*and\s*(over|up)\b/i,
-    /\b18\s*and\s*(over|up)\b/i,
-    /\b21\s*&\s*(over|up)\b/i,
-    /\badults?\s*only\b/i,
-    /\bmature\s*audiences?\b/i,
-  ];
-  const ADULT_DESC_PATTERNS = [
-    /\b21\+\s*(event|show|only|venue|required|admission)/i,
-    /\b18\+\s*(event|show|only|venue|required|admission)/i,
-    /must\s+be\s+21/i,
-    /must\s+be\s+18/i,
-    /\bno\s+(one\s+)?under\s+(21|18)\b/i,
-  ];
-  // Known 21+ comedy club venue name substrings.
-  // These venues serve alcohol and enforce 21+ admission for most shows.
-  const ADULT_COMEDY_VENUES = [
-    "irvine improv", "brea improv", "ontario improv", "tempe improv",
-    "the improv", "comedy store", "laugh factory", "ice house comedy",
-    "cellar comedy", "comedy cellar",
-  ];
-
   // Platform-specific community meetup patterns — these are adult social events
   // tied to a specific app/platform (Yelp Elite, Nextdoor, etc.), not family events.
   // "UYE" = Yelp Elite event abbreviation used in Yelp's API event titles.
@@ -419,9 +444,8 @@ async function main() {
 
   const beforeAdultFilter = allEvents.length;
   const familyFiltered = allEvents.filter((e) => {
-    // Adult age restrictions
-    if (ADULT_TITLE_PATTERNS.some((p) => p.test(e.title))) return false;
-    if (ADULT_DESC_PATTERNS.some((p) => p.test(e.description || ""))) return false;
+    // Shared child-friendly filter (adult events, age restrictions, comedy clubs)
+    if (!isChildFriendlyEvent(e)) return false;
 
     // Platform-specific adult community meetups (Yelp Elite, etc.)
     if (PLATFORM_MEETUP_PATTERNS.some((p) => p.test(e.title))) return false;
@@ -429,13 +453,6 @@ async function main() {
     // Guide/roundup articles masquerading as single events
     if (isGuideArticleTitle(e.title)) return false;
 
-    // Filter stand-up comedy events at known adult-only venues
-    // (only for API sources — scrapers curate family content so venue-blocking
-    // would incorrectly remove legitimate events at multi-use spaces)
-    if (["seatgeek", "ticketmaster", "yelp", "eventbrite"].includes(e.source)) {
-      const venueLower = (e.locationName || "").toLowerCase();
-      if (ADULT_COMEDY_VENUES.some((v) => venueLower.includes(v))) return false;
-    }
     return true;
   });
   const adultRemoved = beforeAdultFilter - familyFiltered.length;

@@ -202,7 +202,7 @@ export async function fillMissingImages(
     const venueQuery = event.locationName
       ? `${event.locationName} ${event.city}`
       : null;
-    const titleQuery = buildEventSearchQuery(event.title);
+    const titleQuery = buildEventSearchQuery(event.title, event.category);
 
     // Try venue-specific search first (more likely to find relevant images)
     if (venueQuery) {
@@ -256,15 +256,56 @@ export async function fillMissingImages(
  * Build a concise search query from event title.
  * Strip generic words to focus on the unique event name.
  */
-function buildEventSearchQuery(title: string): string | null {
-  // Remove common filler words and "Presents:" patterns
+function buildEventSearchQuery(title: string, category?: string): string | null {
+  // Remove city names, venue names, and pricing from the title
+  // to get the core activity description for image search
   const cleaned = title
     .replace(/presents?:?\s*/gi, "")
+    .replace(/\([^)]*\$[^)]*\)/g, "") // Remove price in parens: ($15)
+    .replace(/\$\d+[\d.,]*/g, "") // Remove standalone prices
     .replace(/\b(the|a|an|at|in|on|for|and|of|with)\b/gi, "")
+    .replace(/\b\d{4}\b/g, "") // Remove years (2026)
     .replace(/\s+/g, " ")
     .trim();
-  // Only search if we have enough meaningful words
-  return cleaned.length >= 5 ? cleaned : null;
+
+  if (cleaned.length < 5) return null;
+
+  // Map common event types to better image search terms
+  const SEARCH_IMPROVEMENTS: Array<[RegExp, string]> = [
+    [/storytime|story\s*time|stories/i, "children storytime reading books"],
+    [/craft|arts?\s*&?\s*craft/i, "kids arts crafts activity"],
+    [/lego|building\s*blocks/i, "children building lego blocks"],
+    [/music|concert|sing/i, "children music class singing"],
+    [/puppet/i, "kids puppet show theater"],
+    [/farm|petting\s*zoo|animals/i, "kids farm animals petting zoo"],
+    [/easter|egg\s*hunt/i, "children easter egg hunt outdoor"],
+    [/halloween|costume|trick/i, "kids halloween costumes"],
+    [/christmas|holiday|santa/i, "family christmas holiday celebration"],
+    [/movie|film\s*screen/i, "family outdoor movie night"],
+    [/swim|splash\s*pad|water\s*play/i, "kids water play splash pad"],
+    [/hike|hiking|nature\s*walk/i, "family hiking nature trail kids"],
+    [/science|stem|experiment/i, "children science experiment hands on"],
+    [/cooking|baking/i, "kids cooking class kitchen"],
+    [/dance|ballet/i, "children dance class"],
+    [/yoga|mindfulness/i, "kids yoga stretching"],
+    [/museum|exhibit/i, "children museum interactive exhibit"],
+    [/garden|planting/i, "kids gardening planting"],
+    [/bike|cycling/i, "kids biking family cycling"],
+    [/playground|park\s*play/i, "children playground outdoor play"],
+  ];
+
+  for (const [pattern, replacement] of SEARCH_IMPROVEMENTS) {
+    if (pattern.test(title)) return replacement;
+  }
+
+  // If we have a category, use category-based search as it's more reliable
+  // than searching the raw event title on stock photo sites
+  if (category && CATEGORY_SEARCH_TERMS[category]) {
+    return CATEGORY_SEARCH_TERMS[category];
+  }
+
+  // Fallback: use cleaned title but add "kids family" for context
+  return `${cleaned} kids family`.slice(0, 60);
 }
 
 /**

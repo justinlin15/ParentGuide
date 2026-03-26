@@ -234,43 +234,31 @@ const OC_LIBCAL_INSTANCES: LibCalInstance[] = [
 
 /** Keywords that indicate an adult-only or non-family event */
 const ADULT_KEYWORDS = [
-  "esl conversation",
-  "esl class",
-  "english as a second",
-  "job help",
-  "job search",
-  "resume",
-  "career",
-  "tax prep",
-  "tax preparation",
-  "aarp",
-  "senior",
-  "seniors only",
-  "medicare",
-  "social security",
-  "book club for adults",
-  "adult book",
-  "adult coloring",
-  "adult craft",
-  "knitting circle",
-  "crochet circle",
-  "meditation for adults",
-  "yoga for adults",
-  "citizenship",
-  "naturalization",
-  "immigration",
-  "notary",
-  "legal clinic",
-  "blood pressure",
-  "health screening",
-  "caregiver",
-  "dementia",
-  "alzheimer",
-  "grief support",
-  "bereavement",
-  "computer basics for",
-  "smartphone basics",
-  "iphone basics",
+  // Language/citizenship classes
+  "esl conversation", "esl class", "english as a second",
+  "citizenship", "naturalization", "immigration",
+  // Job/career
+  "job help", "job search", "resume", "career workshop", "career fair",
+  // Tax/legal/financial
+  "tax prep", "tax preparation", "notary", "legal clinic", "financial planning",
+  // Senior-specific
+  "aarp", "senior", "seniors only", "medicare", "social security",
+  "bingo", "bridge club",
+  // Adult programs
+  "book club for adults", "adult book", "adult coloring", "adult craft",
+  "adult enrichment", "adult program", "adult workshop", "adult class",
+  "for adults", "makerspace for adults", "adults only",
+  // Health/wellness (adult-targeted)
+  "knitting circle", "crochet circle", "quilting",
+  "meditation for adults", "yoga for adults",
+  "blood pressure", "health screening", "caregiver",
+  "dementia", "alzheimer", "grief support", "bereavement",
+  // Technology classes (typically for seniors/adults)
+  "computer class", "computer basics", "tech help",
+  "smartphone basics", "iphone basics", "ipad basics",
+  "internet basics", "email basics",
+  // Networking/professional
+  "networking event", "business workshop", "professional development",
 ];
 
 function isFamilyFriendly(event: LibCalEvent): boolean {
