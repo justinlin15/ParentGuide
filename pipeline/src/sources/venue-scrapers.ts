@@ -221,6 +221,7 @@ async function scrapeSouthCoastPlaza(): Promise<PipelineEvent[]> {
       locationName: evt.location || "South Coast Plaza",
       externalURL: evt.url || "https://www.southcoastplaza.com/calendar/",
       websiteURL: evt.url || "https://www.southcoastplaza.com/calendar/",
+      imageURL: evt.imageURL,
       isFeatured: false,
       isRecurring: false,
       tags: [],
@@ -240,9 +241,12 @@ function parseICalSimple(text: string): Array<{
   dtend?: string;
   location?: string;
   url?: string;
+  imageURL?: string;
 }> {
   const events: Array<Record<string, string>> = [];
-  const lines = text.replace(/\r\n /g, "").split(/\r?\n/);
+  // Unfold continuation lines (RFC 5545: CRLF + space/tab = continuation)
+  const unfolded = text.replace(/\r?\n[ \t]/g, "");
+  const lines = unfolded.split(/\r?\n/);
   let current: Record<string, string> | null = null;
 
   for (const line of lines) {
@@ -258,6 +262,7 @@ function parseICalSimple(text: string): Array<{
         const value = line.slice(colonIdx + 1);
         // Strip parameters (e.g., DTSTART;VALUE=DATE:20260401 → dtstart)
         const semiIdx = key.indexOf(";");
+        const params = semiIdx > 0 ? key.slice(semiIdx) : "";
         if (semiIdx > 0) key = key.slice(0, semiIdx);
 
         if (key === "summary") current.summary = value;
@@ -267,6 +272,11 @@ function parseICalSimple(text: string): Array<{
         else if (key === "location") current.location = value.replace(/\\,/g, ",");
         else if (key === "url") current.url = value;
         else if (key === "uid") current.uid = value;
+        // ATTACH;FMTTYPE=image/jpeg:/wp-content/uploads/... → imageURL
+        else if (key === "attach" && params.includes("image")) {
+          const imgPath = value.startsWith("http") ? value : `https://www.southcoastplaza.com${value}`;
+          current.imageURL = imgPath;
+        }
       }
     }
   }

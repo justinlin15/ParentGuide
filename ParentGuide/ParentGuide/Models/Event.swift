@@ -7,6 +7,18 @@ import Foundation
 import CloudKit
 
 struct Event: Identifiable, Hashable, Codable {
+    // Custom Hashable/Equatable — compare by ID + status so SwiftUI detects
+    // moderation changes (publish/reject) and re-renders rows immediately.
+    // We deliberately skip the other 20+ fields for performance.
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(status)
+    }
+
+    static func == (lhs: Event, rhs: Event) -> Bool {
+        lhs.id == rhs.id && lhs.status == rhs.status
+    }
+
     let id: String
     let title: String
     let eventDescription: String
@@ -182,26 +194,41 @@ struct Event: Identifiable, Hashable, Codable {
 
     // MARK: - Price Tier (Yelp-style $ to $$$$$)
 
-    /// Whether this event is free — nil/empty price is treated as free
-    /// since most community/library events don't list a price
-    var isFree: Bool {
+    /// Ticketed sources where missing price does NOT mean free
+    private static let ticketedSources: Set<String> = [
+        "seatgeek", "ticketmaster", "eventbrite",
+        // Direct venue scrapers — missing price means unknown, not free
+        "venue-southcoastplaza", "venue-academy", "venue-kidspace",
+        "venue-nhm", "venue-skirball", "venue-expopark",
+        "themeparks", "pretend-city", "la-parent",
+    ]
+
+    /// Whether the price field is explicitly set to a free value
+    private var hasExplicitFreePrice: Bool {
         guard let price = price?.lowercased().trimmingCharacters(in: .whitespaces),
-              !price.isEmpty else { return true }
+              !price.isEmpty else { return false }
         return price == "free" || price == "$0" || price == "0" || price.contains("free")
+    }
+
+    /// Whether this event is free.
+    /// Only returns true when the price is EXPLICITLY set to a free value.
+    /// Missing/empty price = unknown, not free (avoids showing "FREE" on paid events like WonderCon).
+    var isFree: Bool {
+        return hasExplicitFreePrice
     }
 
     /// Whether this event has an explicit paid price
     var hasPaidPrice: Bool {
         guard let price = price?.trimmingCharacters(in: .whitespaces),
               !price.isEmpty else { return false }
-        return !isFree
+        return !hasExplicitFreePrice
     }
 
     /// Yelp-style price tier: 0 (free) to 5 ($$$$$)
-    /// nil/empty price = free (tier 0)
+    /// nil = unknown price (no badge shown)
     var priceTier: Int? {
         guard let priceStr = price?.trimmingCharacters(in: .whitespaces), !priceStr.isEmpty else {
-            return 0 // No price listed = free
+            return nil // No price data = unknown, don't show a badge
         }
 
         let lower = priceStr.lowercased()
@@ -227,34 +254,27 @@ struct Event: Identifiable, Hashable, Codable {
         }
     }
 
-    /// Display string for price tier: "FREE", "$", "$$", etc.
+    /// Binary price display: "FREE" for free events, "$" for any paid event.
     var priceTierDisplay: String? {
         guard let tier = priceTier else { return nil }
-        if tier == 0 { return "FREE" }
-        return String(repeating: "$", count: tier)
+        return tier == 0 ? "FREE" : "$"
     }
 
-    /// Color for the price tier badge
+    /// Color for the price tier badge: green for FREE, blue for paid.
     var priceTierColor: String {
         guard let tier = priceTier else { return "gray" }
-        switch tier {
-        case 0:  return "green"   // Free - green
-        case 1:  return "green"   // $ - green
-        case 2:  return "blue"    // $$ - blue
-        case 3:  return "orange"  // $$$ - orange
-        case 4:  return "red"     // $$$$ - red
-        case 5:  return "red"     // $$$$$ - red
-        default: return "gray"
-        }
+        return tier == 0 ? "green" : "blue"
     }
+
+    // Cached regexes — avoid allocating on every call (called per-row in lists)
+    private static let dollarRegex = try? NSRegularExpression(pattern: #"\$\s*(\d+(?:\.\d{1,2})?)"#)
+    private static let numberRegex = try? NSRegularExpression(pattern: #"(\d+(?:\.\d{1,2})?)"#)
 
     private func extractDollarAmounts(from text: String) -> [Double] {
         var amounts: [Double] = []
+        let range = NSRange(text.startIndex..., in: text)
         // Match patterns like $15, $25.50, $5
-        let pattern = #"\$\s*(\d+(?:\.\d{1,2})?)"#
-        if let regex = try? NSRegularExpression(pattern: pattern) {
-            let range = NSRange(text.startIndex..., in: text)
-            let matches = regex.matches(in: text, range: range)
+        if let matches = Self.dollarRegex?.matches(in: text, range: range) {
             for match in matches {
                 if let amountRange = Range(match.range(at: 1), in: text),
                    let amount = Double(text[amountRange]) {
@@ -263,16 +283,11 @@ struct Event: Identifiable, Hashable, Codable {
             }
         }
         // Also try plain numbers
-        if amounts.isEmpty {
-            let numPattern = #"(\d+(?:\.\d{1,2})?)"#
-            if let regex = try? NSRegularExpression(pattern: numPattern) {
-                let range = NSRange(text.startIndex..., in: text)
-                let matches = regex.matches(in: text, range: range)
-                for match in matches {
-                    if let amountRange = Range(match.range(at: 1), in: text),
-                       let amount = Double(text[amountRange]) {
-                        amounts.append(amount)
-                    }
+        if amounts.isEmpty, let matches = Self.numberRegex?.matches(in: text, range: range) {
+            for match in matches {
+                if let amountRange = Range(match.range(at: 1), in: text),
+                   let amount = Double(text[amountRange]) {
+                    amounts.append(amount)
                 }
             }
         }
@@ -380,9 +395,11 @@ nonisolated extension Event {
         record["source"] = (source ?? "admin") as CKRecordValue
         record["title"] = title as CKRecordValue
         record["description"] = eventDescription as CKRecordValue
-        record["startDate"] = Int64(startDate.timeIntervalSince1970 * 1000) as CKRecordValue
+        record["startDate"] = startDate as CKRecordValue
         if let endDate {
-            record["endDate"] = Int64(endDate.timeIntervalSince1970 * 1000) as CKRecordValue
+            record["endDate"] = endDate as CKRecordValue
+        } else {
+            record["endDate"] = nil
         }
         record["isAllDay"] = Int64(isAllDay ? 1 : 0) as CKRecordValue
         record["category"] = category.rawValue as CKRecordValue
