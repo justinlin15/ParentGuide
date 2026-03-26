@@ -190,9 +190,22 @@ async function scrapeSouthCoastPlaza(): Promise<PipelineEvent[]> {
   const icalText = await res.text();
   const parsed = parseICalSimple(icalText);
 
+  // Non-family event keywords to skip
+  const SKIP_KEYWORDS = [
+    "trunk show", "ready to wear", "runway", "fashion show",
+    "wine tasting", "wine dinner", "cocktail", "happy hour",
+    "bridal", "wedding", "engagement ring",
+    "private event", "corporate", "networking",
+    "black tie", "gala", "fundraiser",
+  ];
+
   for (const evt of parsed) {
     if (!evt.summary || !evt.dtstart) continue;
     if (!isFutureDate(evt.dtstart)) continue;
+
+    // Skip non-family events
+    const combined = `${evt.summary} ${evt.description || ""}`.toLowerCase();
+    if (SKIP_KEYWORDS.some((kw) => combined.includes(kw))) continue;
 
     const desc = cleanDescription(stripHtml(evt.description || ""));
     events.push({
