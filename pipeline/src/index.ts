@@ -1,8 +1,8 @@
 import { METRO_AREAS, config } from "./config.js";
-import { type PipelineEvent } from "./normalize.js";
+import { type PipelineEvent, decodeHtmlEntities } from "./normalize.js";
 import { fetchTicketmasterEvents } from "./sources/ticketmaster.js";
 import { fetchSeatGeekEvents } from "./sources/seatgeek.js";
-import { fetchYelpEvents } from "./sources/yelp.js";
+import { fetchYelpEvents, type YelpRateLimitInfo } from "./sources/yelp.js";
 import { fetchEventbriteEvents } from "./sources/eventbrite.js";
 import { fetchLibCalEvents } from "./sources/libcal.js";
 import { fetchVenueEvents } from "./sources/venue-scrapers.js";
@@ -10,6 +10,7 @@ import { fetchThemeParkEvents } from "./sources/theme-parks.js";
 import { fetchPretendCityEvents } from "./sources/pretend-city.js";
 import { fetchMuseumEvents } from "./sources/museum-scrapers.js";
 import { fetchLAParentEvents } from "./sources/la-parent.js";
+import { fetchChurchEvents } from "./sources/church-events.js";
 import { scrapeMacaroniKid } from "./sources/scrapers/macaroni-kid.js";
 import { scrapeMommyPoppins } from "./sources/scrapers/mommy-poppins.js";
 import { scrapeNYCFamily } from "./sources/scrapers/nyc-family.js";
@@ -26,7 +27,9 @@ import { enrichEvents } from "./enrich.js";
 import { aiEnrichEvents } from "./utils/ai-enricher.js";
 import { verifyEvents } from "./verify-events.js";
 import { saveAiCache } from "./utils/ai-cache.js";
-import { uploadToCloudKit } from "./cloudkit.js";
+import { uploadToCloudKit, uploadIncrementalToCloudKit } from "./cloudkit.js";
+import { diffEvents } from "./diff-events.js";
+import { loadPerMetroOutputs, deduplicateMerged } from "./merge.js";
 import { geocodeEvents } from "./geocode-events.js";
 import { log } from "./utils/logger.js";
 import { readFileSync } from "fs";
@@ -104,6 +107,7 @@ function loadEventsForReprocess(): PipelineEvent[] {
       description: String(e.description ?? ""),
       startDate: String(e.startDate ?? ""),
       endDate: e.endDate ? String(e.endDate) : undefined,
+      isAllDay: !!e.isAllDay,
       locationName: e.location ? String(e.location) : (e.locationName ? String(e.locationName) : undefined),
       city: String(e.city ?? ""),
       metro: String(e.metro ?? ""),
@@ -115,12 +119,60 @@ function loadEventsForReprocess(): PipelineEvent[] {
       longitude: keepCoords && e.longitude ? Number(e.longitude) : undefined,
       address: e.address ? String(e.address) : undefined,
       source,
+      isFeatured: !!e.isFeatured,
+      isRecurring: !!e.isRecurring,
       tags: Array.isArray(e.tags) ? e.tags.map(String) : [],
       price: e.price ? String(e.price) : undefined,
       ageRange: e.ageRange ? String(e.ageRange) : undefined,
-      status: e.status ? String(e.status) : undefined,
+      status: e.status ? String(e.status) as PipelineEvent["status"] : undefined,
     };
   });
+}
+
+/**
+ * Load baseline events from the previous run for incremental diff.
+ * Unlike loadEventsForReprocess(), this preserves ALL fields (coords, images, etc.)
+ * because unchanged events will be carried forward as-is.
+ */
+function loadBaseline(): PipelineEvent[] | null {
+  const jsonPath = resolve(process.cwd(), "../docs/api/events.json");
+  try {
+    const raw = JSON.parse(readFileSync(jsonPath, "utf8")) as Array<Record<string, unknown>>;
+    if (!raw.length) return null;
+
+    log.info("pipeline", `Incremental: loaded ${raw.length} baseline events from docs/api/events.json`);
+
+    return raw.map((e): PipelineEvent => ({
+      sourceId: String(e.id ?? e.sourceId ?? ""),
+      title: String(e.title ?? ""),
+      description: String(e.description ?? ""),
+      startDate: String(e.startDate ?? ""),
+      endDate: e.endDate ? String(e.endDate) : undefined,
+      isAllDay: !!e.isAllDay,
+      locationName: e.location ? String(e.location) : (e.locationName ? String(e.locationName) : undefined),
+      city: String(e.city ?? ""),
+      metro: String(e.metro ?? ""),
+      category: String(e.category ?? "Other"),
+      imageURL: e.imageURL ? String(e.imageURL) : undefined,
+      externalURL: e.externalURL ? String(e.externalURL) : undefined,
+      websiteURL: e.websiteURL ? String(e.websiteURL) : undefined,
+      latitude: e.latitude != null ? Number(e.latitude) : undefined,
+      longitude: e.longitude != null ? Number(e.longitude) : undefined,
+      address: e.address ? String(e.address) : undefined,
+      source: String(e.source ?? "unknown"),
+      tags: Array.isArray(e.tags) ? e.tags.map(String) : [],
+      price: e.price ? String(e.price) : undefined,
+      ageRange: e.ageRange ? String(e.ageRange) : undefined,
+      status: e.status ? String(e.status) as PipelineEvent["status"] : undefined,
+      isFeatured: !!e.isFeatured,
+      isRecurring: !!e.isRecurring,
+      phone: e.phone ? String(e.phone) : undefined,
+      contactEmail: e.contactEmail ? String(e.contactEmail) : undefined,
+    }));
+  } catch {
+    log.info("pipeline", "No baseline found — will run full processing (first run)");
+    return null;
+  }
 }
 
 // ─── Shared Child-Friendly Event Filter ──────────────────────────────────────
@@ -154,15 +206,35 @@ const ADULT_TITLE_PATS = [
   /\bbrewing\s+(class|workshop)\b/i,
   /\bspeed\s+dating\b/i, /\bsingles\s+(mixer|event|night)\b/i,
   /\bnetworking\s+(event|mixer|happy\s+hour)\b/i,
+  // Adult yoga/fitness/wellness (not "yoga for kids" or "family yoga")
+  /\b(?:monthly\s+)?(?:corepower\s+)?(?:yoga|pilates|breathwork)\s+(?:on\s+the\s+green|class|session|break)\b/i,
+  /\bself\s+care:\s*yoga\b/i, /\bwellness\s+break\b/i,
+  // Beer/wine/spirits events
+  /\bbeer\s+(?:tasting|festival|day|crawl)\b/i,
+  /\bwhisk(?:e?y)\s+tasting\b/i, /\bspirits?\s+tasting\b/i,
+  /\bblind\s+tasting\b/i, /\braise\s+a\s+glass\b/i,
+  // Date night / tantra
+  /\btantra\b/i, /\bdate\s+night\s*\(for\s+couples\)/i,
+  // Board meetings, cancelled events, veteran/military, blood drives
+  /\bboard\s+(?:meeting|of\s+trustees)\b/i,
+  /\bcancell?ed\b/i,
+  /\bblood\s+drive\b/i,
+  /\bveterans?\s+(?:resource|day\s+event)\b/i,
+  // Guide articles combining unrelated topics with "+"
+  /\+\s*(?:family\s+)?hiking\s+recs?\b/i,
+  /\brecs?\s+nearby\b/i,
+  // "17+ Nature Centers" style roundup articles
+  /\b\d+\+?\s+(?:nature\s+centers?|places?\s+to|things?\s+to|ways?\s+to)\b/i,
 ];
 const ADULT_DESC_PATS = [
-  /\b21\+\s*(event|show|only|venue|required|admission)/i,
-  /\b18\+\s*(event|show|only|venue|required|admission)/i,
+  /\b21\+\s*(?:event|show|only|venue|required|admission)/i,
+  /\b18\+\s*(?:event|show|only|venue|required|admission)/i,
   /must\s+be\s+21/i, /must\s+be\s+18/i,
-  /\bno\s+(one\s+)?under\s+(21|18)\b/i,
+  /\bno\s+(?:one\s+)?under\s+(?:21|18)\b/i,
   /\bdesigned\s+for\s+adults\b/i, /\badult\s+program\b/i,
   /\bage[sd]?\s+18\s*\+/i, /\bages?\s+55\s*\+/i, /\bages?\s+60\s*\+/i,
   /\bfor\s+older\s+adults\b/i,
+  /\badults?\s+only\b/i,
 ];
 const ADULT_COMEDY_VENUE_NAMES = [
   "irvine improv", "brea improv", "ontario improv", "tempe improv",
@@ -247,13 +319,90 @@ async function main() {
     return;
   }
 
+  // ── MERGE MODE: combine per-metro outputs from parallel matrix jobs ─────────
+  if (config.mergeMode) {
+    log.info("pipeline", "Running in MERGE mode — combining per-metro outputs...");
+    const merged = loadPerMetroOutputs();
+    if (merged.length === 0) {
+      log.error("pipeline", "No per-metro events found — nothing to merge");
+      process.exit(1);
+    }
+
+    // Metro reassignment (some LA events belong to OC and vice versa)
+    log.divider();
+    log.info("pipeline", "Running metro reassignment on merged events...");
+    // Note: reassignment logic is in the main loop below — for merge mode,
+    // we skip it because each metro job already tagged events with their metro.
+    // Cross-metro reassignment will be added when we have specific city lists.
+
+    // Content filter
+    const familyFiltered = merged.filter((e) => isChildFriendlyEvent(e));
+    const adultRemoved = merged.length - familyFiltered.length;
+    if (adultRemoved > 0) log.info("pipeline", `Removed ${adultRemoved} non-family events`);
+
+    // Cross-metro dedup
+    const deduped = deduplicateMerged(familyFiltered);
+
+    // Stale filter
+    const todayMidnightUTC = new Date();
+    todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+    const todayStr = todayMidnightUTC.toISOString();
+    const upcoming = deduped.filter((e) => e.startDate >= todayStr);
+    const staleCount = deduped.length - upcoming.length;
+    if (staleCount > 0) log.info("pipeline", `Removed ${staleCount} stale events`);
+
+    // Incremental diff + upload
+    const baseline = loadBaseline();
+    if (baseline && baseline.length > 0) {
+      const diff = diffEvents(upcoming, baseline);
+      const newIds = new Set(diff.newEvents.map((e) => e.sourceId));
+      const changedIds = new Set(diff.changedEvents.map((e) => e.sourceId));
+
+      // For merge mode, the per-metro jobs already did AI/geocode/images.
+      // We just need to upload the delta and carry forward unchanged events.
+      // Merge processed events with unchanged baseline events.
+      const mergedMap = new Map<string, PipelineEvent>();
+      for (const e of diff.unchangedEvents) mergedMap.set(e.sourceId, e);
+      for (const e of upcoming) {
+        if (newIds.has(e.sourceId) || changedIds.has(e.sourceId)) {
+          mergedMap.set(e.sourceId, e);
+        }
+      }
+      const allFinal = Array.from(mergedMap.values());
+
+      log.info("pipeline", `Merge upload: ${newIds.size} new, ${changedIds.size} changed, ${diff.unchangedEvents.length} unchanged, ${diff.removedSourceIds.length} removed`);
+
+      await uploadIncrementalToCloudKit(allFinal, newIds, changedIds, diff.removedSourceIds);
+    } else {
+      await uploadToCloudKit(upcoming);
+    }
+
+    saveAiCache();
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    log.divider();
+    log.success("pipeline", `Merge done! ${upcoming.length} events in ${elapsed}s`);
+    return;
+  }
+
   // Only process enabled metros (Phase 1: OC + LA)
-  const activeMetros = METRO_AREAS.filter((m) => m.enabled);
-  log.info("pipeline", `Active metros: ${activeMetros.map((m) => m.name).join(", ")}`);
+  let activeMetros = METRO_AREAS.filter((m) => m.enabled);
+
+  // Single-metro mode: filter to just the specified metro
+  if (config.metroFilter) {
+    activeMetros = activeMetros.filter((m) => m.id === config.metroFilter);
+    if (activeMetros.length === 0) {
+      log.error("pipeline", `Metro "${config.metroFilter}" not found or not enabled`);
+      process.exit(1);
+    }
+    log.info("pipeline", `Single-metro mode: ${activeMetros[0].name}`);
+  } else {
+    log.info("pipeline", `Active metros: ${activeMetros.map((m) => m.name).join(", ")}`);
+  }
   log.info("pipeline", `Skipped metros: ${METRO_AREAS.filter((m) => !m.enabled).map((m) => m.name).join(", ") || "none"}`);
   log.divider();
 
   const allEvents: PipelineEvent[] = [];
+  let yelpRateLimit: YelpRateLimitInfo = { remaining: null, resetTime: null };
 
   for (const metro of activeMetros) {
     log.divider();
@@ -263,7 +412,7 @@ async function main() {
 
     if (!config.scrapersOnly) {
       // Fetch from APIs (run in parallel per metro)
-      const [ticketmaster, seatgeek, yelp, eventbrite, libcal, venues, themeparks, pretendcity, museums, laparent] = await Promise.all([
+      const [ticketmaster, seatgeek, yelpResult, eventbrite, libcal, venues, themeparks, pretendcity, museums, laparent, churches] = await Promise.all([
         fetchTicketmasterEvents(metro).catch((err) => {
           log.error("pipeline", "Ticketmaster failed", err);
           return [] as PipelineEvent[];
@@ -274,7 +423,7 @@ async function main() {
         }),
         fetchYelpEvents(metro).catch((err) => {
           log.error("pipeline", "Yelp failed", err);
-          return [] as PipelineEvent[];
+          return { events: [] as PipelineEvent[], rateLimit: { remaining: null, resetTime: null } };
         }),
                 fetchEventbriteEvents(metro).catch((err) => {
                             log.error("pipeline", "Eventbrite failed", err);
@@ -304,12 +453,23 @@ async function main() {
           log.error("pipeline", "LA Parent failed", err);
           return [] as PipelineEvent[];
         }),
+        fetchChurchEvents(metro).catch((err) => {
+          log.error("pipeline", "Church events failed", err);
+          return [] as PipelineEvent[];
+        }),
       ]);
 
+      // Track Yelp rate limit (keep lowest remaining across metros)
+      if (yelpResult.rateLimit.remaining !== null) {
+        if (yelpRateLimit.remaining === null || yelpResult.rateLimit.remaining < yelpRateLimit.remaining) {
+          yelpRateLimit = yelpResult.rateLimit;
+        }
+      }
+
       metroEvents.push(
-        ...ticketmaster, ...seatgeek, ...yelp, ...eventbrite,
+        ...ticketmaster, ...seatgeek, ...yelpResult.events, ...eventbrite,
         ...libcal, ...venues, ...themeparks, ...pretendcity,
-        ...museums, ...laparent
+        ...museums, ...laparent, ...churches
       );
     }
 
@@ -460,6 +620,12 @@ async function main() {
     log.info("pipeline", `Removed ${adultRemoved} non-family events (adult/21+, platform meetups, guide articles)`);
   }
 
+  // Decode HTML entities in titles (e.g. &#039; → ', &amp; → &)
+  for (const e of familyFiltered) {
+    e.title = decodeHtmlEntities(e.title);
+    if (e.description) e.description = decodeHtmlEntities(e.description);
+  }
+
   // Deduplicate
   const deduped = deduplicateEvents(familyFiltered);
 
@@ -474,78 +640,230 @@ async function main() {
   log.info("pipeline", "Enriching events (URL sanitization, price extraction)...");
   const enriched = await enrichEvents(rewritten);
 
-  // ── AI Enrichment ───────────────────────────────────────────────────────────
-  // One comprehensive Claude pass that simultaneously:
-  //   • Rewrites all descriptions (fresh, unique, family-focused prose)
-  //   • Validates / corrects event categories
-  //   • Extracts missing price, ageRange, locationName, address from description text
-  log.divider();
-  log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
-  const aiEnriched = await aiEnrichEvents(enriched);
+  // ── Single-Metro Mode: skip incremental diff, run full processing ────────────
+  // In matrix strategy, each metro job processes its events fully and writes
+  // a per-metro file. The merge job handles incremental diff and CloudKit upload.
+  if (config.metroFilter) {
+    log.divider();
+    log.info("pipeline", `Single-metro mode: full processing for ${config.metroFilter}...`);
 
-  // ── Post-AI Sanity Checks ─────────────────────────────────────────────────────
-  // Rule-based corrections that catch contradictions the AI may miss.
-  let sanitized = 0;
-  for (const event of aiEnriched) {
-    // "Free Movie" must be genuinely free — if price shows a cost, fix the category
-    if (event.category === "Free Movie") {
-      const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
-      const titleHasPrice = /^\$\d/.test(event.title.trim()); // title starts with "$6", "$3", etc.
-      if (hasCost || titleHasPrice) {
-        event.category = "Other";
-        sanitized++;
+    const aiEnriched = await aiEnrichEvents(enriched);
+
+    // Post-AI sanity
+    let sanitized = 0;
+    for (const event of aiEnriched) {
+      if (event.category === "Free Movie") {
+        const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
+        const titleHasPrice = /^\$\d/.test(event.title.trim());
+        if (hasCost || titleHasPrice) { event.category = "Other"; sanitized++; }
+      }
+      if (event.price?.toLowerCase() === "free") {
+        const m1 = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/);
+        const m2 = event.title.match(/^\$(\d+)/);
+        if (m1) { event.price = `$${m1[1]}`; sanitized++; }
+        else if (m2) { event.price = `$${m2[1]}`; sanitized++; }
       }
     }
-    // Title contains "($)" or starts with "$N" but price is marked Free → fix price
-    if (event.price?.toLowerCase() === "free") {
-      const titlePriceMatch = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/); // e.g. "($29)"
-      const titleStartsWithDollar = event.title.match(/^\$(\d+)/);          // e.g. "$6 Movie"
-      if (titlePriceMatch) {
-        event.price = `$${titlePriceMatch[1]}`;
-        sanitized++;
-      } else if (titleStartsWithDollar) {
-        event.price = `$${titleStartsWithDollar[1]}`;
-        sanitized++;
-      }
-    }
-  }
-  if (sanitized > 0) {
-    log.info("pipeline", `Post-AI sanity: fixed ${sanitized} category/price contradictions`);
+    if (sanitized > 0) log.info("pipeline", `Post-AI sanity: fixed ${sanitized} contradictions`);
+
+    const verified = await verifyEvents(aiEnriched);
+
+    const todayMidnightUTC = new Date();
+    todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+    const todayStr = todayMidnightUTC.toISOString();
+    const upcoming = verified.filter((e) => e.startDate >= todayStr);
+
+    const geocoded = await geocodeEvents(upcoming);
+    const withImages = await fillMissingImages(geocoded);
+
+    // Write per-metro output file (merge job will combine these)
+    const { writeFile, mkdir } = await import("fs/promises");
+    const { join } = await import("path");
+    const outputDir = join(process.cwd(), "output");
+    await mkdir(outputDir, { recursive: true });
+    const outputPath = join(outputDir, `${config.metroFilter}-events.json`);
+    await writeFile(outputPath, JSON.stringify(withImages, null, 2));
+    log.success("pipeline", `Wrote ${withImages.length} events to ${outputPath}`);
+
+    saveAiCache();
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    log.divider();
+    log.success("pipeline", `Done (single-metro)! ${withImages.length} events in ${elapsed}s`);
+    return;
   }
 
-  // ── Honeypot / Watermark Verification ───────────────────────────────────────
-  // API sources are auto-published (trusted partners).
-  // Scraped events without a verified venue URL become "draft" for admin review.
-  log.divider();
-  log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
-  const verified = await verifyEvents(aiEnriched);
+  // ── Incremental Diff ──────────────────────────────────────────────────────────
+  // Compare against previous run's output to only process new/changed events
+  // through the slow steps (AI enrichment, geocoding, images).
+  let finalEventCount = 0;
+  const baseline = config.reprocess ? null : loadBaseline();
 
-  // Filter out stale events (startDate before today)
   const todayMidnightUTC = new Date();
   todayMidnightUTC.setUTCHours(0, 0, 0, 0);
   const todayStr = todayMidnightUTC.toISOString();
 
-  const upcoming = verified.filter((event) => event.startDate >= todayStr);
-  const staleCount = verified.length - upcoming.length;
-  if (staleCount > 0) {
-    log.info(
-      "pipeline",
-      `Removed ${staleCount} stale events (before ${todayMidnightUTC.toISOString().slice(0, 10)})`
-    );
+  if (baseline && baseline.length > 0) {
+    log.divider();
+    log.info("pipeline", "Running incremental diff against baseline...");
+    const diff = diffEvents(enriched, baseline);
+
+    // The "delta" = new + changed events — these need full processing
+    const delta = [...diff.newEvents, ...diff.changedEvents];
+
+    if (delta.length === 0) {
+      log.info("pipeline", "No new or changed events — skipping AI/geocode/images");
+      // Still filter stale from unchanged
+      const upcomingUnchanged = diff.unchangedEvents.filter((e) => e.startDate >= todayStr);
+      const staleCount = diff.unchangedEvents.length - upcomingUnchanged.length;
+      if (staleCount > 0) {
+        log.info("pipeline", `Removed ${staleCount} stale unchanged events`);
+      }
+
+      // Combine removed sourceIds: explicit removals + stale baseline events
+      const staleRemovedIds = diff.unchangedEvents
+        .filter((e) => e.startDate < todayStr)
+        .map((e) => e.sourceId);
+      const allRemovedIds = [...diff.removedSourceIds, ...staleRemovedIds];
+
+      finalEventCount = upcomingUnchanged.length;
+      log.divider();
+      await uploadIncrementalToCloudKit(
+        upcomingUnchanged,
+        new Set<string>(),
+        new Set<string>(),
+        allRemovedIds,
+        { rateLimits: yelpRateLimit.remaining !== null ? { yelp: yelpRateLimit } : undefined }
+      );
+    } else {
+      log.info("pipeline", `Processing ${delta.length} new/changed events through full pipeline...`);
+
+      // ── AI Enrichment (delta only) ──────────────────────────────────────────
+      log.divider();
+      log.info("pipeline", `Running AI enrichment on ${delta.length} events...`);
+      const aiEnriched = await aiEnrichEvents(delta);
+
+      // ── Post-AI Sanity Checks ──────────────────────────────────────────────
+      let sanitized = 0;
+      for (const event of aiEnriched) {
+        if (event.category === "Free Movie") {
+          const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
+          const titleHasPrice = /^\$\d/.test(event.title.trim());
+          if (hasCost || titleHasPrice) { event.category = "Other"; sanitized++; }
+        }
+        if (event.price?.toLowerCase() === "free") {
+          const m1 = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/);
+          const m2 = event.title.match(/^\$(\d+)/);
+          if (m1) { event.price = `$${m1[1]}`; sanitized++; }
+          else if (m2) { event.price = `$${m2[1]}`; sanitized++; }
+        }
+      }
+      if (sanitized > 0) log.info("pipeline", `Post-AI sanity: fixed ${sanitized} contradictions`);
+
+      // ── Honeypot Verification (delta only) ──────────────────────────────────
+      log.divider();
+      log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
+      const verified = await verifyEvents(aiEnriched);
+
+      // Stale filter on delta
+      const upcomingDelta = verified.filter((e) => e.startDate >= todayStr);
+
+      // ── Geocode (delta only, events missing coordinates) ──────────────────
+      log.divider();
+      log.info("pipeline", `Geocoding ${upcomingDelta.filter((e) => !e.latitude).length} events with missing coordinates...`);
+      const geocoded = await geocodeEvents(upcomingDelta);
+
+      // ── Images (delta only) ───────────────────────────────────────────────
+      const withImages = await fillMissingImages(geocoded);
+
+      // Filter stale from unchanged baseline events
+      const upcomingUnchanged = diff.unchangedEvents.filter((e) => e.startDate >= todayStr);
+      const staleUnchanged = diff.unchangedEvents.length - upcomingUnchanged.length;
+      if (staleUnchanged > 0) {
+        log.info("pipeline", `Removed ${staleUnchanged} stale unchanged events`);
+      }
+
+      // Merge: processed delta + unchanged = full event set
+      const mergedMap = new Map<string, PipelineEvent>();
+      for (const e of upcomingUnchanged) mergedMap.set(e.sourceId, e);
+      for (const e of withImages) mergedMap.set(e.sourceId, e);
+      const allFinal = Array.from(mergedMap.values());
+
+      log.info("pipeline", `Merged: ${withImages.length} processed + ${upcomingUnchanged.length} unchanged = ${allFinal.length} total`);
+
+      // Combine removed sourceIds: explicit removals + stale events from both pools
+      const staleRemovedIds = [
+        ...diff.unchangedEvents.filter((e) => e.startDate < todayStr).map((e) => e.sourceId),
+        ...verified.filter((e) => e.startDate < todayStr).map((e) => e.sourceId),
+      ];
+      const allRemovedIds = [...diff.removedSourceIds, ...staleRemovedIds];
+
+      const newSourceIds = new Set(diff.newEvents.map((e) => e.sourceId));
+      const changedSourceIds = new Set(diff.changedEvents.map((e) => e.sourceId));
+
+      finalEventCount = allFinal.length;
+      log.divider();
+      await uploadIncrementalToCloudKit(
+        allFinal,
+        newSourceIds,
+        changedSourceIds,
+        allRemovedIds,
+        { rateLimits: yelpRateLimit.remaining !== null ? { yelp: yelpRateLimit } : undefined }
+      );
+    }
+  } else {
+    // No baseline — full processing (first run or --reprocess)
+    log.info("pipeline", "No baseline available — running full processing pipeline...");
+
+    // ── AI Enrichment ───────────────────────────────────────────────────────────
+    log.divider();
+    log.info("pipeline", "Running AI enrichment (descriptions, categories, fields)...");
+    const aiEnriched = await aiEnrichEvents(enriched);
+
+    // ── Post-AI Sanity Checks ─────────────────────────────────────────────────────
+    let sanitized = 0;
+    for (const event of aiEnriched) {
+      if (event.category === "Free Movie") {
+        const hasCost = event.price && !/^free$/i.test(event.price) && event.price !== "Included with admission";
+        const titleHasPrice = /^\$\d/.test(event.title.trim());
+        if (hasCost || titleHasPrice) { event.category = "Other"; sanitized++; }
+      }
+      if (event.price?.toLowerCase() === "free") {
+        const m1 = event.title.match(/\(\$(\d+(?:\.\d{2})?)\)/);
+        const m2 = event.title.match(/^\$(\d+)/);
+        if (m1) { event.price = `$${m1[1]}`; sanitized++; }
+        else if (m2) { event.price = `$${m2[1]}`; sanitized++; }
+      }
+    }
+    if (sanitized > 0) log.info("pipeline", `Post-AI sanity: fixed ${sanitized} contradictions`);
+
+    // ── Honeypot / Watermark Verification ───────────────────────────────────────
+    log.divider();
+    log.info("pipeline", "Verifying events (honeypot detection, URL validation)...");
+    const verified = await verifyEvents(aiEnriched);
+
+    // Filter out stale events
+    const upcoming = verified.filter((event) => event.startDate >= todayStr);
+    const staleCount = verified.length - upcoming.length;
+    if (staleCount > 0) {
+      log.info("pipeline", `Removed ${staleCount} stale events (before ${todayMidnightUTC.toISOString().slice(0, 10)})`);
+    }
+    log.info("pipeline", `Upcoming events: ${upcoming.length}`);
+
+    // Geocode events missing coordinates
+    log.divider();
+    log.info("pipeline", "Geocoding events with missing coordinates...");
+    const geocoded = await geocodeEvents(upcoming);
+
+    // Fill missing images
+    const withImages = await fillMissingImages(geocoded);
+
+    // Upload to CloudKit (full upload — no baseline to diff against)
+    finalEventCount = withImages.length;
+    log.divider();
+    await uploadToCloudKit(withImages, {
+      rateLimits: yelpRateLimit.remaining !== null ? { yelp: yelpRateLimit } : undefined,
+    });
   }
-  log.info("pipeline", `Upcoming events: ${upcoming.length}`);
-
-  // Geocode events missing coordinates
-  log.divider();
-  log.info("pipeline", "Geocoding events with missing coordinates...");
-  const geocoded = await geocodeEvents(upcoming);
-
-  // Fill missing images
-  const withImages = await fillMissingImages(geocoded);
-
-  // Upload to CloudKit (or write to output/)
-  log.divider();
-  await uploadToCloudKit(withImages);
 
   // Flush AI cache to disk so the next run benefits from today's results
   log.divider();
@@ -553,7 +871,7 @@ async function main() {
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   log.divider();
-  log.success("pipeline", `Done! ${withImages.length} events in ${elapsed}s`);
+  log.success("pipeline", `Done! ${finalEventCount} events in ${elapsed}s`);
 }
 
 main().catch((err) => {

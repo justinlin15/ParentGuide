@@ -191,6 +191,31 @@ export function categorizeEvent(
   return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
 }
 
+/** Decode HTML entities in titles and text */
+export function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&#039;/g, "'")
+    .replace(/&#8211;/g, "–")
+    .replace(/&#8212;/g, "—")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8220;/g, "\u201C")
+    .replace(/&#8221;/g, "\u201D")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, "\u201D")
+    .replace(/&ldquo;/g, "\u201C")
+    .replace(/&ndash;/g, "–")
+    .replace(/&mdash;/g, "—")
+    .trim();
+}
+
 // Clean up HTML and truncate description
 export function cleanDescription(raw: string, maxLength = 500): string {
   return raw

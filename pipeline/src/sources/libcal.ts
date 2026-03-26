@@ -254,11 +254,21 @@ const ADULT_KEYWORDS = [
   "blood pressure", "health screening", "caregiver",
   "dementia", "alzheimer", "grief support", "bereavement",
   // Technology classes (typically for seniors/adults)
-  "computer class", "computer basics", "tech help",
-  "smartphone basics", "iphone basics", "ipad basics",
+  "computer class", "computer basics", "tech help", "drop in tech",
+  "drop-in tech", "smartphone basics", "iphone basics", "ipad basics",
   "internet basics", "email basics",
   // Networking/professional
   "networking event", "business workshop", "professional development",
+  // Board/admin meetings
+  "board meeting", "board of trustees", "friends of the library meeting",
+  // Veteran/military
+  "veterans resource", "veterans day event",
+  // Cancelled events
+  "cancelled", "canceled",
+  // Wellness/yoga (adult)
+  "wellness workshop", "mental wellness", "life balance",
+  // Other adult activities
+  "genealogy", "memoir writing", "watercolor for adults",
 ];
 
 function isFamilyFriendly(event: LibCalEvent): boolean {
