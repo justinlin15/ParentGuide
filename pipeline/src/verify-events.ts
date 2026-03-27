@@ -52,11 +52,19 @@ const TRUSTED_API_SOURCES = new Set([
   "venue-skirball",
   "venue-discoverycube",
   "venue-underwood",
+  "venue-autry",
   // Theme parks, museums, and other direct sources
   "themeparks",
   "venue-expopark",
   "pretend-city",
   "la-parent",
+  // Church community event scrapers — direct venue websites
+  "church-mariners",
+  "church-saddleback",
+  "church-rockharbor",
+  "church-oceans",
+  "church-mosaic",
+  "church-realityla",
 ]);
 
 // ─── Layer 2: URL verification ────────────────────────────────────────────────

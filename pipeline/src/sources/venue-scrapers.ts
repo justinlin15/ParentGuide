@@ -74,8 +74,9 @@ export async function fetchVenueEvents(
     { name: "Kidspace Museum", metros: ["los-angeles"], fn: scrapeKidspace },
     { name: "South Coast Plaza", metros: ["orange-county"], fn: scrapeSouthCoastPlaza },
     { name: "Academy Museum", metros: ["los-angeles"], fn: scrapeAcademyMuseum },
-    // NHM LA and Skirball: skipped — complex Drupal HTML, already covered by MommyPoppins with real URLs
-    { name: "Discovery Cube OC", metros: ["orange-county"], fn: scrapeDiscoveryCube },
+    // NHM LA and Skirball are now in museum-scrapers.ts
+    { name: "Discovery Cube OC", metros: ["orange-county"], fn: () => scrapeDiscoveryCube("oc") },
+    { name: "Discovery Cube LA", metros: ["los-angeles"], fn: () => scrapeDiscoveryCube("la") },
     { name: "Underwood Farms", metros: ["los-angeles"], fn: scrapeUnderwoodFarms },
   ];
 
@@ -109,64 +110,80 @@ async function scrapeKidspace(): Promise<PipelineEvent[]> {
   const today = new Date().toISOString().split("T")[0];
   const endDate = sixtyDaysFromNow().toISOString().split("T")[0];
 
-  const url = `https://kidspacemuseum.org/wp-json/tribe/events/v1/events?start_date=${today}&end_date=${endDate}&per_page=50&page=1`;
+  let page = 1;
+  let totalPages = 1;
 
-  const res = await fetch(url, {
-    headers: { ...getRandomHeaders(), Accept: "application/json" },
-  });
+  while (page <= totalPages && page <= 5) {
+    const url = `https://kidspacemuseum.org/wp-json/tribe/events/v1/events?start_date=${today}&end_date=${endDate}&per_page=50&page=${page}`;
 
-  if (!res.ok) {
-    log.warn("venues", `Kidspace HTTP ${res.status}`);
-    return [];
-  }
+    try {
+      const res = await fetch(url, {
+        headers: { ...getRandomHeaders(), Accept: "application/json" },
+      });
 
-  const data = await res.json() as {
-    events: Array<{
-      id: number;
-      title: string;
-      description: string;
-      url: string;
-      start_date: string;
-      end_date: string;
-      all_day: boolean;
-      cost: string;
-      image?: { url: string };
-      venue?: {
-        venue: string;
-        address: string;
-        city: string;
-        state: string;
-        zip: string;
+      if (!res.ok) {
+        if (page === 1) log.warn("venues", `Kidspace HTTP ${res.status}`);
+        break;
+      }
+
+      const data = await res.json() as {
+        events: Array<{
+          id: number;
+          title: string;
+          description: string;
+          url: string;
+          start_date: string;
+          end_date: string;
+          all_day: boolean;
+          cost: string;
+          image?: { url: string };
+          venue?: {
+            venue: string;
+            address: string;
+            city: string;
+            state: string;
+            zip: string;
+          };
+          categories?: Array<{ name: string }>;
+        }>;
+        total_pages?: number;
       };
-      categories?: Array<{ name: string }>;
-    }>;
-  };
 
-  if (!data.events) return [];
+      if (!data.events || data.events.length === 0) break;
 
-  for (const raw of data.events) {
-    const desc = cleanDescription(stripHtml(raw.description || ""));
-    events.push({
-      sourceId: `kidspace:${raw.id}`,
-      source: "venue-kidspace",
-      title: raw.title,
-      description: desc,
-      startDate: raw.start_date,
-      endDate: raw.end_date || undefined,
-      isAllDay: raw.all_day ?? false,
-      category: categorizeEvent(raw.title, desc, []),
-      city: raw.venue?.city || "Pasadena",
-      locationName: raw.venue?.venue || "Kidspace Children's Museum",
-      address: raw.venue ? `${raw.venue.address}, ${raw.venue.city}, ${raw.venue.state} ${raw.venue.zip}` : undefined,
-      externalURL: raw.url,
-      websiteURL: raw.url,
-      imageURL: raw.image?.url,
-      isFeatured: false,
-      isRecurring: false,
-      tags: [],
-      metro: "los-angeles",
-      price: raw.cost || undefined,
-    });
+      totalPages = data.total_pages || 1;
+
+      for (const raw of data.events) {
+        const desc = cleanDescription(stripHtml(raw.description || ""));
+        events.push({
+          sourceId: `kidspace:${raw.id}`,
+          source: "venue-kidspace",
+          title: raw.title,
+          description: desc,
+          startDate: raw.start_date,
+          endDate: raw.end_date || undefined,
+          isAllDay: raw.all_day ?? false,
+          category: categorizeEvent(raw.title, desc, []),
+          city: raw.venue?.city || "Pasadena",
+          locationName: raw.venue?.venue || "Kidspace Children's Museum",
+          address: raw.venue ? `${raw.venue.address}, ${raw.venue.city}, ${raw.venue.state} ${raw.venue.zip}` : undefined,
+          externalURL: raw.url,
+          websiteURL: raw.url,
+          imageURL: raw.image?.url,
+          isFeatured: false,
+          isRecurring: false,
+          tags: [],
+          metro: "los-angeles",
+          price: raw.cost || undefined,
+        });
+      }
+
+      page++;
+      if (page <= totalPages) await delay(300);
+    } catch (err) {
+      log.warn("venues", `Kidspace page ${page} failed: ${err}`);
+      break;
+    }
   }
 
   return events;
@@ -405,25 +422,54 @@ async function scrapeAcademyMuseum(): Promise<PipelineEvent[]> {
 // MommyPoppins already provides Skirball events with real websiteURLs.
 // TODO: Revisit if Skirball exposes a JSON API or iCal feed.
 
-// ─── Discovery Cube OC (HTML Parse) ──────────────────────────────────────────
-// https://www.discoverycube.org/events/
+// ─── Discovery Cube OC + LA ─────────────────────────────────────────────────
+// https://www.discoverycube.org/events/ (OC)
+// https://www.discoverycube.org/la/events/ (LA)
 
-async function scrapeDiscoveryCube(): Promise<PipelineEvent[]> {
+const DISCOVERY_CUBE_LOCATIONS = {
+  oc: {
+    city: "Santa Ana",
+    locationName: "Discovery Cube Orange County",
+    address: "2500 N Main St, Santa Ana, CA 92705",
+    latitude: 33.7823,
+    longitude: -117.8675,
+    metro: "orange-county",
+    eventsUrl: "https://www.discoverycube.org/events/",
+  },
+  la: {
+    city: "Los Angeles",
+    locationName: "Discovery Cube Los Angeles",
+    address: "11800 Foothill Blvd, Los Angeles, CA 91342",
+    latitude: 34.2986,
+    longitude: -118.3914,
+    metro: "los-angeles",
+    eventsUrl: "https://www.discoverycube.org/la/events/",
+  },
+} as const;
+
+async function scrapeDiscoveryCube(location: "oc" | "la"): Promise<PipelineEvent[]> {
   const events: PipelineEvent[] = [];
+  const loc = DISCOVERY_CUBE_LOCATIONS[location];
 
-  const res = await fetch("https://www.discoverycube.org/events/", {
-    headers: getRandomHeaders(),
-  });
+  // Strategy 1: Try WP REST API first (more reliable than HTML parsing)
+  try {
+    const apiEvents = await scrapeDiscoveryCubeApi(location);
+    if (apiEvents.length > 0) return apiEvents;
+  } catch {
+    // Fall through to HTML parsing
+  }
+
+  // Strategy 2: HTML parse fallback
+  const res = await fetch(loc.eventsUrl, { headers: getRandomHeaders() });
 
   if (!res.ok) {
-    log.warn("venues", `Discovery Cube HTTP ${res.status}`);
+    log.warn("venues", `Discovery Cube ${location.toUpperCase()} HTTP ${res.status}`);
     return [];
   }
 
   const html = await res.text();
 
   // Discovery Cube uses WordPress with custom event markup
-  // Look for event entries with titles and dates
   const articlePattern = /<article[^>]*>([\s\S]*?)<\/article>/g;
   let match;
 
@@ -447,34 +493,111 @@ async function scrapeDiscoveryCube(): Promise<PipelineEvent[]> {
       if (start > sixtyDaysFromNow()) continue;
       startDate = start.toISOString();
     } else {
-      continue; // Skip events without dates
+      continue;
     }
 
     const imgMatch = card.match(/src="([^"]*(?:jpg|jpeg|png|webp)[^"]*)"/i);
     const desc = cleanDescription(stripHtml(card));
-    const fullUrl = href.startsWith("http") ? href : (href ? `https://www.discoverycube.org${href}` : "https://www.discoverycube.org/events/");
+    const fullUrl = href.startsWith("http") ? href : (href ? `https://www.discoverycube.org${href}` : loc.eventsUrl);
 
     events.push({
-      sourceId: `discoverycube:${(href || title).replace(/[^a-z0-9]/gi, "-").slice(0, 60)}`,
+      sourceId: `discoverycube-${location}:${(href || title).replace(/[^a-z0-9]/gi, "-").slice(0, 60)}`,
       source: "venue-discoverycube",
       title,
       description: desc.slice(0, 300),
       startDate,
       isAllDay: false,
       category: categorizeEvent(title, desc, []),
-      city: "Santa Ana",
-      locationName: "Discovery Cube Orange County",
-      address: "2500 N Main St, Santa Ana, CA 92705",
-      latitude: 33.7823,
-      longitude: -117.8675,
+      city: loc.city,
+      locationName: loc.locationName,
+      address: loc.address,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
       externalURL: fullUrl,
       websiteURL: fullUrl,
       imageURL: imgMatch?.[1],
       isFeatured: false,
       isRecurring: false,
       tags: [],
-      metro: "orange-county",
+      metro: loc.metro,
     });
+  }
+
+  return events;
+}
+
+/** Try fetching Discovery Cube events via WordPress REST API */
+async function scrapeDiscoveryCubeApi(location: "oc" | "la"): Promise<PipelineEvent[]> {
+  const loc = DISCOVERY_CUBE_LOCATIONS[location];
+  const events: PipelineEvent[] = [];
+
+  let page = 1;
+  let totalPages = 1;
+
+  while (page <= totalPages && page <= 5) {
+    const url = `https://www.discoverycube.org/wp-json/wp/v2/posts?per_page=50&page=${page}&_embed`;
+    const res = await fetch(url, {
+      headers: { ...getRandomHeaders(), Accept: "application/json" },
+    });
+
+    if (!res.ok) throw new Error(`WP REST API HTTP ${res.status}`);
+
+    totalPages = parseInt(res.headers.get("X-WP-TotalPages") || "1", 10);
+
+    const posts = (await res.json()) as Array<{
+      id: number;
+      date: string;
+      title: { rendered: string };
+      excerpt?: { rendered: string };
+      link: string;
+      _embedded?: {
+        "wp:featuredmedia"?: Array<{ source_url: string }>;
+      };
+    }>;
+
+    if (posts.length === 0) break;
+
+    for (const post of posts) {
+      const title = stripHtml(post.title.rendered || "");
+      if (!title) continue;
+
+      const postDate = new Date(post.date);
+      if (isNaN(postDate.getTime()) || !isFutureDate(post.date)) continue;
+      if (postDate > sixtyDaysFromNow()) continue;
+
+      // Check if this post is related to the correct location
+      const combinedText = `${title} ${post.excerpt?.rendered || ""}`.toLowerCase();
+      if (location === "la" && !combinedText.includes("la") && !combinedText.includes("los angeles") && !combinedText.includes("sylmar")) continue;
+      if (location === "oc" && (combinedText.includes("la location") || combinedText.includes("los angeles location"))) continue;
+
+      const desc = cleanDescription(stripHtml(post.excerpt?.rendered || ""));
+      const imageURL = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+
+      events.push({
+        sourceId: `discoverycube-${location}:${post.id}`,
+        source: "venue-discoverycube",
+        title,
+        description: desc,
+        startDate: postDate.toISOString(),
+        isAllDay: false,
+        category: categorizeEvent(title, desc, []),
+        city: loc.city,
+        locationName: loc.locationName,
+        address: loc.address,
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        externalURL: post.link,
+        websiteURL: post.link,
+        imageURL,
+        isFeatured: false,
+        isRecurring: false,
+        tags: [],
+        metro: loc.metro,
+      });
+    }
+
+    page++;
+    if (page <= totalPages) await delay(300);
   }
 
   return events;

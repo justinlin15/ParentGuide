@@ -5,6 +5,13 @@ import { join } from "path";
 import { config } from "./config.js";
 import { type PipelineEvent } from "./normalize.js";
 import { log } from "./utils/logger.js";
+import type { YelpRateLimitInfo } from "./sources/yelp.js";
+
+export interface PipelineMetadata {
+  rateLimits?: {
+    yelp?: YelpRateLimitInfo;
+  };
+}
 
 // CloudKit Web Services REST API with server-to-server auth
 // https://developer.apple.com/library/archive/documentation/DataManagement/Conceptual/CloudKitWebServicesReference/
@@ -233,11 +240,173 @@ async function uploadBatch(
   return { saved: 0, errors: records.length };
 }
 
+// ─── Incremental upload (delta only) ────────────────────────────────────────
+
+const MAX_DELETES_PER_RUN = 200;
+
+/**
+ * Upload only new/changed events and delete removed events.
+ * Unchanged events are skipped entirely (already in CloudKit).
+ */
+export async function uploadIncrementalToCloudKit(
+  allEvents: PipelineEvent[],
+  newSourceIds: Set<string>,
+  changedSourceIds: Set<string>,
+  removedSourceIds: string[],
+  metadata?: PipelineMetadata
+): Promise<void> {
+  // Always write ALL events to output files (iOS app needs the full set)
+  await writeOutputFiles(allEvents, metadata);
+
+  if (config.dryRun) {
+    log.info("cloudkit", `[DRY RUN] Would upload ${newSourceIds.size} new, ${changedSourceIds.size} changed, delete ${removedSourceIds.length} removed`);
+    return;
+  }
+
+  if (!config.cloudkit.container || !config.cloudkit.keyId) {
+    log.warn("cloudkit", "CloudKit not configured — skipping upload");
+    return;
+  }
+
+  let privateKeyPem: string;
+  try {
+    privateKeyPem = await getPrivateKey();
+  } catch (err) {
+    log.warn("cloudkit", `${err} — skipping upload`);
+    return;
+  }
+
+  // Fetch manually-edited records to avoid overwriting admin corrections
+  const manuallyEdited = await fetchManuallyEditedRecords(privateKeyPem);
+  if (manuallyEdited.size > 0) {
+    log.info("cloudkit", `Found ${manuallyEdited.size} manually edited records — will skip overwriting them`);
+  }
+
+  // Build upsert list: new + changed events (skip manually-edited)
+  const upsertEvents = allEvents.filter((e) => {
+    if (!newSourceIds.has(e.sourceId) && !changedSourceIds.has(e.sourceId)) return false;
+    const recordName = e.sourceId.replace(/[^a-zA-Z0-9_-]/g, "_");
+    if (manuallyEdited.has(recordName) && changedSourceIds.has(e.sourceId)) {
+      log.info("cloudkit", `  Skipping manually edited: ${e.title.slice(0, 60)}`);
+      return false;
+    }
+    return true;
+  });
+
+  const upsertRecords = upsertEvents.map(toCloudKitRecord);
+
+  // Deduplicate by recordName
+  const seen = new Set<string>();
+  const dedupedUpserts = upsertRecords.filter((r) => {
+    if (seen.has(r.recordName)) return false;
+    seen.add(r.recordName);
+    return true;
+  });
+
+  // Build delete list with safety caps
+  let deleteIds = removedSourceIds;
+
+  // Per-source safety: if ALL events from a source vanished, it's likely a scraper outage
+  const removedBySource = new Map<string, string[]>();
+  for (const sid of removedSourceIds) {
+    const source = sid.split(":")[0] || "unknown";
+    const list = removedBySource.get(source) || [];
+    list.push(sid);
+    removedBySource.set(source, list);
+  }
+
+  // Check if any source had ALL its events removed (compare against allEvents)
+  const currentSourceCounts = new Map<string, number>();
+  for (const e of allEvents) {
+    currentSourceCounts.set(e.source, (currentSourceCounts.get(e.source) || 0) + 1);
+  }
+
+  const skippedSources: string[] = [];
+  for (const [source, removed] of removedBySource) {
+    if (!currentSourceCounts.has(source) || currentSourceCounts.get(source) === 0) {
+      // All events from this source vanished — likely scraper outage
+      log.warn("cloudkit", `⚠️  ALL events from "${source}" vanished (${removed.length} removals) — skipping deletes for this source (possible outage)`);
+      skippedSources.push(source);
+    }
+  }
+
+  if (skippedSources.length > 0) {
+    deleteIds = deleteIds.filter((sid) => {
+      const source = sid.split(":")[0] || "unknown";
+      return !skippedSources.includes(source);
+    });
+  }
+
+  if (deleteIds.length > MAX_DELETES_PER_RUN) {
+    log.warn("cloudkit", `⚠️  ${deleteIds.length} deletions exceeds safety cap of ${MAX_DELETES_PER_RUN} — truncating`);
+    deleteIds = deleteIds.slice(0, MAX_DELETES_PER_RUN);
+  }
+
+  log.info("cloudkit", `Incremental upload: ${dedupedUpserts.length} upserts, ${deleteIds.length} deletes`);
+
+  // Upload upserts in batches
+  if (dedupedUpserts.length > 0) {
+    const batches: (typeof dedupedUpserts)[] = [];
+    for (let i = 0; i < dedupedUpserts.length; i += BATCH_SIZE) {
+      batches.push(dedupedUpserts.slice(i, i + BATCH_SIZE));
+    }
+
+    let totalSaved = 0;
+    let totalErrors = 0;
+
+    for (let i = 0; i < batches.length; i++) {
+      const { saved, errors } = await uploadBatch(batches[i], privateKeyPem, i + 1, batches.length);
+      totalSaved += saved;
+      totalErrors += errors;
+      if (i < batches.length - 1) await new Promise((r) => setTimeout(r, 500));
+    }
+
+    log.info("cloudkit", `Upserts complete: ${totalSaved} saved, ${totalErrors} errors`);
+  }
+
+  // Delete removed records
+  if (deleteIds.length > 0) {
+    const deleteRecords = deleteIds.map((sid) => ({
+      recordType: "Event" as const,
+      recordName: sid.replace(/[^a-zA-Z0-9_-]/g, "_"),
+    }));
+
+    const env = config.cloudkit.environment;
+    const container = config.cloudkit.container;
+    const subpath = `/database/1/${container}/${env}/public/records/modify`;
+
+    // Delete in batches of 200
+    for (let i = 0; i < deleteRecords.length; i += BATCH_SIZE) {
+      const batch = deleteRecords.slice(i, i + BATCH_SIZE);
+      const body = {
+        operations: batch.map((record) => ({
+          operationType: "delete",
+          record: { recordType: record.recordType, recordName: record.recordName },
+        })),
+      };
+
+      try {
+        const result = await cloudKitFetch(subpath, body, privateKeyPem);
+        const deleted = (result.records || []).filter((r: Record<string, unknown>) => !r.serverErrorCode).length;
+        const errors = (result.records || []).filter((r: Record<string, unknown>) => r.serverErrorCode).length;
+        log.info("cloudkit", `  Delete batch: ${deleted} deleted, ${errors} errors`);
+      } catch (err) {
+        log.warn("cloudkit", `  Delete batch failed: ${err}`);
+      }
+    }
+  }
+
+  log.success("cloudkit", `Incremental upload complete`);
+}
+
+// ─── Full upload (legacy — used when no baseline exists) ────────────────────
+
 export async function uploadToCloudKit(
-  events: PipelineEvent[]
+  events: PipelineEvent[],
+  metadata?: PipelineMetadata
 ): Promise<void> {
   // Always write local output files for debugging/artifacts
-  await writeOutputFiles(events);
+  await writeOutputFiles(events, metadata);
 
   if (config.dryRun) {
     log.info("cloudkit", `[DRY RUN] Would upload ${events.length} events`);
@@ -319,7 +488,7 @@ export async function uploadToCloudKit(
 
 // ─── Local output (always written for debugging) ────────────────────────────
 
-async function writeOutputFiles(events: PipelineEvent[]): Promise<void> {
+async function writeOutputFiles(events: PipelineEvent[], metadata?: PipelineMetadata): Promise<void> {
   await mkdir(OUTPUT_DIR, { recursive: true });
 
   const byMetro = new Map<string, PipelineEvent[]>();
@@ -340,7 +509,7 @@ async function writeOutputFiles(events: PipelineEvent[]): Promise<void> {
   await writeFile(combinedPath, JSON.stringify(events, null, 2));
   log.success("cloudkit", `${events.length} events written to output/`);
 
-  const summary = {
+  const summary: Record<string, unknown> = {
     generatedAt: new Date().toISOString(),
     totalEvents: events.length,
     byMetro: Object.fromEntries(
@@ -349,6 +518,9 @@ async function writeOutputFiles(events: PipelineEvent[]): Promise<void> {
     bySource: countBy(events, "source"),
     byCategory: countBy(events, "category"),
   };
+  if (metadata?.rateLimits) {
+    summary.rateLimits = metadata.rateLimits;
+  }
   await writeFile(
     join(OUTPUT_DIR, "summary.json"),
     JSON.stringify(summary, null, 2)

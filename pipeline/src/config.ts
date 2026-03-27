@@ -143,4 +143,11 @@ export const config = {
   // clear stale geocoding/images, re-run enrichment + geocode + images + upload.
   // Use when you want to apply pipeline improvements without re-hitting source sites.
   reprocess: process.argv.includes("--reprocess"),
+  // Single-metro mode: only scrape/process the specified metro (used by matrix jobs)
+  metroFilter: (() => {
+    const idx = process.argv.indexOf("--metro");
+    return idx !== -1 ? process.argv[idx + 1] : undefined;
+  })(),
+  // Merge mode: load per-metro outputs and combine into final dataset
+  mergeMode: process.argv.includes("--merge-mode"),
 };

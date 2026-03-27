@@ -36,18 +36,30 @@ interface YelpResponse {
   total: number;
 }
 
+export interface YelpRateLimitInfo {
+  remaining: number | null;
+  resetTime: string | null;
+}
+
+export interface YelpResult {
+  events: PipelineEvent[];
+  rateLimit: YelpRateLimitInfo;
+}
+
 export async function fetchYelpEvents(
   metro: MetroArea
-): Promise<PipelineEvent[]> {
+): Promise<YelpResult> {
   if (!config.yelp.apiKey) {
     log.warn("yelp", "No API key configured, skipping");
-    return [];
+    return { events: [], rateLimit: { remaining: null, resetTime: null } };
   }
 
   const events: PipelineEvent[] = [];
   let offset = 0;
   const limit = 50;
   const maxResults = 300;
+  let lowestRemaining: number | null = null;
+  let latestResetTime: string | null = null;
 
   log.info("yelp", `Fetching events for ${metro.name}...`);
 
@@ -85,6 +97,19 @@ export async function fetchYelpEvents(
         break;
       }
 
+      // Capture rate limit headers (Yelp uses both standard and x- prefixed)
+      const remainingHeader = res.headers.get("RateLimit-Remaining") ?? res.headers.get("x-ratelimit-remaining");
+      const resetHeader = res.headers.get("RateLimit-ResetTime") ?? res.headers.get("x-ratelimit-reset-time") ?? res.headers.get("x-ratelimit-reset");
+      if (remainingHeader != null) {
+        const remaining = parseInt(remainingHeader, 10);
+        if (!isNaN(remaining) && (lowestRemaining === null || remaining < lowestRemaining)) {
+          lowestRemaining = remaining;
+        }
+      }
+      if (resetHeader != null) {
+        latestResetTime = resetHeader;
+      }
+
       const data = (await res.json()) as YelpResponse;
       if (data.events.length === 0) break;
 
@@ -105,7 +130,19 @@ export async function fetchYelpEvents(
   }
 
   log.success("yelp", `Found ${events.length} events for ${metro.name}`);
-  return events;
+
+  // Warn if approaching rate limit
+  if (lowestRemaining !== null) {
+    log.info("yelp", `Rate limit remaining: ${lowestRemaining}${latestResetTime ? ` (resets: ${latestResetTime})` : ""}`);
+    if (lowestRemaining < 50) {
+      log.warn("yelp", `⚠️  RATE LIMIT LOW! Only ${lowestRemaining} requests remaining. Resets: ${latestResetTime ?? "unknown"}`);
+    }
+  }
+
+  return {
+    events,
+    rateLimit: { remaining: lowestRemaining, resetTime: latestResetTime },
+  };
 }
 
 function normalizeYelpEvent(

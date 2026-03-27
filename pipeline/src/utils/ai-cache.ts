@@ -227,5 +227,40 @@ export function setCachedGuideEnrichment(
   isDirty = true;
 }
 
+/**
+ * Merge multiple AI cache files into the current in-memory cache.
+ * For each key, keeps the entry with the newest cachedAt timestamp.
+ * Used by the merge job to combine caches from parallel metro jobs.
+ */
+export function mergeAiCaches(cacheFiles: string[]): void {
+  for (const file of cacheFiles) {
+    try {
+      if (!existsSync(file)) continue;
+      const raw = JSON.parse(readFileSync(file, "utf-8")) as Partial<CacheData>;
+
+      for (const [key, entry] of Object.entries(raw.enrichment ?? {})) {
+        if (!cache.enrichment[key] || (cache.enrichment[key].cachedAt ?? "") < (entry.cachedAt ?? "")) {
+          cache.enrichment[key] = entry;
+        }
+      }
+      for (const [key, entry] of Object.entries(raw.honeypot ?? {})) {
+        if (!cache.honeypot[key] || (cache.honeypot[key].cachedAt ?? "") < (entry.cachedAt ?? "")) {
+          cache.honeypot[key] = entry;
+        }
+      }
+      for (const [key, entry] of Object.entries(raw.guideEnrichment ?? {})) {
+        if (!cache.guideEnrichment[key] || (cache.guideEnrichment[key].cachedAt ?? "") < (entry.cachedAt ?? "")) {
+          cache.guideEnrichment[key] = entry;
+        }
+      }
+
+      isDirty = true;
+      log.info("ai-cache", `Merged cache from ${file}`);
+    } catch (err) {
+      log.warn("ai-cache", `Failed to merge cache from ${file}: ${err}`);
+    }
+  }
+}
+
 // Load cache immediately on module import
 load();

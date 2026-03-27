@@ -384,56 +384,71 @@ async function fetchExpositionParkEvents(): Promise<PipelineEvent[]> {
   const today = formatDate(new Date());
   const endDate = formatDate(sixtyDaysFromNow());
 
-  const url = `https://expositionpark.ca.gov/wp-json/tribe/events/v1/events?per_page=50&start_date=${today}&end_date=${endDate}`;
+  let page = 1;
+  let totalPages = 1;
 
-  const res = await fetch(url, {
-    headers: { ...getRandomHeaders(), Accept: "application/json" },
-  });
+  while (page <= totalPages && page <= 5) {
+    const url = `https://expositionpark.ca.gov/wp-json/tribe/events/v1/events?per_page=50&start_date=${today}&end_date=${endDate}&page=${page}`;
 
-  if (!res.ok) {
-    log.warn("theme-parks", `Exposition Park HTTP ${res.status}`);
-    return [];
-  }
+    try {
+      const res = await fetch(url, {
+        headers: { ...getRandomHeaders(), Accept: "application/json" },
+      });
 
-  const data = (await res.json()) as TribeResponse;
-  if (!data.events) return [];
+      if (!res.ok) {
+        if (page === 1) log.warn("theme-parks", `Exposition Park HTTP ${res.status}`);
+        break;
+      }
 
-  for (const raw of data.events) {
-    const titleText = stripHtml(raw.title || "");
-    if (!titleText) continue;
+      const data = (await res.json()) as TribeResponse;
+      if (!data.events || data.events.length === 0) break;
 
-    // Skip non-family events
-    const combined = `${titleText} ${raw.description || ""}`.toLowerCase();
-    if (EXPO_SKIP_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+      totalPages = data.total_pages || 1;
 
-    const desc = cleanDescription(stripHtml(raw.description || ""));
-    const city = raw.venue?.city || "Los Angeles";
-    const locationName = raw.venue?.venue || "Exposition Park";
-    const address = raw.venue
-      ? `${raw.venue.address}, ${raw.venue.city}, ${raw.venue.state} ${raw.venue.zip}`
-      : "700 Exposition Park Dr, Los Angeles, CA 90037";
+      for (const raw of data.events) {
+        const titleText = stripHtml(raw.title || "");
+        if (!titleText) continue;
 
-    events.push({
-      sourceId: `expopark:${raw.id}`,
-      source: "venue-expopark",
-      title: titleText,
-      description: desc,
-      startDate: raw.start_date,
-      endDate: raw.end_date || undefined,
-      isAllDay: raw.all_day ?? false,
-      category: categorizeEvent(titleText, desc, []),
-      city,
-      locationName,
-      address,
-      externalURL: raw.url,
-      websiteURL: raw.url,
-      imageURL: raw.image?.url,
-      isFeatured: false,
-      isRecurring: false,
-      tags: [],
-      metro: "los-angeles",
-      price: raw.cost || undefined,
-    });
+        // Skip non-family events
+        const combined = `${titleText} ${raw.description || ""}`.toLowerCase();
+        if (EXPO_SKIP_KEYWORDS.some((kw) => combined.includes(kw))) continue;
+
+        const desc = cleanDescription(stripHtml(raw.description || ""));
+        const city = raw.venue?.city || "Los Angeles";
+        const locationName = raw.venue?.venue || "Exposition Park";
+        const address = raw.venue
+          ? `${raw.venue.address}, ${raw.venue.city}, ${raw.venue.state} ${raw.venue.zip}`
+          : "700 Exposition Park Dr, Los Angeles, CA 90037";
+
+        events.push({
+          sourceId: `expopark:${raw.id}`,
+          source: "venue-expopark",
+          title: titleText,
+          description: desc,
+          startDate: raw.start_date,
+          endDate: raw.end_date || undefined,
+          isAllDay: raw.all_day ?? false,
+          category: categorizeEvent(titleText, desc, []),
+          city,
+          locationName,
+          address,
+          externalURL: raw.url,
+          websiteURL: raw.url,
+          imageURL: raw.image?.url,
+          isFeatured: false,
+          isRecurring: false,
+          tags: [],
+          metro: "los-angeles",
+          price: raw.cost || undefined,
+        });
+      }
+
+      page++;
+      if (page <= totalPages) await delay(300);
+    } catch (err) {
+      log.warn("theme-parks", `Exposition Park page ${page} failed: ${err}`);
+      break;
+    }
   }
 
   return events;

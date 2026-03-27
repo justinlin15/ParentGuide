@@ -16,7 +16,7 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 
 ### Source Strategy
 - **Goal:** Reduce dependence on aggregator sites (OC Parent Guide, MommyPoppins, MacaroniKid) to avoid legal issues. Prefer direct venue/API sources.
-- **Direct sources (preferred):** Ticketmaster, SeatGeek, Yelp, Eventbrite, LibCal (libraries), ThemeParks.wiki (theme parks), Pretend City (WP API), Academy Museum (__NEXT_DATA__), Kidspace (WP API), South Coast Plaza (iCal), Exposition Park/Cal Science Center (WP API), NHM LA, Skirball, LA Parent Calendar
+- **Direct sources (preferred):** Ticketmaster, SeatGeek, Yelp, Eventbrite, LibCal (libraries), ThemeParks.wiki (theme parks), Pretend City (WP API), Academy Museum (__NEXT_DATA__), Kidspace (WP API), South Coast Plaza (iCal), Exposition Park/Cal Science Center (WP API), NHM LA, Skirball, LA Parent Calendar, Church Events (Mariners, Saddleback, Rock Harbor, Oceans, Mosaic, Reality LA)
 - **Aggregator sources (being phased out):** OC Parent Guide, MommyPoppins, MacaroniKid — still running but direct sources take dedup priority and will eventually replace them
 
 ### Architecture
@@ -25,6 +25,8 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 - **Manual trigger:** GitHub Actions tab → "Event Pipeline" → "Run workflow"
 - **Dry run:** Pass `--dry-run` to skip CloudKit upload and write to `pipeline/output/`
 - **Reprocess run:** Pass `--reprocess` (or check "reprocess" in the workflow_dispatch UI) to skip scraping, re-enrich/re-geocode/re-image existing events and upload — useful for testing pipeline improvements without hitting source sites
+- **Single-metro mode:** Pass `--metro <id>` (e.g. `--metro orange-county`) to scrape/process only one metro area. Writes output to `pipeline/output/{metro-id}-events.json` and skips CloudKit upload. Used by matrix strategy jobs.
+- **Merge mode:** Pass `--merge-mode` to combine per-metro output files from `pipeline/output/`, run cross-metro dedup, incremental diff against baseline, and upload to CloudKit. Used by the matrix merge job.
 
 ### Pipeline Flow
 1. **Scrape** — APIs (Ticketmaster, SeatGeek, Yelp, Eventbrite, LibCal, ThemeParks.wiki) + direct venue scrapers (Pretend City, Academy Museum, Kidspace, South Coast Plaza, NHM, Skirball, Exposition Park, etc.) + aggregator scrapers (OC Parent Guide, Kidsguide, MommyPoppins, MacaroniKid — being phased out in favor of direct sources)
@@ -34,25 +36,67 @@ The goal of the app is to function similar to https://www.orangecountyparentguid
 5. **Rewrite descriptions** — Template-based paraphrasing (fast pre-pass before AI)
 6. **Enrich** — Sanitize URLs, extract prices via regex, strip scraper tags
 7. **Content filter** — Remove adult/21+/18+ events, known adult comedy venues (Irvine Improv, Brea Improv, Comedy Store, Laugh Factory, etc.), Yelp Elite community meetups (UYE prefix), and multi-location guide articles
-8. **AI Enrichment** — Claude Sonnet rewrites descriptions, validates categories, corrects locationName/address using world knowledge, extracts missing price/ageRange. Results cached by `sourceId + content hash` to skip unchanged events on future runs.
-9. **Post-AI sanity checks** — Rule-based fixes: "Free Movie" category requires free price; title price hints (e.g. `($29)`) override AI-extracted price; category corrected to "Other" if price contradicts
-10. **Verify** — 3-layer honeypot detection (see below). AI verdicts cached by `sourceId + title hash`.
-11. **Filter stale** — Remove events with startDate before today
-12. **Geocode** — City extracted from event title when stored city is generic ("Orange County", "Los Angeles"). Google Places searched with `effectiveCity` for accurate results; wrong-city results rejected via city validation. Google Places Photos used as venue image when event has no `websiteURL`.
-13. **Fill images** — Priority: og:image from event's own `websiteURL` (fetched once per unique URL, reused for all recurring instances) → venue/title search via Unsplash/Pexels → category-based stock photo. Google Places venue photos are **skipped** when the event has a specific event-page `websiteURL` (lets og:image fetch the real promo photo instead).
-14. **Upload** — Push to CloudKit (production or development based on `CLOUDKIT_ENVIRONMENT` secret)
-15. **Commit** — Pipeline commits updated `docs/api/events.json` AND `ParentGuide/ParentGuide/Resources/events.json` to the repo so both the remote feed and the bundled iOS fallback stay in sync
-16. **Save AI cache** — Flush enrichment + honeypot cache to `pipeline/cache/ai-cache.json`
+8. **Incremental diff** *(new)* — Compare scraped events against previous run's `docs/api/events.json` baseline using content hash (SHA-256 of title+description+startDate+category+locationName+city). Only new/changed events proceed to steps 9–14. Unchanged events carry forward all fields from baseline. First run (no baseline) processes everything.
+9. **AI Enrichment** — Claude Sonnet rewrites descriptions, validates categories, corrects locationName/address using world knowledge, extracts missing price/ageRange. Results cached by `sourceId + content hash` to skip unchanged events on future runs. *(Only runs on new/changed events in incremental mode.)*
+10. **Post-AI sanity checks** — Rule-based fixes: "Free Movie" category requires free price; title price hints (e.g. `($29)`) override AI-extracted price; category corrected to "Other" if price contradicts
+11. **Verify** — 3-layer honeypot detection (see below). AI verdicts cached by `sourceId + title hash`.
+12. **Filter stale** — Remove events with startDate before today
+13. **Geocode** — City extracted from event title when stored city is generic ("Orange County", "Los Angeles"). Google Places searched with `effectiveCity` for accurate results; wrong-city results rejected via city validation. Google Places Photos used as venue image when event has no `websiteURL`. *(Only runs on new/changed events in incremental mode.)*
+14. **Fill images** — Priority: og:image from event's own `websiteURL` (fetched once per unique URL, reused for all recurring instances) → venue/title search via Unsplash/Pexels → category-based stock photo. Google Places venue photos are **skipped** when the event has a specific event-page `websiteURL` (lets og:image fetch the real promo photo instead). *(Only runs on new/changed events in incremental mode.)*
+15. **Merge processed + unchanged** — Combine delta (processed new/changed events) with unchanged baseline events into the final event set.
+16. **Upload** — Incremental: upsert only new/changed records, delete removed records (200/run safety cap, per-source outage protection). Falls back to full `forceReplace` upload when no baseline exists. Skips overwriting manually-edited CloudKit records (admin edits preserved).
+17. **Commit** — Pipeline commits updated `docs/api/events.json` AND `ParentGuide/ParentGuide/Resources/events.json` to the repo so both the remote feed and the bundled iOS fallback stay in sync
+18. **Save AI cache** — Flush enrichment + honeypot cache to `pipeline/cache/ai-cache.json`
 
 ### Execution
 - **Runs on:** GitHub Actions (cloud) — NOT on local machine
 - **Trigger:** Automatic (twice daily cron) or manual (GitHub Actions → Run workflow)
 - **Local dry run:** `cd pipeline && npx tsx src/index.ts --dry-run` (writes to `pipeline/output/`, skips CloudKit)
 - **Local reprocess dry run:** `cd pipeline && npx tsx src/index.ts --reprocess --dry-run`
-- **Timeout:** 150 minutes
+- **Local single-metro dry run:** `cd pipeline && npx tsx src/index.ts --metro orange-county --dry-run`
+- **Smoke tests:** `cd pipeline && npx tsx test-refactor.ts` — 30 tests covering diff engine, merge, config flags, type safety
 - **Workflow file:** `.github/workflows/pipeline.yml`
 - **Node version:** 20.x
 - **CloudKit environment:** Controlled by `CLOUDKIT_ENVIRONMENT` GitHub Secret (`production` or `development`)
+
+### GitHub Actions Matrix Strategy
+The pipeline uses a matrix strategy to run each metro on its own parallel runner, avoiding the 6-hour GitHub job limit as we scale to 30 cities.
+
+**Jobs (3-stage pipeline):**
+1. **`setup`** — Parses `pipeline/src/config.ts` to extract enabled metro IDs, outputs JSON matrix
+2. **`scrape`** (matrix, one runner per metro) — Runs `npx tsx src/index.ts --metro <id>`. Playwright installed only for `orange-county` (OC Parent Guide scraper). Each job uploads `output/{metro}-events.json` + `cache/ai-cache.json` as artifacts. `fail-fast: false` so one metro failure doesn't kill others. 90-min timeout per metro.
+3. **`merge`** — Downloads all per-metro artifacts, runs `npx tsx src/index.ts --merge-mode`. Combines events, runs cross-metro dedup + content filter + stale filter, incremental CloudKit upload, commits JSON to repo. 30-min timeout. Runs even if some scrape jobs failed (`if: !cancelled()`).
+
+**Reprocess mode:** Bypasses matrix entirely — runs as a standalone single-job workflow.
+
+**Relevant source files:**
+- `pipeline/src/config.ts` — `--metro` and `--merge-mode` flag parsing
+- `pipeline/src/merge.ts` — `loadPerMetroOutputs()`, `deduplicateMerged()`
+- `pipeline/src/utils/ai-cache.ts` — `mergeAiCaches()` combines caches from parallel jobs
+
+### Incremental Processing
+The pipeline diffs current scraped events against the previous run's `docs/api/events.json` to avoid reprocessing unchanged events through expensive steps (AI enrichment, geocoding, image fetching).
+
+- **Diff logic:** `pipeline/src/diff-events.ts` — `contentHash()` = SHA-256 of `title|description|startDate|endDate|category|locationName|city` (truncated to 16 hex chars). `diffEvents()` returns `{ newEvents, changedEvents, unchangedEvents, removedSourceIds }`.
+- **Unchanged events:** Carry forward ALL fields from baseline (coords, images, prices, etc.) — zero processing.
+- **Changed events:** Selectively preserve coords (if locationName+city+address unchanged) and non-stock images from baseline.
+- **Stock image detection:** Unsplash/Pexels images are NOT preserved on changed events (forces fresh image fetch).
+- **First run / no baseline:** All events treated as "new" — full processing (identical to pre-refactor behavior).
+- **`--reprocess` mode:** Bypasses incremental diff entirely.
+
+**CloudKit incremental upload** (`uploadIncrementalToCloudKit` in `pipeline/src/cloudkit.ts`):
+- New/changed events: `forceReplace` (create-or-update)
+- Manually-edited records: SKIPPED (preserves admin edits via `fetchManuallyEditedRecords()`)
+- Unchanged events: NOT uploaded (already in CloudKit)
+- Removed events: `delete` with safety cap (max 200 deletes/run)
+- Per-source outage protection: if ALL events from one source vanished, skips those deletes and logs warning
+
+### Yelp API Rate Limit Monitoring
+- `pipeline/src/sources/yelp.ts` captures `RateLimit-Remaining` and `RateLimit-ResetTime` HTTP headers (checks both standard and `x-ratelimit-*` variants)
+- Tracks the lowest `remaining` value across all paginated requests and all metros
+- Logs `⚠️  RATE LIMIT LOW!` warning if remaining < 50
+- Rate limit info included in `output/summary.json` under `rateLimits.yelp`
+- Return type is `YelpResult { events, rateLimit }` (not bare `PipelineEvent[]`)
 
 ### AI Cost Management
 The pipeline uses two Claude API steps (enrichment + honeypot verification). To control costs:
@@ -85,7 +129,7 @@ The pipeline uses two Claude API steps (enrichment + honeypot verification). To 
 ### Deduplication Source Priority
 Higher-priority sources win when the same event exists in multiple sources:
 - Ticketmaster/SeatGeek/Eventbrite: 5 (official ticketing APIs)
-- LibCal/Venue scrapers/Theme parks/Museums/Pretend City: 4 (direct venue sources)
+- LibCal/Venue scrapers/Theme parks/Museums/Pretend City/Church Events: 4 (direct venue sources)
 - Kidsguide/Yelp/LA Parent: 3
 - MommyPoppins: 1
 - OC Parent Guide/MacaroniKid: 0
@@ -121,6 +165,7 @@ Each scraper declares its supported metro(s) and is only invoked for those metro
 | **Museum Scrapers** | `los-angeles` only | NHM LA (Drupal HTML parse of nhm.org/calendar), Skirball Cultural Center (Drupal Views AJAX parse of kids-and-families programs). Source: `pipeline/src/sources/museum-scrapers.ts` |
 | **Pretend City** | `orange-county` only | WordPress Tribe Events REST API (`pretendcity.org/wp-json/tribe/events/v1/events`). ~147 events. Trusted API source. Source: `pipeline/src/sources/pretend-city.ts` |
 | **LA Parent Calendar** | Both OC + LA | SceneThink platform at calendar.laparent.com. Vue.js SPA with network-intercepted API. 60+ categories, regional filters. Source: `pipeline/src/sources/la-parent.ts` |
+| **Church Events** | Both OC + LA | Community family events from major churches. OC: Mariners Church (Rock RMS JSON API), Saddleback (Azure REST API), Rock Harbor (Squarespace), Oceans Church (Squarespace). LA: Mosaic Church (Squarespace event list), Reality LA (WordPress HTML), Saddleback LA campuses. Filters exclude worship services, Bible studies, prayer groups — only kids/family community events (egg hunts, camps, festivals). Trusted (auto-published). Source: `pipeline/src/sources/church-events.ts` |
 | **NYC / Dallas / Chicago / Atlanta scrapers** | Disabled (metros off) | Code present but never invoked in Phase 1. |
 
 ### Event Window
@@ -287,7 +332,7 @@ Score-based keyword matching in `pipeline/src/normalize.ts`:
 - Source file: `ParentGuide/Views/Admin/DraftEventsView.swift`
 
 ### Event Data Loading
-- **Repo visibility:** Public (made public 2026-03-18 — required for `raw.githubusercontent.com` to return 200 without a GitHub Pro subscription)
+- **Repo visibility:** Private (made private 2026-03-26 to protect scraping IP — GitHub Actions minutes now billed past 2,000 free-tier limit)
 - **Primary:** Remote JSON feed at `https://raw.githubusercontent.com/justinlin15/ParentGuide/main/docs/api/events.json` — fetched with `.reloadIgnoringLocalCacheData` to bypass URLSession disk cache (prevents stale 404 from blocking load after visibility changes)
 - **Fallback:** Bundled `ParentGuide/ParentGuide/Resources/events.json` (updated automatically by every pipeline run)
 - **Last resort:** CloudKit direct query (capped at ~200–500 records, not reliable as primary)

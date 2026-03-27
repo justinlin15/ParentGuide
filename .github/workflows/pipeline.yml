@@ -23,8 +23,15 @@ on:
         default: "false"
         type: boolean
 
+# ─── Reprocess: single job (no matrix) ─────────────────────────────────────────
+# Reprocess loads from docs/api/events.json, so it doesn't need per-metro scraping.
+
 jobs:
-  fetch-events:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 1: Reprocess (standalone, skips matrix entirely)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  reprocess:
+    if: ${{ inputs.reprocess == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 150
     permissions:
@@ -46,23 +53,144 @@ jobs:
         working-directory: pipeline
         run: npm ci
 
-      - name: Install Playwright (for scrapers)
-        if: ${{ inputs.reprocess != 'true' }}
-        working-directory: pipeline
-        run: npx playwright install --with-deps chromium
-
       - name: Restore AI cache
         uses: actions/cache@v4
         with:
           path: pipeline/cache
-          # Unique key per run so each run saves its own cache entry.
-          # restore-keys allows restoring the most recent previous cache
-          # when there's no exact match (i.e. almost always).
           key: ai-cache-v1-${{ github.run_id }}
           restore-keys: |
             ai-cache-v1-
 
-      - name: Run pipeline
+      - name: Run pipeline (reprocess)
+        working-directory: pipeline
+        env:
+          CLOUDKIT_CONTAINER: ${{ secrets.CLOUDKIT_CONTAINER }}
+          CLOUDKIT_KEY_ID: ${{ secrets.CLOUDKIT_KEY_ID }}
+          CLOUDKIT_PRIVATE_KEY: ${{ secrets.CLOUDKIT_PRIVATE_KEY }}
+          CLOUDKIT_ENVIRONMENT: ${{ secrets.CLOUDKIT_ENVIRONMENT }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: |
+          ARGS="--reprocess"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          npx tsx src/index.ts $ARGS
+
+      - name: Check for empty output
+        if: success()
+        working-directory: pipeline
+        run: |
+          if [ ! -f output/all-events.json ]; then
+            echo "::error::Pipeline output file not found"
+            exit 1
+          fi
+          EVENT_COUNT=$(jq 'length' output/all-events.json)
+          echo "Event count: $EVENT_COUNT"
+          if [ "$EVENT_COUNT" -eq 0 ]; then
+            echo "::error::Pipeline produced 0 events"
+            exit 1
+          fi
+
+      - name: Commit events JSON to repo
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p docs/api ParentGuide/ParentGuide/Resources
+          cp pipeline/output/all-events.json docs/api/events.json
+          cp pipeline/output/all-events.json ParentGuide/ParentGuide/Resources/events.json
+          git add docs/api/events.json ParentGuide/ParentGuide/Resources/events.json
+          git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git pull --rebase origin main && git push)
+
+      - name: Upload output artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-output-reprocess-${{ github.run_number }}
+          path: pipeline/output/
+          retention-days: 7
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 2: Setup — determine active metro list for matrix
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  setup:
+    if: ${{ inputs.reprocess != 'true' }}
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine active metros
+        id: set-matrix
+        working-directory: pipeline
+        run: |
+          # Extract enabled metro IDs from config.ts
+          METROS=$(node -e "
+            const fs = require('fs');
+            const src = fs.readFileSync('src/config.ts', 'utf8');
+            const metros = [];
+            const blocks = src.split(/\{[\s\S]*?enabled:\s*(true|false)/g);
+            let i = 0;
+            const idRe = /id:\s*['\"]([^'\"]+)['\"]/;
+            const enabledRe = /enabled:\s*(true|false)/;
+            // Simple regex parse: find each metro block
+            const re = /\{\s*id:\s*['\"]([^'\"]+)['\"][\s\S]*?enabled:\s*(true|false)/g;
+            let m;
+            while ((m = re.exec(src)) !== null) {
+              if (m[2] === 'true') metros.push(m[1]);
+            }
+            console.log(JSON.stringify({metro: metros}));
+          ")
+          echo "matrix=$METROS" >> $GITHUB_OUTPUT
+          echo "Active metros: $METROS"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 3: Scrape — one runner per metro (parallel matrix)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  scrape:
+    needs: setup
+    if: ${{ inputs.reprocess != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: pipeline/package-lock.json
+
+      - name: Install dependencies
+        working-directory: pipeline
+        run: npm ci
+
+      # Playwright only needed for orange-county (OC Parent Guide scraper)
+      - name: Install Playwright
+        if: ${{ matrix.metro == 'orange-county' }}
+        working-directory: pipeline
+        run: npx playwright install --with-deps chromium
+
+      - name: Restore AI cache
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline/cache
+          key: ai-cache-v1-${{ github.run_id }}
+          restore-keys: |
+            ai-cache-v1-
+
+      - name: Run pipeline (single metro)
         working-directory: pipeline
         env:
           TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
@@ -70,45 +198,125 @@ jobs:
           YELP_API_KEY: ${{ secrets.YELP_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-          CLOUDKIT_CONTAINER: ${{ secrets.CLOUDKIT_CONTAINER }}
-          CLOUDKIT_KEY_ID: ${{ secrets.CLOUDKIT_KEY_ID }}
-          CLOUDKIT_PRIVATE_KEY: ${{ secrets.CLOUDKIT_PRIVATE_KEY }}
-          CLOUDKIT_ENVIRONMENT: ${{ secrets.CLOUDKIT_ENVIRONMENT }}
-          OC_PARENT_GUIDE_EMAIL: ${{ secrets.OC_PARENT_GUIDE_EMAIL }}
-          OC_PARENT_GUIDE_PASSWORD: ${{ secrets.OC_PARENT_GUIDE_PASSWORD }}
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OC_PARENT_GUIDE_EMAIL: ${{ secrets.OC_PARENT_GUIDE_EMAIL }}
+          OC_PARENT_GUIDE_PASSWORD: ${{ secrets.OC_PARENT_GUIDE_PASSWORD }}
+          EVENTBRITE_API_KEY: ${{ secrets.EVENTBRITE_API_KEY }}
         run: |
-          # Random jitter only for scheduled runs (not manual triggers)
+          # Random jitter only for scheduled runs
           if [ "${{ github.event_name }}" = "schedule" ]; then
             JITTER=$((RANDOM % 300))
             echo "Scheduled run — sleeping ${JITTER}s jitter"
             sleep $JITTER
           fi
-          ARGS=""
+          ARGS="--metro ${{ matrix.metro }}"
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
           if [ "${{ inputs.scrapers_only }}" = "true" ]; then
             ARGS="$ARGS --scrapers-only"
           fi
-          if [ "${{ inputs.reprocess }}" = "true" ]; then
-            ARGS="$ARGS --reprocess"
+          npx tsx src/index.ts $ARGS
+
+      - name: Upload per-metro events
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metro-events-${{ matrix.metro }}
+          path: pipeline/output/${{ matrix.metro }}-events.json
+          retention-days: 1
+
+      - name: Upload AI cache
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-cache-${{ matrix.metro }}
+          path: pipeline/cache/ai-cache.json
+          retention-days: 1
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 4: Merge — combine per-metro outputs, upload to CloudKit, commit
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  merge:
+    needs: [setup, scrape]
+    if: ${{ inputs.reprocess != 'true' && !cancelled() && needs.scrape.result != 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: pipeline/package-lock.json
+
+      - name: Install dependencies
+        working-directory: pipeline
+        run: npm ci
+
+      - name: Restore AI cache (baseline)
+        uses: actions/cache@v4
+        with:
+          path: pipeline/cache
+          key: ai-cache-v1-${{ github.run_id }}
+          restore-keys: |
+            ai-cache-v1-
+
+      - name: Download all per-metro artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: metro-events-*
+          path: pipeline/output/
+          merge-multiple: true
+
+      - name: Download AI caches from metro jobs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ai-cache-*
+          path: pipeline/cache/metro-caches/
+          merge-multiple: false
+
+      - name: Merge AI caches
+        working-directory: pipeline
+        run: |
+          # List downloaded cache files for debugging
+          echo "Downloaded AI cache files:"
+          find cache/metro-caches -name "ai-cache.json" -type f 2>/dev/null || echo "No metro cache files found"
+
+      - name: Run merge pipeline
+        working-directory: pipeline
+        env:
+          CLOUDKIT_CONTAINER: ${{ secrets.CLOUDKIT_CONTAINER }}
+          CLOUDKIT_KEY_ID: ${{ secrets.CLOUDKIT_KEY_ID }}
+          CLOUDKIT_PRIVATE_KEY: ${{ secrets.CLOUDKIT_PRIVATE_KEY }}
+          CLOUDKIT_ENVIRONMENT: ${{ secrets.CLOUDKIT_ENVIRONMENT }}
+        run: |
+          ARGS="--merge-mode"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
           fi
           npx tsx src/index.ts $ARGS
 
-      - name: Check for empty output (staleness protection)
+      - name: Check for empty output
         if: success()
         working-directory: pipeline
         run: |
           if [ ! -f output/all-events.json ]; then
-            echo "::error::Pipeline output file not found: output/all-events.json"
+            echo "::error::Merge output file not found"
             exit 1
           fi
           EVENT_COUNT=$(jq 'length' output/all-events.json)
           echo "Event count: $EVENT_COUNT"
           if [ "$EVENT_COUNT" -eq 0 ]; then
-            echo "::error::Pipeline produced 0 events. Failing to prevent pushing empty data."
+            echo "::error::Merge produced 0 events"
             exit 1
           fi
           echo "Staleness check passed: $EVENT_COUNT events found."
@@ -125,8 +333,6 @@ jobs:
             jq -r 'to_entries[] | "| \(.key) | \(.value) |"' output/summary.json >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "_Run #${{ github.run_number }} at $(date -u '+%Y-%m-%d %H:%M UTC')_" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "::warning::summary.json not found, skipping job summary."
           fi
 
       - name: Commit events JSON to repo
@@ -134,12 +340,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp pipeline/output/all-events.json docs/api/events.json 2>/dev/null || {
-            mkdir -p docs/api
-            cp pipeline/output/all-events.json docs/api/events.json
-          }
-          # Also update the bundled fallback used by the iOS app when remote feed is unavailable
-          mkdir -p ParentGuide/ParentGuide/Resources
+          mkdir -p docs/api ParentGuide/ParentGuide/Resources
+          cp pipeline/output/all-events.json docs/api/events.json
           cp pipeline/output/all-events.json ParentGuide/ParentGuide/Resources/events.json
           git add docs/api/events.json ParentGuide/ParentGuide/Resources/events.json
           git diff --cached --quiet || (git commit -m "Update events data [pipeline]" && git pull --rebase origin main && git push)

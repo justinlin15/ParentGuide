@@ -166,11 +166,19 @@ const SOURCE_PRIORITY: Record<string, number> = {
   "venue-skirball": 4,
   "venue-discoverycube": 4,
   "venue-underwood": 4,
+  "venue-autry": 4,
   // Theme parks, museums, and other direct sources
   "themeparks": 4,
   "venue-expopark": 4,
   "pretend-city": 4,
   "la-parent": 3,    // Aggregator but high-quality family events
+  // Church community event scrapers — direct venue websites
+  "church-mariners": 4,
+  "church-saddleback": 4,
+  "church-rockharbor": 4,
+  "church-oceans": 4,
+  "church-mosaic": 4,
+  "church-realityla": 4,
   mommypoppins: 1, // Scraper — has websiteURLs but aggregator
   "oc-parent-guide": 0, // Scraper — Google Search fallback URLs
   macaronikid: 0,
